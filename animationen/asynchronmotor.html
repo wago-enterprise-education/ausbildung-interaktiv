@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drehstrom-Asynchronmotor: Drehfeld, Schlupf, Leistungsschild</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Elektro und Mechatronik · LF 8 · AP2</div>
+<h1>Drehstrom-Asynchronmotor: Drehfeld, Schlupf und Leistungsschild</h1>
+<p class="unter">Drei um 120° versetzte Wicklungen erzeugen ein Drehfeld. Der Läufer dreht etwas langsamer als das Feld: Das ist der Schlupf. Last, Frequenz und Polpaarzahl einstellen, Drehzahl und Drehmoment ablesen.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 600" aria-label="Ständer mit drei Wicklungen und Läufer"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Einstellungen</h2>
+      <label class="regler"><span class="zeile"><span>Netzfrequenz f</span><output id="fOut"></output></span><input id="f" type="range" min="5" max="60" step="1" value="50"></label>
+      <label class="regler"><span class="zeile"><span>Polpaarzahl p</span><output id="pOut"></output></span><input id="p" type="range" min="1" max="4" step="1" value="2"></label>
+      <label class="regler"><span class="zeile"><span>Belastung (Anteil vom Bemessungsmoment)</span><output id="lOut"></output></span><input id="l" type="range" min="0" max="150" step="5" value="100"></label>
+      <div class="zeile">Anlauf</div>
+      <div class="seg" role="radiogroup"><label><input type="radio" name="an" value="d" checked>direkt</label><label><input type="radio" name="an" value="sd">Stern-Dreieck</label></div>
+      <div class="haken"><label><input id="lauf" type="checkbox" checked> Drehung zeigen (stark verlangsamt)</label><label><input id="ueber" type="checkbox" checked> Schlupf übertrieben darstellen (× 8)</label></div>
+      <div class="knoepfe"><button id="start" class="zweit">Startwerte</button><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte"><h2>Rechenweg</h2><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>Auf dem Leistungsschild steht 1440 1/min bei 50 Hz. Wie viele Polpaare hat der Motor, und wie groß ist der Schlupf?</li>
+        <li>Stell die Belastung auf 0 %. Warum erreicht der Läufer trotzdem nicht ganz die Drehfelddrehzahl?</li>
+        <li>Warum darf ein Motor mit „400/690 V Δ/Y“ am 400-V-Netz im Stern-Dreieck-Anlauf betrieben werden?</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>Nächste Drehfelddrehzahl darüber: 1500 1/min, also p = 2. s = (1500 − 1440) / 1500 = 4 %.</li>
+        <li>Ohne Schlupf würde im Läufer keine Spannung induziert, es flösse kein Strom und es entstünde kein Drehmoment. Reibung und Lüfter brauchen immer ein kleines Moment.</li>
+        <li>Im Betrieb liegt er in Dreieck an 400 V, also 400 V je Wicklung. Im Anlauf in Stern bekommt jede Wicklung nur 400 V / √3 = 230 V, Strom und Moment sinken auf ein Drittel.</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · Beispielmotor, Schlupf vereinfacht proportional zum Moment · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+const START={f:50,p:2,l:100,lauf:true,ueber:true}; let wf=0, wr=0, letzt=0;
+const PN=4, SN=0.04, UN=400, IN=8.2, COS=0.82; // Beispiel-Leistungsschild
+const PH=[BRAUN,GRAPHIT,STAHL];
+function zeichne(){ const f=+$('f').value, p=+$('p').value, lp=+$('l').value/100, sd=radio('an')==='sd';
+  const ns=60*f/p, s=SN*lp*(50/f), n=ns*(1-s), M=lp*9550*PN/((3000/p)*(1-SN)), P2=M*n/9550;
+  svg.innerHTML=''; defs();
+  const cx=230, cy=300, R=200;
+  el('circle',{cx,cy,r:R,fill:'#DCE3E5',stroke:GRAPHIT,'stroke-width':2}); el('circle',{cx,cy,r:R-46,fill:'#fff',stroke:GRAPHIT,'stroke-width':1.5});
+  // Wicklungen: 3·p Spulenpaare
+  const z=6*p; for(let k=0;k<z;k++){ const j=k%6, ph=[0,2,1,0,2,1][j], sg=j%2?-1:1, a=k*2*Math.PI/z-Math.PI/2, I=sg*Math.cos(wf*p-ph*2*Math.PI/3);
+    const x=cx+(R-23)*Math.cos(a), y=cy+(R-23)*Math.sin(a);
+    el('circle',{cx:x,cy:y,r:p>2?13:17,fill:PH[ph],opacity:.25+.75*Math.abs(I)});
+    text(x,y+5,['U','V','W'][ph]+(sg<0?'′':''),{s:p>2?11:14,f:'#fff',sw:0}); }
+  // Läufer (Käfig)
+  el('circle',{cx,cy,r:92,fill:'#C9D3D6',stroke:GRAPHIT,'stroke-width':2}); for(let k=0;k<16;k++){ const a=wr+k*Math.PI/8; el('circle',{cx:cx+78*Math.cos(a),cy:cy+78*Math.sin(a),r:6,fill:'#B87333'}); }
+  el('line',{x1:cx,y1:cy,x2:cx+70*Math.cos(wr),y2:cy+70*Math.sin(wr),stroke:PETROL,'stroke-width':6,'stroke-linecap':'round'}); el('circle',{cx,cy,r:12,fill:PETROL});
+  // Drehfeld-Zeiger
+  const fa=wf-Math.PI/2; if(p===1) pfeil(cx-120*Math.cos(fa),cy-120*Math.sin(fa),cx+120*Math.cos(fa),cy+120*Math.sin(fa),KUPFER,5);
+  for(let k=0;k<2*p;k++){ const b=fa+k*Math.PI/p, nn=k%2===0; if(p>1) pfeil(cx+(nn?100:140)*Math.cos(b),cy+(nn?100:140)*Math.sin(b),cx+(nn?140:100)*Math.cos(b),cy+(nn?140:100)*Math.sin(b),nn?KUPFER:PETROL,4); text(cx+130*Math.cos(b)+(p>1?16*Math.cos(b+Math.PI/2):0),cy+130*Math.sin(b)+5+(p>1?16*Math.sin(b+Math.PI/2):0),nn?'N':'S',{s:16,f:nn?KUPFER:PETROL}); }
+  // rechte Seite: Leistungsschild + Anlauf
+  const lx=480; el('rect',{x:lx,y:60,width:290,height:210,rx:8,fill:'#fff',stroke:GRAPHIT,'stroke-width':1.5}); text(lx+145,86,'Leistungsschild (Beispiel)',{s:14,f:PETROL});
+  [['3 ~ Mot.','IP55 · S1'],['400/690 V  Δ/Y',fmt(IN,1)+'/'+fmt(IN/Math.sqrt(3),1)+' A'],[PN+' kW','cos φ 0,82'],['1440 1/min','50 Hz']].forEach(([a,b],i)=>{ text(lx+16,118+i*32,a,{s:15,f:GRAPHIT,a:'start'}); text(lx+274,118+i*32,b,{s:15,f:GRAPHIT,a:'end'}); });
+  const IA=sd?7/3:7; text(lx,312,'Anlaufstrom '+(sd?'Stern-Dreieck':'direkt'),{s:14,f:PETROL,a:'start'});
+  el('rect',{x:lx,y:322,width:290,height:22,rx:5,fill:'#fff',stroke:'#D9E1E3'}); el('rect',{x:lx,y:322,width:290*IA/7,height:22,rx:5,fill:sd?GRUEN:ROT}); text(lx+290,364,'≈ '+fmt(IA,1)+' × Bemessungsstrom = '+fmt(IA*IN,0)+' A',{s:13,f:sd?GRUEN:ROT,a:'end'});
+  // Drehzahl-Balken
+  text(lx,410,'Drehzahl',{s:14,f:PETROL,a:'start'}); const b=v=>Math.min(290,v/(6000/290));
+  el('rect',{x:lx,y:420,width:290,height:18,rx:5,fill:'#fff',stroke:'#D9E1E3'}); el('rect',{x:lx,y:420,width:b(n),height:18,rx:5,fill:PETROL}); el('line',{x1:lx+b(ns),y1:414,x2:lx+b(ns),y2:444,stroke:KUPFER,'stroke-width':3});
+  text(lx,462,'n = '+fmt(n,0)+' 1/min',{s:14,f:PETROL,a:'start'}); text(lx+290,462,'Drehfeld '+fmt(ns,0)+' 1/min',{s:14,f:KUPFER,a:'end'});
+  text(lx,500,'Schlupf s = '+fmt(s*100,1)+' %',{s:16,f:PETROL,a:'start'}); text(lx,526,'Moment M = '+fmt(M,1)+' Nm',{s:16,f:PETROL,a:'start'}); text(lx,552,'Leistung P₂ = '+fmt(P2,2)+' kW',{s:16,f:PETROL,a:'start'});
+  const st=$('status'), ub=lp>1.05; st.className='status'+(ub?' faellt':''); st.innerHTML=ub?'Überlast: Der Motor nimmt mehr als den Bemessungsstrom auf und wird zu warm. Motorschutz einstellen auf I<sub>N</sub>!':'Drehfeld '+fmt(ns,0)+' 1/min, Läufer '+fmt(n,0)+' 1/min, Schlupf '+fmt(s*100,1)+' %';
+  const P1=Math.sqrt(3)*UN*IN*COS;
+  rechenweg([['Drehfelddrehzahl','n<sub>s</sub> = 60 · f / p = 60 · '+f+' / '+p,fmt(ns,0)+' 1/min'],['Läuferdrehzahl','n = n<sub>s</sub> · (1 − s)',fmt(n,0)+' 1/min'],['Schlupf','s = (n<sub>s</sub> − n) / n<sub>s</sub>',fmt(s*100,1)+' %'],
+    ['Bemessungsmoment','M<sub>N</sub> = 9550 · P<sub>N</sub> / n<sub>N</sub> = 9550 · 4 / 1440',fmt(9550*PN/1440,1)+' Nm'],['Aufgenommene Leistung','P₁ = √3 · U · I · cos φ',fmt(P1/1000,2)+' kW'],['Wirkungsgrad','η = P₂ / P₁ = 4 kW / '+fmt(P1/1000,2)+' kW',fmt(PN*1000/P1*100,1)+' %']]);
+  $('fOut').textContent=f+' Hz'; $('pOut').textContent=p; $('lOut').textContent=fmt(lp*100,0)+' %';
+}
+function lauf(ts){ const dt=letzt?Math.min(.05,(ts-letzt)/1000):0; letzt=ts;
+  if($('lauf').checked){ const f=+$('f').value, p=+$('p').value, lp=+$('l').value/100, s=SN*lp*(50/f)*($('ueber').checked?8:1), w=2*Math.PI*0.25*f/50;
+    wf+=w*dt/p; wr+=w*dt*(1-Math.min(1,s))/p; }
+  zeichne(); requestAnimationFrame(lauf); }
+document.querySelectorAll('input').forEach(e=>e.addEventListener('input',zeichne));
+knopfStart(START,()=>{ document.querySelector('input[name=an][value=d]').checked=true; }); knopfBeamer(); requestAnimationFrame(lauf);
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

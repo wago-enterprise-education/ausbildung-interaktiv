@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Installationsschaltungen: Aus, Wechsel, Kreuz, Stromstoß</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Elektro und Mechatronik · LF 2 · AP1</div>
+<h1>Installationsschaltungen zum Ausprobieren</h1>
+<p class="unter">Aus-, Wechsel-, Kreuz- und Stromstoßschaltung im Stromlaufplan in aufgelöster Darstellung. Tippe auf die Schalter. Leiter mit Außenleiterpotenzial werden braun und dick, die Lampe leuchtet, wenn der Stromkreis geschlossen ist.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 600" aria-label="Stromlaufplan mit anklickbaren Schaltern und Lampe"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Einstellungen</h2>
+      <div class="zeile">Schaltung</div>
+      <div class="seg" role="radiogroup" style="flex-wrap:wrap">
+        <label><input type="radio" name="sch" value="aus" checked>Aus</label>
+        <label><input type="radio" name="sch" value="wechsel">Wechsel</label>
+        <label><input type="radio" name="sch" value="kreuz">Kreuz</label>
+        <label><input type="radio" name="sch" value="stoss">Stromstoß</label>
+      </div>
+      <div class="haken">
+        <label><input id="pot" type="checkbox" checked> Außenleiterpotenzial farbig zeigen</label>
+        <label><input id="namen" type="checkbox" checked> Betriebsmittelkennzeichen zeigen</label>
+      </div>
+      <div class="hinweis">Schalter und Taster direkt im Bild antippen. Darstellung nach DIN EN 60617, Leiterfarben: L braun, N blau. Schutzleiter aus Gründen der Übersicht nicht gezeichnet.</div>
+      <div class="knoepfe"><button id="start" class="zweit">Alles aus</button><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte"><h2>So funktioniert's</h2><div id="erkl"></div><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>Wechselschaltung: Schalte die Lampe von S1 aus ein und von S2 aus wieder aus. Wie viele Leitungsadern brauchst du zwischen den beiden Schaltern?</li>
+        <li>Kreuzschaltung: Wie viele Kreuzschalter brauchst du für einen Flur mit fünf Schaltstellen?</li>
+        <li>Stromstoßschaltung: Warum ist sie bei vielen Schaltstellen günstiger als eine Kreuzschaltung?</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>Zwei korrespondierende Leiter (Brücken) zwischen den Wechselschaltern, zusammen mit N und PE also eine fünfadrige Leitung oder zwei Leitungen.</li>
+        <li>Drei. Die beiden äußeren Schaltstellen bekommen Wechselschalter, jede weitere dazwischen einen Kreuzschalter.</li>
+        <li>Alle Taster liegen parallel im Steuerstromkreis. Jeder weitere Taster braucht nur eine Stichleitung mit zwei Adern, egal wie viele Schaltstellen es sind. Die Lampe schaltet der Kontakt des Stromstoßschalters K1.</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · vereinfachte Schaltzeichen · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+const YL=60, YN=540; let Z={s1:0,s2:0,k:0,kr:0,rel:0,druck:-1};
+// Schaltungen: Knoten (x,y), feste Drähte, Schalter mit aktueller Verbindung
+function aufbau(sch){
+  const n={}, d=[], sw=[], P=(k,x,y)=>n[k]=[x,y];
+  P('L0',100,YL); P('N0',100,YN);
+  if(sch==='aus'){ P('L1',400,YL); P('a',400,170); P('b',400,250); P('la',400,330); P('lb',400,430); P('N1',400,YN);
+    d.push(['L0','L1'],['L1','a'],['b','la'],['lb','N1'],['N0','N1']);
+    sw.push({id:'s1',typ:'aus',name:'-S1',c:'a',o:['b'],zu:()=>Z.s1?[['a','b']]:[]}); }
+  if(sch==='wechsel'||sch==='kreuz'){ const k=sch==='kreuz';
+    P('L1',400,YL); P('c1',400,130); P('t1',350,190); P('t2',450,190);
+    let y=k?300:270; if(k){ P('i1',350,240); P('i2',450,240); P('o1',350,320); P('o2',450,320); y=380; }
+    P('u1',350,y); P('u2',450,y); P('c2',400,y+60); P('la',400,y+100); P('lb',400,y+150); P('N1',400,YN);
+    d.push(['L0','L1'],['L1','c1'],['c2','la'],['lb','N1'],['N0','N1']);
+    if(k) d.push(['t1','i1'],['t2','i2'],['o1','u1'],['o2','u2']); else d.push(['t1','u1'],['t2','u2']);
+    sw.push({id:'s1',typ:'wechsel',name:'-S1',c:'c1',o:['t1','t2'],zu:()=>[['c1',Z.s1?'t2':'t1']]});
+    if(k) sw.push({id:'kr',typ:'kreuz',name:'-S2',zu:()=>Z.kr?[['i1','o2'],['i2','o1']]:[['i1','o1'],['i2','o2']]});
+    sw.push({id:'s2',typ:'wechsel',name:k?'-S3':'-S2',c:'c2',o:['u1','u2'],unten:true,zu:()=>[['c2',Z.s2?'u2':'u1']]}); }
+  if(sch==='stoss'){ // Steuerstromkreis links, Laststromkreis rechts
+    P('T0',180,YL); ['1','2','3'].forEach((i,j)=>{ const x=140+j*80; P('ta'+i,x,170); P('tb'+i,x,240); P('tq'+i,x,YL); P('tr'+i,x,300); });
+    P('ka',220,300); P('kb',220,360); P('kN',220,YN);
+    P('L1',560,YL); P('ra',560,170); P('rb',560,250); P('la',560,330); P('lb',560,430); P('N1',560,YN);
+    d.push(['L0','tq1'],['tq1','tq2'],['tq2','tq3'],['tq3','L1'],['tr1','tr2'],['tr2','tr3'],['ka','tr2'],['kb','kN'],['N0','kN'],['kN','N1'],['L1','ra'],['rb','la'],['lb','N1']);
+    ['1','2','3'].forEach(i=>{ d.push(['tq'+i,'ta'+i],['tb'+i,'tr'+i]); sw.push({id:'t'+i,typ:'taster',name:'-S'+i,c:'ta'+i,o:['tb'+i],zu:()=>Z.druck===+i?[['ta'+i,'tb'+i]]:[]}); });
+    sw.push({id:'rel',typ:'kontakt',name:'-K1',c:'ra',o:['rb'],zu:()=>Z.rel?[['ra','rb']]:[]}); }
+  return {n,d,sw};
+}
+function leitend(A){ const kanten=A.d.concat(...A.sw.map(s=>s.zu())), live=new Set(['L0']); let neu=true;
+  while(neu){ neu=false; for(const [a,b] of kanten){ if(live.has(a)&&!live.has(b)){live.add(b);neu=true;} if(live.has(b)&&!live.has(a)){live.add(a);neu=true;} } } return {live,kanten}; }
+function zeichne(){ const sch=radio('sch'), A=aufbau(sch), {live}=leitend(A), pot=$('pot').checked; svg.innerHTML=''; defs();
+  const N=A.n, isN=k=>/^N|^lb$|^kb$|^kN$/.test(k);
+  // Schienen
+  el('line',{x1:60,y1:YL,x2:740,y2:YL,stroke:BRAUN,'stroke-width':pot?5:3}); text(50,YL+5,'L',{s:16,f:BRAUN,a:'end'});
+  el('line',{x1:60,y1:YN,x2:740,y2:YN,stroke:BLAU,'stroke-width':3}); text(50,YN+5,'N',{s:16,f:BLAU,a:'end'});
+  for(const [a,b] of A.d){ if(a==='L0'||a==='N0'||b==='N0') continue; const l=live.has(a)&&live.has(b)&&pot, nn=isN(a)||isN(b);
+    el('line',{x1:N[a][0],y1:N[a][1],x2:N[b][0],y2:N[b][1],stroke:l?BRAUN:(nn?BLAU:GRAPHIT),'stroke-width':l?5:2.5,'stroke-linecap':'round'}); }
+  // Schalter
+  for(const s of A.sw){ const g=el('g',{style:'cursor:pointer'}), col=k=>live.has(k)&&pot?BRAUN:GRAPHIT;
+    if(s.typ==='kreuz'){ const i1=N.i1,i2=N.i2,o1=N.o1,o2=N.o2; el('rect',{x:i1[0]-30,y:i1[1]-14,width:o2[0]-i1[0]+60,height:o2[1]-i1[1]+28,fill:'#fff',stroke:STAHL,'stroke-dasharray':'5 4',rx:8},g);
+      s.zu().forEach(([a,b])=>el('line',{x1:N[a][0],y1:N[a][1],x2:N[b][0],y2:N[b][1],stroke:col(a),'stroke-width':live.has(a)&&pot?5:3.5,'stroke-linecap':'round'},g));
+      ['i1','i2','o1','o2'].forEach(k=>el('circle',{cx:N[k][0],cy:N[k][1],r:5,fill:'#fff',stroke:GRAPHIT,'stroke-width':2},g));
+      if($('namen').checked) text(o2[0]+40,(i1[1]+o1[1])/2+5,s.name+' (Kreuz)',{s:14,f:PETROL,a:'start'},g); }
+    else { const c=N[s.c], ziel=s.zu().length?N[s.zu()[0][1]]:null;
+      const hit=[c].concat(s.o.map(k=>N[k])), xs=hit.map(p=>p[0]), ys=hit.map(p=>p[1]);
+      el('rect',{x:Math.min(...xs)-30,y:Math.min(...ys)-14,width:Math.max(...xs)-Math.min(...xs)+60,height:Math.max(...ys)-Math.min(...ys)+28,fill:'#fff',stroke:STAHL,'stroke-dasharray':'5 4',rx:8},g);
+      s.o.forEach(k=>el('circle',{cx:N[k][0],cy:N[k][1],r:5,fill:'#fff',stroke:GRAPHIT,'stroke-width':2},g)); el('circle',{cx:c[0],cy:c[1],r:5,fill:GRAPHIT},g);
+      let e; if(ziel) e=ziel; else { const o=N[s.o[0]]; e=[c[0]+(s.typ==='kontakt'||s.typ==='aus'||s.typ==='taster'?28:0),o[1]-(o[1]-c[1])*0.25]; if(s.typ==='taster') e=[c[0]+26,o[1]-14]; }
+      el('line',{x1:c[0],y1:c[1],x2:e[0],y2:e[1],stroke:col(s.c),'stroke-width':live.has(s.c)&&pot?5:3.5,'stroke-linecap':'round'},g);
+      if(s.typ==='taster'){ el('line',{x1:c[0]-22,y1:(c[1]+N[s.o[0]][1])/2,x2:c[0]-8,y2:(c[1]+N[s.o[0]][1])/2,stroke:GRAPHIT,'stroke-width':2,'stroke-dasharray':'3 3'},g); el('path',{d:`M${c[0]-28},${(c[1]+N[s.o[0]][1])/2-8} v16 h-6 v-16 z`,fill:'none',stroke:GRAPHIT,'stroke-width':2},g); }
+      if(s.typ==='kontakt') text(c[0]-34,(c[1]+N[s.o[0]][1])/2+5,'K1',{s:12,f:STAHL,a:'end',w:400},g);
+      if($('namen').checked) text(Math.max(...xs)+38,(Math.min(...ys)+Math.max(...ys))/2+5,s.name,{s:14,f:PETROL,a:'start'},g); }
+    g.addEventListener('pointerdown',ev=>{ ev.preventDefault(); klick(s); }); }
+  // Lampe
+  const la=N.la, lb=N.lb, an=live.has('la'), my=(la[1]+lb[1])/2;
+  el('line',{x1:la[0],y1:la[1],x2:la[0],y2:my-24,stroke:an&&pot?BRAUN:GRAPHIT,'stroke-width':an&&pot?5:2.5}); el('line',{x1:lb[0],y1:my+24,x2:lb[0],y2:lb[1],stroke:BLAU,'stroke-width':2.5});
+  if(an) el('circle',{cx:la[0],cy:my,r:44,fill:'#FFD54A',opacity:.45});
+  el('circle',{cx:la[0],cy:my,r:24,fill:an?'#FFE680':'#fff',stroke:GRAPHIT,'stroke-width':3}); el('path',{d:`M${la[0]-17},${my-17} l34,34 M${la[0]+17},${my-17} l-34,34`,stroke:GRAPHIT,'stroke-width':2.5});
+  if($('namen').checked) text(la[0]+34,my+5,'-E1',{s:14,f:PETROL,a:'start'});
+  // Spule K1
+  if(sch==='stoss'){ const ka=N.ka, kb=N.kb, erregt=live.has('ka'); el('rect',{x:ka[0]-22,y:ka[1]+4,width:44,height:kb[1]-ka[1]-8,fill:erregt?'#F3D9C4':'#fff',stroke:GRAPHIT,'stroke-width':3});
+    el('line',{x1:ka[0],y1:ka[1],x2:ka[0],y2:ka[1]+4,stroke:GRAPHIT,'stroke-width':2.5}); el('line',{x1:kb[0],y1:kb[1]-4,x2:kb[0],y2:kb[1],stroke:BLAU,'stroke-width':2.5});
+    text(ka[0]+32,(ka[1]+kb[1])/2+5,'-K1 Stromstoßschalter',{s:14,f:PETROL,a:'start'}); el('line',{x1:ka[0]+120,y1:(ka[1]+kb[1])/2,x2:520,y2:(ka[1]+kb[1])/2,stroke:STAHL,'stroke-dasharray':'6 5'}); el('line',{x1:520,y1:(ka[1]+kb[1])/2,x2:520,y2:210,stroke:STAHL,'stroke-dasharray':'6 5'});
+    text(180,YL-16,'Steuerstromkreis (Taster parallel)',{s:13,f:STAHL,w:400}); text(560,YL-16,'Laststromkreis',{s:13,f:STAHL,w:400}); }
+  // Status + Erklärung
+  const st=$('status'); st.classList.toggle('gut',an); st.innerHTML=an?'Die Lampe leuchtet: Der Stromkreis von L über die Schalter zur Lampe und nach N ist geschlossen.':'Die Lampe ist aus: Der Weg von L zur Lampe ist unterbrochen.';
+  const E={aus:'Ein Schalter (Schließer) unterbricht den Außenleiter. Geschaltet wird immer L, nie N.',
+    wechsel:'Zwei Wechselschalter, dazwischen zwei korrespondierende Leiter. Die Lampe leuchtet, wenn beide Schalter auf denselben Leiter zeigen.',
+    kreuz:'Zwischen zwei Wechselschaltern sitzt ein Kreuzschalter. Er tauscht die beiden korrespondierenden Leiter. Jeder der drei Schalter ändert den Zustand der Lampe.',
+    stoss:'Die Taster sind parallel geschaltet und geben nur einen kurzen Impuls auf die Spule von K1. Bei jedem Impuls wechselt der Kontakt K1 seine Stellung und bleibt dort mechanisch stehen.'};
+  $('erkl').innerHTML='<p>'+E[sch]+'</p>';
+  let rows=[];
+  if(sch==='wechsel'){ rows=[[0,0],[0,1],[1,0],[1,1]].map(([a,b])=>[`S1 ${a?'unten rechts':'links'} · S2 ${b?'rechts':'links'}`,'',(a===b?'Lampe an':'Lampe aus')+(Z.s1===a&&Z.s2===b?' ◀':'')]); }
+  if(sch==='kreuz'){ rows=[]; for(const a of [0,1]) for(const k of [0,1]) for(const b of [0,1]) rows.push([`S1 ${a} · S2 ${k?'gekreuzt':'gerade'} · S3 ${b}`,'',((a^k)===b?'an':'aus')+(Z.s1===a&&Z.kr===k&&Z.s2===b?' ◀':'')]); }
+  rechenweg(rows);
+}
+function klick(s){
+  if(s.typ==='taster'){ Z.druck=+s.id.slice(1); Z.rel^=1; zeichne(); setTimeout(()=>{ Z.druck=-1; zeichne(); },350); return; }
+  if(s.id==='rel') return; Z[s.id]^=1; zeichne(); }
+document.querySelectorAll('input').forEach(e=>e.addEventListener('input',zeichne));
+$('start').addEventListener('click',()=>{ Z={s1:0,s2:0,k:0,kr:0,rel:0,druck:-1}; zeichne(); });
+knopfBeamer(); zeichne();
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

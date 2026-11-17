@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GRAFCET lesen: Bohrvorrichtung</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Mechatronik und Elektro · LF 7 und 9 · AP1 + AP2</div>
+<h1>GRAFCET lesen: Ablaufsteuerung einer Bohrvorrichtung</h1>
+<p class="unter">Links der GRAFCET nach DIN EN 60848, rechts die Maschine. Der aktive Schritt ist markiert, die erfüllte Transition leuchtet. So siehst du, wie Schritte, Aktionen und Übergangsbedingungen zusammenspielen.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 600" aria-label="GRAFCET und Bohrvorrichtung"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Bedienung</h2>
+      <div class="knoepfe" style="flex-wrap:wrap"><button id="s1">S1 Start</button><button id="wst" class="zweit">Werkstück einlegen/entnehmen</button><button id="notaus" class="zweit">Not-Halt (Initialisieren)</button></div>
+      <label class="regler"><span class="zeile"><span>Tempo</span><output id="vOut"></output></span><input id="v" type="range" min="0.25" max="2" step="0.25" value="1"></label>
+      <div class="haken"><label><input id="dauer" type="checkbox"> Dauerbetrieb (Start bleibt gedrückt)</label><label><input id="lauf" type="checkbox" checked> Zeit läuft</label></div>
+      <div class="hinweis">Bohrzeit unten: 2 s (Zeitbedingung 2s/X3). Endlagen: 1B1 Spannzylinder hinten, 1B2 vorn (gespannt), B3 Bohrer oben, B4 Bohrer unten, B5 Werkstück da.</div>
+      <div class="knoepfe"><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte"><h2>Was gerade passiert</h2><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>Drück S1 ohne Werkstück. Warum startet der Ablauf nicht?</li>
+        <li>Woran erkennst du im GRAFCET, dass M1 in den Schritten 2 bis 4 läuft, obwohl er nur einmal eingetragen ist?</li>
+        <li>Was ändert sich, wenn Schritt 3 statt „2s/X3“ die Bedingung „B4“ hätte?</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>Die Transition 0 → 1 lautet S1 · B3 · 1B1 · B5. Ohne Werkstück ist B5 = 0, die UND-Verknüpfung ist nicht erfüllt.</li>
+        <li>M1 wird in Schritt 2 gespeichert gesetzt (M1 := 1, Pfeil nach oben) und erst in Schritt 5 wieder rückgesetzt (M1 := 0). Kontinuierliche Aktionen gelten dagegen nur, solange ihr Schritt aktiv ist.</li>
+        <li>Der Bohrer würde sofort wieder hochfahren, sobald er unten ankommt. Die Verweilzeit sorgt für einen sauberen Bohrgrund.</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · Darstellung nach DIN EN 60848, vereinfacht · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+// Zustand Maschine: sp = Spannzylinder 0 (hinten) … 1 (vorn), bo = Bohrer 0 (oben) … 1 (unten)
+let X=0, tX=0, sp=0, bo=0, wst=true, s1=0, rot=0, M1=false, letzt=0, schrittT=0;
+const SCH=[
+  {n:0,akt:[],t:'S1 · B3 · 1B1 · B5'},
+  {n:1,akt:['1M1 Spannen'],t:'1B2'},
+  {n:2,akt:['M1 := 1','2M1 Bohrer ab'],t:'B4'},
+  {n:3,akt:['2M1 Bohrer ab'],t:'2s/X3'},
+  {n:4,akt:['2M2 Bohrer auf'],t:'B3'},
+  {n:5,akt:['M1 := 0','1M2 Lösen'],t:'1B1'}];
+function sens(){ return {B1:sp<0.02,B2:sp>0.98,B3:bo<0.02,B4:bo>0.98,B5:wst,S1:s1>0||$('dauer').checked}; }
+function bed(i,s){ return [s.S1&&s.B3&&s.B1&&s.B5, s.B2, s.B4, tX>=2, s.B3, s.B1][i]; }
+function schritt(dt){ const v=+$('v').value; dt*=v; s1=Math.max(0,s1-dt); tX+=dt; const s=sens();
+  if(X===1) sp=Math.min(1,sp+dt/1.2); if(X===5) sp=Math.max(0,sp-dt/1.2);
+  if(X===2||X===3) bo=Math.min(1,bo+dt/2.5); if(X===4) bo=Math.max(0,bo-dt/1.5);
+  if(X===2) M1=true; if(X===5) M1=false; if(M1) rot+=dt*20;
+  if(bed(X,sens())){ X=(X+1)%6; tX=0; } }
+function zeichne(){ const s=sens(); svg.innerHTML=''; defs();
+  // GRAFCET
+  const gx=40, sw=54, dy=92, y0=24;
+  el('rect',{x:16,y:6,width:380,height:588,rx:10,fill:'#fff',stroke:'#D9E1E3'});
+  el('line',{x1:gx+sw/2,y1:y0,x2:gx+sw/2,y2:y0+5*dy+sw+30,stroke:PETROL,'stroke-width':2});
+  el('polyline',{points:`${gx+sw/2},${y0+5*dy+sw+30} ${gx-14},${y0+5*dy+sw+30} ${gx-14},${y0-8} ${gx+sw/2},${y0-8} ${gx+sw/2},${y0}`,fill:'none',stroke:PETROL,'stroke-width':2});
+  pfeil(gx-14,y0+80,gx-14,y0+40,PETROL,2);
+  SCH.forEach((c,i)=>{ const y=y0+i*dy, ak=X===i, f=ak?KUPFER:PETROL;
+    el('rect',{x:gx,y,width:sw,height:sw-10,fill:ak?'#FBEDE2':'#fff',stroke:f,'stroke-width':ak?3.5:2});
+    if(i===0) el('rect',{x:gx+5,y:y+5,width:sw-10,height:sw-20,fill:'none',stroke:f,'stroke-width':2});
+    text(gx+sw/2,y+(sw-10)/2+7,c.n,{s:20,f});
+    if(ak) el('circle',{cx:gx+sw/2,cy:y+sw-17,r:4,fill:KUPFER});
+    c.akt.forEach((a,j)=>{ const ax=gx+sw+22+j*130; el('line',{x1:j?ax-8:gx+sw,y1:y+(sw-10)/2,x2:ax,y2:y+(sw-10)/2,stroke:f,'stroke-width':2});
+      el('rect',{x:ax,y:y+6,width:122,height:sw-22,fill:ak?'#FBEDE2':'#fff',stroke:f,'stroke-width':1.6});
+      const gs=a.includes(':=');
+      text(ax+61,y+(sw-10)/2+5,a,{s:13,f,w:600});
+      if(gs) pfeil(ax+61,y+6,ax+61,y-6,f,1.6); });
+    const ty=y+sw+(dy-sw)/2-3, ok=bed(i,s);
+    el('line',{x1:gx+sw/2-16,y1:ty,x2:gx+sw/2+16,y2:ty,stroke:ak&&ok?GRUEN:PETROL,'stroke-width':4});
+    text(gx+sw/2+26,ty+5,c.t,{s:14,a:'start',f:ak&&ok?GRUEN:(ak?KUPFER:GRAPHIT),w:ak?700:500}); });
+  // Maschine
+  const mx=440, my=60;
+  el('rect',{x:mx-14,y:6,width:376,height:588,rx:10,fill:'#fff',stroke:'#D9E1E3'});
+  text(mx+170,34,'Bohrvorrichtung',{s:16,f:PETROL});
+  el('rect',{x:mx,y:470,width:340,height:22,fill:STAHL}); // Tisch
+  // Werkstück
+  const wx=mx+150; if(wst){ el('rect',{x:wx,y:420,width:110,height:50,fill:'#C9D3D6',stroke:GRAPHIT,'stroke-width':1.5});
+    if(bo>0.55) el('rect',{x:wx+48,y:420,width:14,height:Math.min(50,(bo-0.55)/0.45*50),fill:'#7E8B90'}); }
+  // Spannzylinder links
+  const kx=mx+10, ky=430; el('rect',{x:kx,y:ky,width:90,height:30,fill:'#fff',stroke:PETROL,'stroke-width':2}); const sx=kx+20+sp*45; el('rect',{x:sx,y:ky+3,width:8,height:24,fill:PETROL});
+  el('rect',{x:sx+8,y:ky+12,width:59,height:6,fill:PETROL}); text(kx+45,ky+82,'1A  Spannen',{s:12,f:PETROL,w:600});
+  el('circle',{cx:kx+20,cy:ky-8,r:5,fill:s.B1?GRUEN:'#D9E1E3'}); text(kx+20,ky-18,'1B1',{s:11,f:GRAPHIT});
+  el('circle',{cx:kx+65,cy:ky-8,r:5,fill:s.B2?GRUEN:'#D9E1E3'}); text(kx+65,ky-18,'1B2',{s:11,f:GRAPHIT});
+  // Bohrer
+  const bx=wx+55, ob=110, hub=bo*160; el('rect',{x:bx-70,y:70,width:16,height:300,fill:'#E4EAEC'}); // Säule
+  el('rect',{x:bx-40,y:ob+hub,width:80,height:70,rx:6,fill:'#fff',stroke:PETROL,'stroke-width':2.5}); text(bx,ob+hub+30,'M1',{s:15,f:M1?KUPFER:PETROL}); text(bx,ob+hub+50,M1?'läuft':'aus',{s:11,f:M1?KUPFER:STAHL,w:600});
+  const bt=ob+hub+70; el('rect',{x:bx-5,y:bt,width:10,height:70,fill:STAHL});
+  for(let k=0;k<5;k++){ const yy=bt+10+k*12+((rot*6)%12); if(yy<bt+68) el('line',{x1:bx-5,y1:yy,x2:bx+5,y2:yy+6,stroke:'#fff','stroke-width':1.5}); }
+  el('circle',{cx:bx+80,cy:ob+10,r:5,fill:s.B3?GRUEN:'#D9E1E3'}); text(bx+92,ob+14,'B3 oben',{s:11,f:GRAPHIT,a:'start'});
+  el('circle',{cx:bx+80,cy:ob+170,r:5,fill:s.B4?GRUEN:'#D9E1E3'}); text(bx+92,ob+174,'B4 unten',{s:11,f:GRAPHIT,a:'start'});
+  el('circle',{cx:mx+300,cy:448,r:5,fill:s.B5?GRUEN:'#D9E1E3'}); text(mx+300,438,'B5',{s:11,f:GRAPHIT});
+  text(bx+60,ob+hub+38,X===2||X===3?'2M1 ↓':X===4?'2M2 ↑':'',{s:12,f:KUPFER,a:'start'});
+  text(mx+10,540,'S1',{s:12,f:GRAPHIT,a:'start'}); el('circle',{cx:mx+40,cy:536,r:10,fill:s.S1?GRUEN:'#fff',stroke:GRUEN,'stroke-width':2});
+  const st=$('status'), ok=bed(X,s); st.className='status'+(ok?' gut':'');
+  st.innerHTML='Schritt '+X+' aktiv'+(X===3?' · Verweilzeit '+fmt(Math.min(tX,2),1)+' s von 2 s':'')+' · Transition „'+SCH[X].t+'“ '+(ok?'erfüllt':'noch nicht erfüllt');
+  rechenweg([['aktiver Schritt','X'+X,SCH[X].akt.join(', ')||'Grundstellung'],['nächste Transition',SCH[X].t,ok?'erfüllt':'0'],['Sensoren','1B1 1B2 B3 B4 B5',[s.B1,s.B2,s.B3,s.B4,s.B5].map(b=>b?'1':'0').join('  ')],['Bohrmotor M1','gespeichert',M1?'an':'aus']]);
+  $('vOut').textContent=fmt(+$('v').value,2)+' ×';
+}
+function lauf(ts){ const dt=letzt?Math.min(.05,(ts-letzt)/1000):0; letzt=ts; if($('lauf').checked) schritt(dt); zeichne(); requestAnimationFrame(lauf); }
+$('s1').addEventListener('click',()=>{ s1=0.4; });
+$('wst').addEventListener('click',()=>{ if(X===0) wst=!wst; });
+$('notaus').addEventListener('click',()=>{ X=0; tX=0; sp=0; bo=0; M1=false; s1=0; $('dauer').checked=false; });
+knopfBeamer(); requestAnimationFrame(lauf);
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

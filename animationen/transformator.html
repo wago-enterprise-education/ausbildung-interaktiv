@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transformator: Übersetzung, Ströme und Kurzschluss</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Elektro · LF 5 · AP1 + AP2</div>
+<h1>Transformator: Übersetzung, Ströme und Kurzschluss</h1>
+<p class="unter">Windungszahlen und Last einstellen: Spannung und Strom auf beiden Seiten ändern sich sofort. Aus der Kurzschlussspannung u<sub>k</sub> ergibt sich der Dauerkurzschlussstrom. Einphasiger Trafo, Verluste vernachlässigt.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 600" aria-label="Transformator mit Primär- und Sekundärwicklung"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Einstellungen</h2>
+      <label class="regler"><span class="zeile"><span>Eingangsspannung U₁</span><output id="uOut"></output></span><input id="u" type="range" min="0" max="2" step="1" value="0" data-liste="230,400,690"></label>
+      <label class="regler"><span class="zeile"><span>Windungen primär N₁</span><output id="n1Out"></output></span><input id="n1" type="range" min="50" max="2000" step="10" value="920"></label>
+      <label class="regler"><span class="zeile"><span>Windungen sekundär N₂</span><output id="n2Out"></output></span><input id="n2" type="range" min="10" max="2000" step="10" value="96"></label>
+      <label class="regler"><span class="zeile"><span>Bemessungsleistung S<sub>N</sub></span><output id="sOut"></output></span><input id="s" type="range" min="0" max="6" step="1" value="3" data-liste="100,250,400,630,1000,1600,2500"></label>
+      <label class="regler"><span class="zeile"><span>Belastung</span><output id="lOut"></output></span><input id="l" type="range" min="0" max="150" step="5" value="80"></label>
+      <label class="regler"><span class="zeile"><span>Kurzschlussspannung u<sub>k</sub></span><output id="ukOut"></output></span><input id="uk" type="range" min="2" max="15" step="0.5" value="6"></label>
+      <div class="haken"><label><input id="fluss" type="checkbox" checked> Wechselnden Magnetfluss zeigen (verlangsamt)</label><label><input id="kurz" type="checkbox"> Kurzschluss auf der Sekundärseite</label></div>
+      <div class="knoepfe"><button id="start" class="zweit">Startwerte</button><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte"><h2>Rechenweg</h2><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>Steuertrafo 230 V auf 24 V: Welches Verhältnis N₁ : N₂ brauchst du? Stell es ein.</li>
+        <li>Verdopple die Belastung. Was passiert mit I₁ und I₂, was mit U₂?</li>
+        <li>Wie ändert sich der Kurzschlussstrom, wenn u<sub>k</sub> von 4 % auf 8 % steigt?</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>ü = 230 V / 24 V ≈ 9,6. Zum Beispiel N₁ = 960, N₂ = 100.</li>
+        <li>Beide Ströme verdoppeln sich, ihr Verhältnis bleibt ü. U₂ bleibt beim idealen Trafo gleich (beim realen sinkt sie leicht).</li>
+        <li>I<sub>k</sub> = I<sub>N</sub> · 100 % / u<sub>k</sub>: Er halbiert sich. Kleines u<sub>k</sub> heißt hoher Kurzschlussstrom.</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · idealer Transformator, Dauerkurzschlussstrom bei starrer Einspeisung · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+const UL=[230,400,690], SL=[100,250,400,630,1000,1600,2500];
+const START={u:0,n1:920,n2:96,s:3,l:80,uk:6,fluss:true,kurz:false}; let ph=0, letzt=0;
+const A=i=>i>=1000?fmt(i/1000,2)+' kA':i>=1?fmt(i,i<10?2:1)+' A':fmt(i*1000,0)+' mA';
+function spule(x,y,h,n,c,seite){ const w=Math.max(3,Math.min(18,Math.round(n/60))), d=h/w; for(let k=0;k<w;k++){ const yy=y+k*d+d/2;
+    el('path',{d:`M${x-24},${yy} q24,${-d*0.8} 48,0`,fill:'none',stroke:c,'stroke-width':4,opacity:.9}); }
+  text(x,y-80,(seite<0?'N₁ = ':'N₂ = ')+n,{s:15,f:c}); }
+function zeichne(){ const U1=UL[+$('u').value], N1=+$('n1').value, N2=+$('n2').value, SN=SL[+$('s').value], lp=+$('l').value/100, uk=+$('uk').value, kurz=$('kurz').checked;
+  const ue=N1/N2, U2=U1/ue, I1N=SN/U1, I2N=SN/U2, Ik2=I2N*100/uk, Ik1=Ik2/ue, I2=kurz?Ik2:lp*I2N, I1=I2/ue, S=U2*I2, ueber=!kurz&&lp>1;
+  svg.innerHTML=''; defs();
+  // Kern
+  const kx=270, ky=110, kw=260, kh=300, t=46;
+  el('path',{d:`M${kx},${ky} h${kw} v${kh} h${-kw} z M${kx+t},${ky+t} v${kh-2*t} h${kw-2*t} v${-(kh-2*t)} z`,fill:'#C9D3D6','fill-rule':'evenodd',stroke:GRAPHIT,'stroke-width':1.5});
+  if($('fluss').checked){ const per=2*(kw-t)+2*(kh-t); for(let k=0;k<10;k++){ const sn=Math.sin(2*Math.PI*ph); let s=(k/10)*per+per*0.025; const L=kw-t, H=kh-t, ox=kx+t/2, oy=ky+t/2; let x,y,ang;
+      if(s<L){x=ox+s;y=oy;ang=0;} else if(s<L+H){x=ox+L;y=oy+s-L;ang=90;} else if(s<2*L+H){x=ox+L-(s-L-H);y=oy+H;ang=180;} else {x=ox;y=oy+H-(s-2*L-H);ang=270;}
+      el('path',{d:'M-7,-6 L7,0 L-7,6 z',fill:PETROL,opacity:.15+.65*Math.abs(sn),transform:`translate(${x},${y}) rotate(${ang+(sn<0?180:0)}) scale(${.6+.6*Math.abs(sn)})`}); } text(400,ky+kh/2+5,'Φ',{s:22,f:PETROL}); }
+  spule(kx+t/2,ky+t+10,kh-2*t-20,N1,KUPFER,-1); spule(kx+kw-t/2,ky+t+10,kh-2*t-20,N2,BLAU,1);
+  // Primärkreis
+  const yo=ky+t+6, yu=ky+kh-t-6;
+  linie([[kx+t/2-24,yo],[120,yo]],KUPFER,3); linie([[kx+t/2-24,yu],[120,yu]],KUPFER,3);
+  el('circle',{cx:100,cy:(yo+yu)/2,r:26,fill:'#fff',stroke:KUPFER,'stroke-width':3}); text(100,(yo+yu)/2+6,'~',{s:26,f:KUPFER});
+  linie([[100,yo],[120,yo]],KUPFER,3); linie([[100,yo],[100,(yo+yu)/2-26]],KUPFER,3); linie([[100,yu],[100,(yo+yu)/2+26]],KUPFER,3); linie([[100,yu],[120,yu]],KUPFER,3);
+  pfeil(60,yo+6,60,yu-6,KUPFER,2.5); text(52,(yo+yu)/2-34,'U₁',{s:16,f:KUPFER,a:'end'}); text(52,(yo+yu)/2-14,fmt(U1,0)+' V',{s:14,f:KUPFER,a:'end',w:600});
+  pfeil(140,yo-12,210,yo-12,KUPFER,2.5); text(175,yo-22,'I₁ = '+A(I1),{s:14,f:KUPFER});
+  // Sekundärkreis
+  const xr=680; linie([[kx+kw-t/2+24,yo],[xr,yo],[xr,(yo+yu)/2-36]],BLAU,3); linie([[kx+kw-t/2+24,yu],[xr,yu],[xr,(yo+yu)/2+36]],BLAU,3);
+  if(kurz){ linie([[xr,(yo+yu)/2-36],[xr,(yo+yu)/2+36]],ROT,5); text(xr+12,(yo+yu)/2+5,'Kurzschluss',{s:14,f:ROT,a:'start'}); }
+  else { el('rect',{x:xr-14,y:(yo+yu)/2-36,width:28,height:72,fill:'#fff',stroke:BLAU,'stroke-width':3}); text(xr+24,(yo+yu)/2+5,'Last',{s:14,f:BLAU,a:'start'}); }
+  pfeil(735,yo+6,735,yu-6,BLAU,2.5); text(745,(yo+yu)/2+60,'U₂',{s:16,f:BLAU,a:'start'}); text(745,(yo+yu)/2+80,kurz?'≈ 0 V':fmt(U2,U2<100?1:0)+' V',{s:14,f:BLAU,a:'start',w:600});
+  pfeil(580,yo-12,650,yo-12,BLAU,2.5); text(615,yo-22,'I₂ = '+A(I2),{s:14,f:kurz?ROT:BLAU});
+  // Balken Auslastung
+  const bx=120, by=470, bw=560; el('rect',{x:bx,y:by,width:bw,height:22,rx:6,fill:'#fff',stroke:'#D9E1E3'});
+  const fr=Math.min(1.5,kurz?1.5:lp)/1.5; el('rect',{x:bx,y:by,width:bw*fr,height:22,rx:6,fill:ueber||kurz?ROT:GRUEN});
+  el('line',{x1:bx+bw/1.5,y1:by-6,x2:bx+bw/1.5,y2:by+28,stroke:PETROL,'stroke-width':2}); text(bx+bw/1.5,by-10,'100 % (Bemessungsleistung)',{s:12,f:PETROL});
+  text(bx,by+48,kurz?'Kurzschluss: I = '+fmt(100/uk,1)+' · I_N':'Auslastung '+fmt(lp*100,0)+' % · S = '+fmt(S,0)+' VA',{s:14,f:PETROL,a:'start'}); text(bx+bw,by+48,'ü = '+fmt(ue,2)+' : 1',{s:16,f:PETROL,a:'end'});
+  const st=$('status'); st.className='status'+(kurz||ueber?' faellt':''); st.innerHTML=kurz?'Dauerkurzschlussstrom sekundär I<sub>k</sub> = '+A(Ik2)+' (das '+fmt(100/uk,1)+'-Fache des Bemessungsstroms). Die Schutzeinrichtung muss sicher abschalten.':ueber?'Überlast: Der Trafo wird zu warm. Maximal '+A(I2N)+' sekundär.':'U₂ = '+fmt(U2,1)+' V, I₂ = '+A(I2)+', I₁ = '+A(I1);
+  rechenweg([['Übersetzung ü','ü = N₁ / N₂ = '+N1+' / '+N2,fmt(ue,2)],['Sekundärspannung U₂','U₂ = U₁ / ü = '+U1+' V / '+fmt(ue,2),fmt(U2,1)+' V'],
+    ['Bemessungsströme','I<sub>1N</sub> = S<sub>N</sub> / U₁ · I<sub>2N</sub> = S<sub>N</sub> / U₂',A(I1N)+' · '+A(I2N)],['Stromübersetzung','I₁ = I₂ / ü',A(I1)],
+    ['Kurzschlussstrom sekundär','I<sub>k</sub> = I<sub>2N</sub> · 100 % / u<sub>k</sub>',A(Ik2)],['Kurzschlussstrom primär','I<sub>k1</sub> = I<sub>k</sub> / ü',A(Ik1)]]);
+  $('uOut').textContent=U1+' V'; $('n1Out').textContent=N1; $('n2Out').textContent=N2; $('sOut').textContent=SN+' VA'; $('lOut').textContent=lp*100+' %'; $('ukOut').textContent=fmt(uk,1)+' %';
+}
+function lauf(ts){ const dt=letzt?Math.min(.05,(ts-letzt)/1000):0; letzt=ts; if($('fluss').checked) ph=(ph+dt*0.4)%1; zeichne(); requestAnimationFrame(lauf); }
+knopfStart(START,()=>{}); knopfBeamer(); requestAnimationFrame(lauf);
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

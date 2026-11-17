@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kondensator und Spule: Laden, Entladen, Zeitkonstante</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Elektro und Mechatronik · LF 1 · AP1</div>
+<h1>Kondensator und Spule: Laden, Entladen, Zeitkonstante τ</h1>
+<p class="unter">Schalte um und sieh zu, wie sich Spannung und Strom zeitlich ändern. Nach einer Zeitkonstante τ sind 63 % erreicht, nach 5 τ gilt der Vorgang als abgeschlossen.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 600" aria-label="Schaltung mit Umschalter und Lade- und Entladekurven"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Einstellungen</h2>
+      <div class="zeile">Bauteil</div>
+      <div class="seg" role="radiogroup">
+        <label><input type="radio" name="bt" value="C" checked>Kondensator (RC)</label>
+        <label><input type="radio" name="bt" value="L">Spule (RL)</label>
+      </div>
+      <label class="regler"><span class="zeile"><span>Spannung U</span><output id="uOut"></output></span><input id="u" type="range" min="1" max="30" step="0.5" value="12"></label>
+      <label class="regler"><span class="zeile"><span>Widerstand R</span><output id="rOut"></output></span><input id="r" type="range" min="0" max="9" step="1" value="5" data-liste="10,47,100,470,1000,4700,10000,47000,100000,470000"></label>
+      <label class="regler" id="wC"><span class="zeile"><span>Kapazität C</span><output id="cOut"></output></span><input id="c" type="range" min="0" max="7" step="1" value="4" data-liste="1,4.7,10,47,100,470,1000,4700"></label>
+      <label class="regler" id="wL"><span class="zeile"><span>Induktivität L</span><output id="lOut"></output></span><input id="l" type="range" min="0" max="6" step="1" value="3" data-liste="0.01,0.047,0.1,0.47,1,4.7,10"></label>
+      <div class="haken"><label><input id="tau" type="checkbox" checked> τ-Marken (1 τ bis 5 τ)</label></div>
+      <div class="hinweis">Die Zeitachse zeigt immer 0 bis 6 τ, beschriftet in echter Zeit. Ein Lade- oder Entladevorgang läuft in der Animation immer 6 Sekunden, egal wie groß τ ist (Zeitlupe oder Zeitraffer). Spannungsachse fest 0 bis 30 V.</div>
+      <div class="knoepfe"><button id="schalt">Umschalten</button><button id="start" class="zweit">Startwerte</button><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte"><h2>Rechenweg</h2><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>R = 4,7 kΩ, C = 100 µF, U = 12 V. Wie groß ist τ? Welche Spannung hat der Kondensator nach 1 τ?</li>
+        <li>Wie lange dauert das vollständige Laden?</li>
+        <li>Wechsel auf die Spule (R = 47 Ω, L = 0,47 H). Was ist beim Einschalten anders als beim Kondensator?</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>τ = R · C = 4700 Ω · 100 µF = 0,47 s. Nach 1 τ: u<sub>C</sub> = 0,63 · 12 V = 7,6 V.</li>
+        <li>Etwa 5 τ = 2,35 s, dann sind über 99 % erreicht.</li>
+        <li>τ = L / R = 0,47 H / 47 Ω = 10 ms. Beim Kondensator springt der Strom sofort auf U/R und fällt dann ab. Bei der Spule ist es umgekehrt: Der Strom steigt langsam an, die Spannung an der Spule springt zuerst auf U und fällt dann ab.</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · ideale Bauteile, beim Entladen der Spule über R (Freilaufkreis) · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+const RW=[10,47,100,470,1000,4700,10000,47000,100000,470000], CW=[1,4.7,10,47,100,470,1000,4700], LW=[0.01,0.047,0.1,0.47,1,4.7,10];
+const START={u:12,r:5,c:4,l:3,tau:true}; let laden=true, s0=0, x=0, letzt=0;   // x = Fortschritt in τ (0…6), s0 = Startwert (0…1)
+const om=r=>r>=1000?fmt(r/1000,r>=10000?0:1)+' kΩ':fmt(r,0)+' Ω', zt=t=>t>=1?fmt(t,2)+' s':t>=1e-3?fmt(t*1000,t>=0.01?1:2)+' ms':fmt(t*1e6,1)+' µs';
+function werte(){ const bt=radio('bt'), U=+$('u').value, R=RW[+$('r').value], C=CW[+$('c').value]*1e-6, L=LW[+$('l').value]; const tau=bt==='C'?R*C:L/R; return {bt,U,R,C,L,tau,I0:U/R}; }
+const G={x:370,y:60,w:400,h:200}, G2={x:370,y:350,w:400,h:190};
+function zust(w,xx){ // normierter Speicherzustand (u_C/U bzw. i_L/I0)
+  return laden? 1-(1-s0)*Math.exp(-xx) : s0*Math.exp(-xx); }
+function zeichne(){ const w=werte(); svg.innerHTML=''; defs(); $('wC').style.display=w.bt==='C'?'':'none'; $('wL').style.display=w.bt==='L'?'':'none';
+  const z=zust(w,x);
+  // Schaltung
+  const qx=50, top=120, bot=420, sx=150, kx=230;
+  linie([[qx,top],[qx,bot]],GRAPHIT,2.5,{opacity:0}); el('circle',{cx:qx,cy:270,r:22,fill:'#fff',stroke:PETROL,'stroke-width':3}); text(qx,277,'=',{s:20,f:PETROL}); text(qx+30,262,'U = '+fmt(w.U,1)+' V',{s:13,f:PETROL,a:'start'});
+  linie([[qx,248],[qx,top],[sx-20,top]],GRAPHIT,2.5); linie([[qx,292],[qx,bot],[kx,bot]],GRAPHIT,2.5);
+  // Umschalter: Pos laden verbindet Quelle, entladen verbindet Kurzschlussbügel
+  el('circle',{cx:sx-20,cy:top,r:5,fill:'#fff',stroke:GRAPHIT,'stroke-width':2}); el('circle',{cx:sx-20,cy:top+60,r:5,fill:'#fff',stroke:GRAPHIT,'stroke-width':2}); el('circle',{cx:sx+20,cy:top+30,r:5,fill:GRAPHIT});
+  linie([[sx+20,top+30],laden?[sx-16,top+3]:[sx-16,top+57]],GRAPHIT,4); linie([[sx-20,top+60],[sx-60,top+60],[sx-60,bot]],GRAPHIT,2.5); text(sx-6,top-14,laden?'Laden':'Entladen',{s:14,f:laden?GRUEN:KUPFER});
+  linie([[sx+20,top+30],[kx,top+30],[kx,top+60]],GRAPHIT,2.5);
+  el('rect',{x:kx-13,y:top+60,width:26,height:70,fill:'#fff',stroke:PETROL,'stroke-width':3}); text(kx+20,top+100,'R = '+om(w.R),{s:13,f:PETROL,a:'start'});
+  linie([[kx,top+130],[kx,280]],GRAPHIT,2.5);
+  if(w.bt==='C'){ el('line',{x1:kx-24,y1:282,x2:kx+24,y2:282,stroke:PETROL,'stroke-width':5}); el('line',{x1:kx-24,y1:298,x2:kx+24,y2:298,stroke:PETROL,'stroke-width':5}); text(kx+30,280,'C = '+fmt(w.C*1e6,w.C<1e-5?1:0)+' µF',{s:13,f:PETROL,a:'start'});
+    const fh=Math.max(0,z)*44; el('rect',{x:kx-70,y:345-fh,width:16,height:fh,fill:GRUEN,opacity:.6}); el('rect',{x:kx-70,y:301,width:16,height:44,fill:'none',stroke:STAHL}); text(kx-62,362,'Ladung',{s:11,f:STAHL,w:400});
+    linie([[kx,300],[kx,bot]],GRAPHIT,2.5); }
+  else { el('rect',{x:kx-13,y:280,width:26,height:60,fill:PETROL}); text(kx+20,315,'L = '+fmt(w.L,w.L<1?2:1)+' H',{s:13,f:PETROL,a:'start'}); linie([[kx,340],[kx,bot]],GRAPHIT,2.5); }
+  // Kurven: Speichergröße und die andere Größe
+  const T=w.tau, X=xx=>G.x+xx/6*G.w;
+  const kurve=(g,fn,c,max)=>{ const pts=[]; for(let i=0;i<=Math.round(x*40);i++){ const xx=i/40; pts.push([X(xx),g.y+g.h-fn(xx)/max*g.h]); } linie(pts,c,3); };
+  const uC=xx=>w.bt==='C'?zust(w,xx)*w.U:(laden?(1-zust(w,xx))*w.U:0), uL=xx=>laden? (w.bt==='L'?(1-zust(w,xx))*w.U:(1-zust(w,xx))*w.U):(w.bt==='L'?zust(w,xx)*w.U:zust(w,xx)*w.U);
+  [[G,'Spannung am '+(w.bt==='C'?'Kondensator u<tspan font-size="70%" baseline-shift="sub">C</tspan>':'Widerstand u<tspan font-size="70%" baseline-shift="sub">R</tspan>')+' in V',30],[G2,'Strom i in mA (Betrag)',null]].forEach(([g,n,mx],j)=>{
+    el('rect',{x:g.x,y:g.y,width:g.w,height:g.h,fill:'#fff',stroke:'#D9E1E3'}); text(g.x,g.y-12,n,{s:14,f:PETROL,a:'start'});
+    for(let k=0;k<=6;k++){ el('line',{x1:X(k),y1:g.y,x2:X(k),y2:g.y+g.h,stroke:'#EEF2F3'}); text(X(k),g.y+g.h+16,k===0?'0':zt(k*T),{s:11,f:STAHL,w:400}); } });
+  [0,10,20,30].forEach(v=>text(G.x-6,G.y+G.h-v/30*G.h+4,v,{s:11,f:STAHL,a:'end',w:400}));
+  const Imax=w.I0*1000; [0,0.5,1].forEach(v=>text(G2.x-6,G2.y+G2.h-v*G2.h+4,fmt(Imax*v,Imax*v<10?2:0),{s:11,f:STAHL,a:'end',w:400}));
+  // Speicherkurve oben: C → u_C, L → u_R (= i·R)
+  const oben=xx=>w.bt==='C'?zust(w,xx)*w.U:zust(w,xx)*w.U, strom=xx=>w.bt==='C'?(laden?(1-zust(w,xx)):zust(w,xx)):zust(w,xx);
+  kurve(G,oben,GRUEN,30); kurve(G2,xx=>strom(xx)*Imax,KUPFER,Imax);
+  if($('tau').checked){ for(let k=1;k<=5;k++){ el('line',{x1:X(k),y1:G.y,x2:X(k),y2:G2.y+G2.h,stroke:LILA,'stroke-dasharray':'3 5','stroke-width':1}); text(X(k),G.y+G.h+32,k+' τ',{s:12,f:LILA}); }
+    const v63=laden?(s0+(1-s0)*0.632):s0*0.368; el('line',{x1:G.x,y1:G.y+G.h-v63*w.U/30*G.h,x2:X(1),y2:G.y+G.h-v63*w.U/30*G.h,stroke:LILA,'stroke-width':1.5}); text(G.x+4,G.y+G.h-v63*w.U/30*G.h-6,laden?'63 %':'37 %',{s:12,f:LILA,a:'start'}); }
+  el('circle',{cx:X(x),cy:G.y+G.h-oben(x)/30*G.h,r:6,fill:GRUEN}); el('circle',{cx:X(x),cy:G2.y+G2.h-strom(x)*G2.h,r:6,fill:KUPFER});
+  const t=x*T, st=$('status');
+  st.innerHTML=(laden?'Laden':'Entladen')+': t = '+zt(t)+' = '+fmt(x,1)+' τ · '+(w.bt==='C'?'u<sub>C</sub> = '+fmt(oben(x),2)+' V':'i = '+fmt(strom(x)*Imax,2)+' mA')+(x>=5?' · Vorgang praktisch abgeschlossen':'');
+  rechenweg([['Zeitkonstante τ',w.bt==='C'?'τ = R · C':'τ = L / R',zt(T)],['Ladezeit (Faustregel)','t ≈ 5 τ',zt(5*T)],['größter Strom','I<sub>0</sub> = U / R',fmt(Imax,Imax<10?2:1)+' mA'],
+    [w.bt==='C'?'Ladekurve':'Stromanstieg',w.bt==='C'?'u<sub>C</sub> = U · (1 − e<sup>−t/τ</sup>)':'i = I<sub>0</sub> · (1 − e<sup>−t/τ</sup>)',''],[w.bt==='C'?'Entladekurve':'Stromabfall',w.bt==='C'?'u<sub>C</sub> = U<sub>0</sub> · e<sup>−t/τ</sup>':'i = I<sub>0</sub> · e<sup>−t/τ</sup>','']]);
+  $('uOut').textContent=fmt(w.U,1)+' V'; $('rOut').textContent=w.R+' Ω'; $('cOut').textContent=fmt(w.C*1e6,1)+' µF'; $('lOut').textContent=fmt(w.L,3)+' H';
+}
+function lauf(ts){ const dt=letzt?Math.min(.05,(ts-letzt)/1000):0; letzt=ts; if(x<6) x=Math.min(6,x+dt); zeichne(); requestAnimationFrame(lauf); }
+$('schalt').addEventListener('click',()=>{ const w=werte(); s0=zust(w,x); laden=!laden; x=0; });
+document.querySelectorAll('input').forEach(e=>e.addEventListener('input',()=>{ if(e.name==='bt'){ s0=0; laden=true; x=0; } }));
+knopfStart(START,()=>{ s0=0; laden=true; x=0; }); knopfBeamer(); requestAnimationFrame(lauf);
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

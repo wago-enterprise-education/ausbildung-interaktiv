@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KNX: Telegramm vom Taster zum Aktor</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Energie- und Gebäudetechnik · LF 9 · AP2</div>
+<h1>KNX: Wie ein Telegramm vom Taster zum Aktor kommt</h1>
+<p class="unter">Drück eine Taste: Der Taster schickt ein Telegramm an eine Gruppenadresse. Alle Teilnehmer an der Linie hören mit, aber nur die Aktorkanäle mit dieser Gruppenadresse schalten. Gruppenadressen farbig, Telegrammaufbau vereinfacht.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 600" aria-label="KNX-Linie mit Tastern, Aktor und Telegramm"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Taster bedienen</h2>
+      <div class="knoepfe" style="flex-wrap:wrap"><button id="t1">Büro umschalten</button><button id="t2">Flur umschalten</button><button id="t3" class="zweit">Zentral aus</button></div>
+      <label class="regler"><span class="zeile"><span>Tempo der Darstellung</span><output id="vOut"></output></span><input id="v" type="range" min="0.25" max="2" step="0.25" value="1"></label>
+      <div class="haken"><label><input id="ack" type="checkbox" checked> Bestätigung (ACK) der Empfänger zeigen</label><label><input id="flur2" type="checkbox"> Kanal B zusätzlich auf „Zentral aus“ legen</label></div>
+      <div class="hinweis">Die Taster im Bild lassen sich auch antippen. In Wirklichkeit dauert ein Schalttelegramm etwa 20 ms (9600 bit/s).</div>
+      <div class="knoepfe"><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte"><h2>Letztes Telegramm</h2><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>Schalte Büro und Flur ein und drück „Zentral aus“. Welche Lampe bleibt an, und warum?</li>
+        <li>Hak „Kanal B zusätzlich auf Zentral aus legen“ an und wiederhole den Versuch.</li>
+        <li>Was ist der Unterschied zwischen physikalischer Adresse und Gruppenadresse?</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>Der Flur bleibt an: Kanal B hört nur auf 1/0/2, nicht auf 1/0/0.</li>
+        <li>Jetzt gehen beide aus. Ein Kanal kann mehrere Gruppenadressen haben, gesendet wird aber immer nur auf eine.</li>
+        <li>Die physikalische Adresse (Bereich.Linie.Teilnehmer, z. B. 1.1.10) ist einmalig und dient zum Programmieren und als Absender. Die Gruppenadresse (z. B. 1/0/1) verbindet Funktionen: Sender und Empfänger mit derselben Gruppenadresse gehören zusammen.</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · KNX TP, vereinfachte Darstellung · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+const GA={'1/0/0':{n:'Zentral aus',c:ROT},'1/0/1':{n:'Licht Büro',c:KUPFER},'1/0/2':{n:'Licht Flur',c:BLAU}};
+let A=false, B=false, tel=null, letzt=0, last=null;
+const DEV={t1:{x:205,pa:'1.1.1'},t3:{x:365,pa:'1.1.2'},akt:{x:580,pa:'1.1.10'}};
+function senden(quelle,ga,wert){ if(tel) return; tel={q:quelle,ga,wert,t:0,x0:DEV[quelle].x}; last=tel; }
+function kanalGA(k){ return k==='A'?['1/0/1','1/0/0']:($('flur2').checked?['1/0/2','1/0/0']:['1/0/2']); }
+function schritt(dt){ if(!tel) return; tel.t+=dt*+$('v').value; if(tel.t>1.6&&!tel.done){ tel.done=1; const g=tel.ga; if(kanalGA('A').includes(g)) A=tel.wert; if(kanalGA('B').includes(g)) B=tel.wert; } if(tel.t>($('ack').checked?2.6:1.9)) tel=null; }
+function zeichne(){ svg.innerHTML=''; defs(); const by=210;
+  // Busleitung
+  linie([[40,by-4],[760,by-4]],ROT,4); linie([[40,by+4],[760,by+4]],GRAPHIT,4); text(760,by-14,'KNX-Bus TP: rot +, schwarz −, 30 V DC',{s:12,f:STAHL,a:'end',w:500});
+  el('rect',{x:40,y:by+30,width:90,height:60,rx:6,fill:'#fff',stroke:PETROL,'stroke-width':2}); text(85,by+56,'Spannungs-',{s:12,f:PETROL}); text(85,by+72,'versorgung',{s:12,f:PETROL}); linie([[85,by+30],[85,by+4]],GRAPHIT,2);
+  // Telegrammwelle
+  if(tel&&tel.t<1.6){ const r=Math.min(1,tel.t/1.2)*720, c=GA[tel.ga].c; el('rect',{x:Math.max(40,tel.x0-r),y:by-12,width:Math.min(760,tel.x0+r)-Math.max(40,tel.x0-r),height:24,fill:c,opacity:.25});
+    [-1,1].forEach(s=>{ const x=tel.x0+s*r; if(x>40&&x<760) el('rect',{x:x-26,y:by-14,width:52,height:28,rx:5,fill:c}); if(x>40&&x<760) text(x,by+5,tel.ga,{s:12,f:'#fff',sw:0}); }); }
+  if(tel&&tel.t>1.9&&$('ack').checked){ const r=Math.min(1,(tel.t-1.9)/0.5)*400; el('rect',{x:DEV.akt.x-r,y:by-8,width:2*r,height:16,fill:GRUEN,opacity:.35}); text(DEV.akt.x,by-26,'ACK',{s:13,f:GRUEN}); }
+  // Taster 1.1.1 (zwei Wippen)
+  const taster=(d,titel,knoepfe)=>{ const x=DEV[d].x; linie([[x,by+4],[x,by+40]],GRAPHIT,2); el('rect',{x:x-60,y:by+40,width:120,height:150,rx:10,fill:'#fff',stroke:PETROL,'stroke-width':2.5}); text(x,by+62,titel,{s:13,f:PETROL}); text(x,by+78,'PA '+DEV[d].pa,{s:11,f:STAHL,w:500});
+    knoepfe.forEach(([lab,ga,fn],i)=>{ const yy=by+90+i*48, c=GA[ga].c; const r=el('rect',{x:x-48,y:yy,width:96,height:40,rx:6,fill:'#fff',stroke:c,'stroke-width':3,style:'cursor:pointer'}); r.addEventListener('pointerdown',fn);
+      const t=text(x,yy+18,lab,{s:12,f:c}); t.style.pointerEvents='none'; const t2=text(x,yy+33,'→ '+ga,{s:11,f:STAHL,w:500}); t2.style.pointerEvents='none'; }); };
+  taster('t1','Taster 2-fach',[['Büro','1/0/1',()=>senden('t1','1/0/1',!A)],['Flur','1/0/2',()=>senden('t1','1/0/2',!B)]]);
+  taster('t3','Taster Tür',[['Zentral aus','1/0/0',()=>senden('t3','1/0/0',false)]]);
+  // Aktor
+  const ax=DEV.akt.x; linie([[ax,by+4],[ax,by+40]],GRAPHIT,2); el('rect',{x:ax-90,y:by+40,width:180,height:150,rx:10,fill:'#fff',stroke:PETROL,'stroke-width':2.5}); text(ax,by+62,'Schaltaktor 2-fach',{s:13,f:PETROL}); text(ax,by+78,'PA '+DEV.akt.pa,{s:11,f:STAHL,w:500});
+  [['A',A,-45],['B',B,45]].forEach(([k,on,dx])=>{ const x=ax+dx, gl=kanalGA(k); text(x,by+100,'Kanal '+k,{s:12,f:GRAPHIT});
+    gl.forEach((g,i)=>{ const hit=tel&&tel.ga===g&&tel.t>1.2&&tel.t<1.9; el('rect',{x:x-36,y:by+108+i*26,width:72,height:22,rx:4,fill:hit?GA[g].c:'#fff',stroke:GA[g].c,'stroke-width':2}); text(x,by+124+i*26,g,{s:12,f:hit?'#fff':GA[g].c,sw:0}); });
+    // Lampe
+    const ly=by+260; linie([[x,by+190],[x,ly-24]],on?KUPFER:STAHL,2); el('circle',{cx:x,cy:ly,r:22,fill:on?'#F2B84B':'#fff',stroke:GRAPHIT,'stroke-width':2}); el('path',{d:`M${x-15},${ly-15} L${x+15},${ly+15} M${x+15},${ly-15} L${x-15},${ly+15}`,stroke:GRAPHIT,'stroke-width':2});
+    if(on) for(let k=0;k<8;k++){ const a=k*Math.PI/4; el('line',{x1:x+28*Math.cos(a),y1:ly+28*Math.sin(a),x2:x+38*Math.cos(a),y2:ly+38*Math.sin(a),stroke:'#F2B84B','stroke-width':3}); }
+    text(x,ly+42,k==='A'?'Büro':'Flur',{s:13,f:GRAPHIT}); });
+  // Telegrammaufbau
+  const tx=40, ty=40, f=[['Steuerfeld',90,'Priorität'],['Quelladresse',140,last?DEV[last.q].pa:'–'],['Zieladresse',140,last?last.ga:'–'],['Länge',80,'1 Byte'],['Nutzdaten',120,last?(last.wert?'1 = ein':'0 = aus'):'–'],['Prüffeld',90,'Parität']];
+  let xx=tx; text(tx,ty-12,'Telegrammaufbau (vereinfacht)',{s:13,f:PETROL,a:'start'}); f.forEach(([n,w,v],i)=>{ const c=i===2&&last?GA[last.ga].c:i===4&&last?KUPFER:PETROL; el('rect',{x:xx,y:ty,width:w-4,height:50,rx:5,fill:'#fff',stroke:c,'stroke-width':2}); text(xx+w/2-2,ty+20,n,{s:11,f:STAHL,w:500}); text(xx+w/2-2,ty+40,v,{s:14,f:c}); xx+=w; });
+  const st=$('status'); st.className='status'+(tel?'':' gut'); st.innerHTML=tel?(tel.t<1.6?'Telegramm an '+tel.ga+' ('+GA[tel.ga].n+') läuft über die Linie. Alle Teilnehmer empfangen es.':'Teilnehmer mit Gruppenadresse '+tel.ga+' werten aus'+($('ack').checked?' und bestätigen mit ACK':'')+'.'):'Bereit. Büro '+(A?'an':'aus')+', Flur '+(B?'an':'aus')+'.';
+  if(last) rechenweg([['Absender','physikalische Adresse',DEV[last.q].pa],['Ziel','Gruppenadresse',last.ga+' '+GA[last.ga].n],['Wert','1 Bit (DPT 1.001 Schalten)',last.wert?'1 (ein)':'0 (aus)'],['reagiert','Kanäle mit dieser Gruppenadresse',['A','B'].filter(k=>kanalGA(k).includes(last.ga)).map(k=>'Kanal '+k).join(', ')||'keiner']]);
+  $('vOut').textContent=fmt(+$('v').value,2)+' ×';
+}
+function lauf(ts){ const dt=letzt?Math.min(.05,(ts-letzt)/1000):0; letzt=ts; schritt(dt); zeichne(); requestAnimationFrame(lauf); }
+$('t1').addEventListener('click',()=>senden('t1','1/0/1',!A)); $('t2').addEventListener('click',()=>senden('t1','1/0/2',!B)); $('t3').addEventListener('click',()=>senden('t3','1/0/0',false));
+knopfBeamer(); requestAnimationFrame(lauf);
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

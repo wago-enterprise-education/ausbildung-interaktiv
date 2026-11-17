@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leistung, Wirkungsgrad und Energiekosten</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Elektro und Mechatronik · LF 1 · AP1</div>
+<h1>Leistung, Wirkungsgrad und Energiekosten</h1>
+<p class="unter">Ein Motor treibt über ein Getriebe eine Maschine an. Das Energieflussbild zeigt, wie viel Leistung ankommt und wie viel als Wärme verloren geht. Darunter: was das im Jahr kostet.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 700" aria-label="Energieflussbild mit Motor und Getriebe, Verlustpfeilen und Kostenbalken"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Einstellungen</h2>
+      <label class="regler"><span class="zeile"><span>abgegebene Leistung an der Maschine P<sub>ab</sub></span><output id="pOut"></output></span><input id="p" type="range" min="0.5" max="15" step="0.5" value="7.5"></label>
+      <label class="regler"><span class="zeile"><span>Wirkungsgrad Motor η<sub>1</sub></span><output id="e1Out"></output></span><input id="e1" type="range" min="0.6" max="0.98" step="0.01" value="0.88"></label>
+      <label class="regler" id="wG"><span class="zeile"><span>Wirkungsgrad Getriebe η<sub>2</sub></span><output id="e2Out"></output></span><input id="e2" type="range" min="0.6" max="0.99" step="0.01" value="0.95"></label>
+      <label class="regler"><span class="zeile"><span>Betriebsstunden pro Jahr</span><output id="hOut"></output></span><input id="h" type="range" min="100" max="8760" step="10" value="2000"></label>
+      <label class="regler"><span class="zeile"><span>Strompreis</span><output id="kOut"></output></span><input id="k" type="range" min="5" max="60" step="0.5" value="25"></label>
+      <div class="haken">
+        <label><input id="getriebe" type="checkbox" checked> Getriebe zwischen Motor und Maschine</label>
+        <label><input id="vergleich" type="checkbox"> Vergleich mit besserem Motor (η<sub>1</sub> + 5 Prozentpunkte)</label>
+      </div>
+      <div class="hinweis">Fester Maßstab: 1 kW ≙ 8 Bildpunkte Bandbreite. Kostenbalken: 1000 € ≙ 20 Bildpunkte (Balken endet am Rand bei sehr hohen Kosten, der Betrag steht daneben).</div>
+      <div class="knoepfe"><button id="start" class="zweit">Startwerte</button><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte"><h2>Rechenweg</h2><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>Motor η<sub>1</sub> = 0,88, Getriebe η<sub>2</sub> = 0,95, P<sub>ab</sub> = 7,5 kW. Wie groß ist die aufgenommene Leistung?</li>
+        <li>Wie viel kostet der Betrieb bei 2000 h im Jahr und 25 ct/kWh?</li>
+        <li>Hak „Vergleich“ an. Wie viel spart der bessere Motor im Jahr?</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>η<sub>ges</sub> = η<sub>1</sub> · η<sub>2</sub> = 0,836. P<sub>zu</sub> = P<sub>ab</sub> / η<sub>ges</sub> = 7,5 kW / 0,836 = 8,97 kW. Davon gehen 1,47 kW als Wärme verloren.</li>
+        <li>W = P<sub>zu</sub> · t = 8,97 kW · 2000 h = 17 943 kWh. Kosten = 17 943 kWh · 0,25 €/kWh = 4 486 €.</li>
+        <li>Mit η<sub>1</sub> = 0,93: P<sub>zu</sub> = 8,49 kW, Kosten rund 4 244 €. Ersparnis rund 241 € pro Jahr.</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · Wirkungsgrade als Beispielwerte, reale Werte stehen auf dem Leistungsschild · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+const START={p:7.5,e1:0.88,e2:0.95,h:2000,k:25,getriebe:true,vergleich:false}, KB=8;
+function rechne(eta1){ const P=+$('p').value, e1=eta1??+$('e1').value, g=$('getriebe').checked, e2=g?+$('e2').value:1, h=+$('h').value, k=+$('k').value;
+  const P1=P/e2, Pzu=P1/e1, V1=Pzu-P1, V2=P1-P, W=Pzu*h, K=W*k/100; return {P,e1,e2,g,h,k,P1,Pzu,V1,V2,eg:e1*e2,W,K}; }
+function band(x0,x1,yTop,h,c){ el('rect',{x:x0,y:yTop,width:x1-x0,height:Math.max(1,h),fill:c}); }
+function verlust(x,yA,t,c,txt){ // unterer Teil des Bandes biegt nach unten ab
+  if(t<0.5) return; const r=24, yB=yA+t, y2=yA+r+t+30;
+  el('path',{d:`M${x},${yA} A${r+t},${r+t} 0 0 1 ${x+r+t},${yA+r+t} V${y2} H${x+r} V${yB+r} A${r},${r} 0 0 0 ${x},${yB} Z`,fill:c,opacity:.92});
+  el('path',{d:`M${x+r-6},${y2} h${t+12} l${-(t+12)/2},${Math.min(20,6+t/3)} z`,fill:c}); text(x+r+t/2,y2+Math.min(20,6+t/3)+20,txt,{s:13,f:c}); }
+function zeichne(){ const r=rechne(), s=$('vergleich').checked?rechne(Math.min(0.99,r.e1+0.05)):null; svg.innerHTML=''; defs();
+  $('wG').style.display=r.g?'':'none';
+  const Y=80, xA=40, xM=250, xG=480, xE=730, hz=r.Pzu*KB, h1=r.P1*KB, hab=r.P*KB;
+  // Zufluss
+  band(xA,xM,Y,hz,BLAU); text(xA,Y-12,sub('P','zu')+' = '+fmt(r.Pzu,2)+' kW (elektrisch)',{s:14,f:BLAU,a:'start'});
+  // Motor
+  const kasten=(x,y0,h,n,e)=>{ el('rect',{x:x-10,y:y0-14,width:90,height:h+28,rx:10,fill:'none',stroke:PETROL,'stroke-width':3}); text(x+35,y0-22,n,{s:15,f:PETROL}); text(x+35,y0+h+34,e,{s:13,f:STAHL}); };
+  band(xM+80,(r.g?xG:xE),Y,h1,GRUEN);
+  verlust(xM+80,Y+h1,hz-h1,ROT,sub('P','V1')+' = '+fmt(r.V1,2)+' kW Wärme');
+  if(r.g){
+    band(xG+80,xE,Y,hab,GRUEN); verlust(xG+80,Y+hab,h1-hab,KUPFER,sub('P','V2')+' = '+fmt(r.V2,2)+' kW'); }
+  band(xM-10,xM+80,Y,hz,BLAU); kasten(xM,Y,hz,'Motor','η₁ = '+fmt(r.e1,2)); if(r.g){ band(xG-10,xG+80,Y,h1,GRUEN); kasten(xG,Y,h1,'Getriebe','η₂ = '+fmt(r.e2,2)); }
+  el('path',{d:`M${xE},${Y-10} l30,${hab/2+10} l-30,${hab/2+10} z`,fill:GRUEN}); text(xE+10,Y+hab+34,sub('P','ab')+' = '+fmt(r.P,2)+' kW',{s:14,f:GRUEN,a:'end'});
+  // Kosten
+  const KY=590, KX=180, kb=v=>Math.min(560,v/1000*20);
+  text(40,KY-24,'Energie und Kosten im Jahr',{s:15,f:PETROL,a:'start'});
+  const zeile=(y,n,o,c)=>{ text(KX-10,y+18,n,{s:13,a:'end',w:400}); el('rect',{x:KX,y,width:Math.max(2,kb(o.K)),height:26,rx:3,fill:c}); text(KX+kb(o.K)+8,y+18,fmt(o.W,0)+' kWh · '+fmt(o.K,0)+' €',{s:14,f:c,a:'start'}); };
+  zeile(KY,'dieser Antrieb',r,PETROL); if(s){ zeile(KY+38,'η₁ = '+fmt(s.e1,2),s,GRUEN); text(KX,KY+90,'Ersparnis: '+fmt(r.K-s.K,0)+' € pro Jahr, '+fmt(r.W-s.W,0)+' kWh',{s:14,f:GRUEN,a:'start'}); }
+  const st=$('status'); st.innerHTML='Gesamtwirkungsgrad η = '+fmt(r.eg,3)+': Von '+fmt(r.Pzu,2)+' kW kommen '+fmt(r.P,2)+' kW an der Maschine an. '+fmt(r.Pzu-r.P,2)+' kW werden zu Wärme.';
+  const rows=[['Gesamtwirkungsgrad η',r.g?'η = η₁ · η₂ = '+fmt(r.e1,2)+' · '+fmt(r.e2,2):'η = η₁',fmt(r.eg,3)]];
+  if(r.g) rows.push(['Leistung am Getriebeeingang','P₁ = P<sub>ab</sub> / η₂',fmt(r.P1,2)+' kW']);
+  rows.push(['aufgenommene Leistung P<sub>zu</sub>','P<sub>zu</sub> = P<sub>ab</sub> / η',fmt(r.Pzu,2)+' kW'],['Verlustleistung gesamt','P<sub>V</sub> = P<sub>zu</sub> − P<sub>ab</sub>',fmt(r.Pzu-r.P,2)+' kW'],
+    ['Energie im Jahr W','W = P<sub>zu</sub> · t = '+fmt(r.Pzu,2)+' kW · '+fmt(r.h,0)+' h',fmt(r.W,0)+' kWh'],['Kosten im Jahr','K = W · Preis = '+fmt(r.W,0)+' kWh · '+fmt(r.k/100,3)+' €/kWh',fmt(r.K,0)+' €']);
+  rechenweg(rows);
+  $('pOut').textContent=fmt(r.P,1)+' kW'; $('e1Out').textContent=fmt(r.e1,2); $('e2Out').textContent=fmt(+$('e2').value,2); $('hOut').textContent=fmt(r.h,0)+' h'; $('kOut').textContent=fmt(r.k,1)+' ct/kWh';
+}
+document.querySelectorAll('input').forEach(e=>e.addEventListener('input',zeichne));
+knopfStart(START,zeichne); knopfBeamer(); zeichne();
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

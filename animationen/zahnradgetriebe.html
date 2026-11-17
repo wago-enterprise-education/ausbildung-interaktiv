@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zahnradgetriebe: Übersetzung, Drehzahl, Drehmoment</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Mechatronik · LF 7 und 8 · AP1 + AP2</div>
+<h1>Zahnradgetriebe: Übersetzung, Drehzahl und Drehmoment</h1>
+<p class="unter">Zähnezahlen einstellen: Das Abtriebsrad dreht sich langsamer oder schneller, das Drehmoment ändert sich umgekehrt. Die Leistung bleibt bis auf die Verluste gleich. Stirnradstufe mit Modul m = 2 mm.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 600" aria-label="Zahnradpaar mit Antrieb und Abtrieb"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Einstellungen</h2>
+      <label class="regler"><span class="zeile"><span>Zähnezahl Antriebsrad z₁</span><output id="z1Out"></output></span><input id="z1" type="range" min="10" max="80" step="1" value="20"></label>
+      <label class="regler"><span class="zeile"><span>Zähnezahl Abtriebsrad z₂</span><output id="z2Out"></output></span><input id="z2" type="range" min="10" max="80" step="1" value="50"></label>
+      <label class="regler"><span class="zeile"><span>Antriebsdrehzahl n₁</span><output id="nOut"></output></span><input id="n" type="range" min="100" max="3000" step="50" value="1450"></label>
+      <label class="regler"><span class="zeile"><span>Antriebsleistung P₁</span><output id="pOut"></output></span><input id="p" type="range" min="0.25" max="15" step="0.25" value="3"></label>
+      <div class="haken"><label><input id="lauf" type="checkbox" checked> Drehung zeigen (verlangsamt)</label><label><input id="verl" type="checkbox" checked> Verluste berücksichtigen (η = 0,98)</label></div>
+      <div class="knoepfe"><button id="start" class="zweit">Startwerte</button><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte"><h2>Rechenweg</h2><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>Ein Motor mit 1450 1/min soll ein Förderband mit 290 1/min antreiben. Welches Übersetzungsverhältnis brauchst du? Stell passende Zähnezahlen ein.</li>
+        <li>Was passiert mit dem Drehmoment am Abtrieb, wenn i = 5 ist?</li>
+        <li>Warum dreht das Abtriebsrad andersherum, und wie kehrt man das wieder um?</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>i = 1450 / 290 = 5. Zum Beispiel z₁ = 15, z₂ = 75 oder z₁ = 16, z₂ = 80.</li>
+        <li>Es wird fünfmal so groß (minus Verluste): M₂ = M₁ · i · η.</li>
+        <li>Außenverzahnte Stirnräder drehen gegenläufig. Ein Zwischenrad kehrt die Drehrichtung um, ändert aber die Übersetzung nicht.</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · vereinfachte Zahnform · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+const START={z1:20,z2:50,n:1450,p:3,lauf:true,verl:true}; let w1=0, letzt=0; const m=2, S=2.2;
+function rad(cx,cy,z,ang,c,lab){ const r=m*z/2*S, ra=r+m*S, rf=r-1.25*m*S, pts=[];
+  for(let k=0;k<z;k++){ const a=ang+k*2*Math.PI/z, t=2*Math.PI/z; [[rf,-0.5],[rf,-0.3],[ra,-0.15],[ra,0.15],[rf,0.3],[rf,0.5]].forEach(([rr,f])=>pts.push([cx+rr*Math.cos(a+f*t),cy+rr*Math.sin(a+f*t)])); }
+  el('path',{d:'M'+pts.map(p=>p.map(v=>v.toFixed(1)).join(',')).join(' L')+' Z',fill:c,opacity:.9,stroke:GRAPHIT,'stroke-width':1});
+  el('circle',{cx,cy,r,fill:'none',stroke:'#fff','stroke-width':1,'stroke-dasharray':'4 4',opacity:.7});
+  el('circle',{cx,cy,r:Math.max(8,r*0.25),fill:'#fff',stroke:GRAPHIT,'stroke-width':1.5});
+  el('line',{x1:cx,y1:cy,x2:cx+Math.max(8,r*0.25)*Math.cos(ang),y2:cy+Math.max(8,r*0.25)*Math.sin(ang),stroke:GRAPHIT,'stroke-width':3});
+ }
+function zeichne(){ const z1=+$('z1').value, z2=+$('z2').value, n1=+$('n').value, P1=+$('p').value, eta=$('verl').checked?0.98:1;
+  const i=z2/z1, n2=n1/i, M1=9550*P1/n1, P2=P1*eta, M2=M1*i*eta, a=m*(z1+z2)/2;
+  svg.innerHTML=''; defs();
+  const r1=m*z1/2*S, r2=m*z2/2*S, cy=245, cx1=400-(r1+r2)/2-(r2-r1)/2*0, cx2=cx1+r1+r2;
+  const x1=Math.max(40+r1+m*S, 400-(r1+r2)/2), x2=x1+r1+r2;
+  rad(x1,cy,z1,w1,KUPFER,'z₁ = '+z1+' · d = '+fmt(m*z1,0)+' mm'); rad(x2,cy,z2,-w1*z1/z2+Math.PI+Math.PI/z2,PETROL,'z₂ = '+z2+' · d = '+fmt(m*z2,0)+' mm');
+  // Drehrichtung
+  const pf=(cx,r,dir,c)=>{ const rr=r+m*S+14, a0=-Math.PI*0.75, a1=-Math.PI*0.25, p0=[cx+rr*Math.cos(dir>0?a0:a1),cy+rr*Math.sin(dir>0?a0:a1)], p1=[cx+rr*Math.cos(dir>0?a1:a0),cy+rr*Math.sin(dir>0?a1:a0)];
+    el('path',{d:`M${p0[0]},${p0[1]} A${rr},${rr} 0 0 ${dir>0?1:0} ${p1[0]},${p1[1]}`,fill:'none',stroke:c,'stroke-width':3,'marker-end':`url(#m${c===KUPFER?1:0})`}); };
+  pf(x1,r1,1,KUPFER); pf(x2,r2,-1,PETROL);
+  el('line',{x1:x1,y1:cy,x2:x2,y2:cy,stroke:GRAPHIT,'stroke-dasharray':'6 5'}); text((x1+x2)/2,cy-8,'',{s:12});
+  // Werte
+  const W=[['Antrieb · z₁ = '+z1+' · d = '+m*z1+' mm',KUPFER,[['n₁',fmt(n1,0)+' 1/min'],['M₁',fmt(M1,1)+' Nm'],['P₁',fmt(P1,2)+' kW']]],['Abtrieb · z₂ = '+z2+' · d = '+m*z2+' mm',PETROL,[['n₂',fmt(n2,0)+' 1/min'],['M₂',fmt(M2,1)+' Nm'],['P₂',fmt(P2,2)+' kW']]]];
+  W.forEach(([t,c,r],k)=>{ const bx=40+k*420; el('rect',{x:bx,y:480,width:300,height:104,rx:10,fill:'#fff',stroke:c,'stroke-width':2}); text(bx+150,504,t,{s:15,f:c});
+    r.forEach(([a,b],j)=>{ text(bx+20+j*95,534,a,{s:13,f:STAHL,a:'start',w:500}); text(bx+20+j*95,560,b,{s:15,f:c,a:'start'}); }); });
+  text(400,528,'i = '+fmt(i,2),{s:20,f:GRAPHIT}); text(400,552,i>1?'ins Langsame':i<1?'ins Schnelle':'1 : 1',{s:12,f:STAHL,w:500});
+  const st=$('status'); st.className='status'; st.innerHTML='i = z₂ / z₁ = '+z2+' / '+z1+' = '+fmt(i,2)+' · Achsabstand a = '+fmt(a,0)+' mm';
+  rechenweg([['Übersetzung','i = z₂ / z₁ = n₁ / n₂',fmt(i,2)],['Abtriebsdrehzahl','n₂ = n₁ / i = '+fmt(n1,0)+' / '+fmt(i,2),fmt(n2,0)+' 1/min'],['Antriebsmoment','M₁ = 9550 · P₁ / n₁',fmt(M1,1)+' Nm'],['Abtriebsmoment','M₂ = M₁ · i · η',fmt(M2,1)+' Nm'],['Teilkreisdurchmesser','d = m · z',fmt(m*z1,0)+' mm / '+fmt(m*z2,0)+' mm'],['Achsabstand','a = m · (z₁ + z₂) / 2',fmt(a,0)+' mm']]);
+  $('z1Out').textContent=z1; $('z2Out').textContent=z2; $('nOut').textContent=n1+' 1/min'; $('pOut').textContent=fmt(P1,2)+' kW';
+}
+function lauf(ts){ const dt=letzt?Math.min(.05,(ts-letzt)/1000):0; letzt=ts; if($('lauf').checked) w1+=dt*(+$('n').value/1450)*0.8; zeichne(); requestAnimationFrame(lauf); }
+knopfStart(START,()=>{}); knopfBeamer(); requestAnimationFrame(lauf);
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

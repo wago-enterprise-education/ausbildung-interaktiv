@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gleichrichter mit Glättungskondensator</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Elektro und Mechatronik · LF 1 und 6 · AP1</div>
+<h1>Gleichrichter mit Glättungskondensator</h1>
+<p class="unter">Einweg- oder Brückengleichrichter: Sieh, welche Dioden gerade leiten, und schalte einen Glättungskondensator zu. Last und Kapazität bestimmen, wie stark die Ausgangsspannung schwankt (Restwelligkeit).</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 620" aria-label="Gleichrichterschaltung mit leitenden Dioden und Spannungsverlauf"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Einstellungen</h2>
+      <div class="seg" role="radiogroup">
+        <label><input type="radio" name="art" value="m1u">Einweg (M1U)</label>
+        <label><input type="radio" name="art" value="b2u" checked>Brücke (B2U)</label>
+      </div>
+      <label class="regler"><span class="zeile"><span>Wechselspannung U (Effektivwert)</span><output id="uOut"></output></span><input id="u" type="range" min="6" max="24" step="1" value="12"></label>
+      <label class="regler"><span class="zeile"><span>Lastwiderstand R<sub>L</sub></span><output id="rOut"></output></span><input id="r" type="range" min="10" max="1000" step="10" value="100"></label>
+      <label class="regler"><span class="zeile"><span>Glättungskondensator C</span><output id="cOut"></output></span><input id="c" type="range" min="0" max="8" step="1" value="5" data-liste="0,47,100,220,470,1000,2200,4700,10000"></label>
+      <div class="haken"><label><input id="lauf" type="checkbox" checked> Zeitmarke läuft (Zeitlupe)</label><label><input id="ein" type="checkbox" checked> Eingangsspannung einblenden</label></div>
+      <div class="hinweis">50 Hz, Schwellspannung je Siliziumdiode 0,7 V. Spannungsachse fest von −40 V bis +40 V, Zeitachse 3 Perioden (60 ms). C = 0 heißt: kein Kondensator.</div>
+      <div class="knoepfe"><button id="start" class="zweit">Startwerte</button><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte"><h2>Rechenweg</h2><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>Brücke, U = 12 V, ohne Kondensator. Wie groß ist der Scheitelwert der Ausgangsspannung?</li>
+        <li>Schalte 1000 µF bei R<sub>L</sub> = 100 Ω zu. Wie groß ist die Restwelligkeit ungefähr? Prüfe mit der Faustformel.</li>
+        <li>Wechsel auf Einweg bei gleichen Werten. Warum wird die Welligkeit etwa doppelt so groß?</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>û = √2 · 12 V = 17,0 V, minus 2 · 0,7 V (zwei Dioden leiten) = 15,6 V.</li>
+        <li>I ≈ 15 V / 100 Ω = 0,15 A. ΔU ≈ I / (f<sub>p</sub> · C) = 0,15 A / (100 Hz · 1000 µF) = 1,5 V. Die Animation zeigt etwa 1,4 V.</li>
+        <li>Beim Einweggleichrichter gibt es nur einen Ladepuls pro Periode (50 Hz statt 100 Hz). Der Kondensator muss doppelt so lange allein die Last versorgen.</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · vereinfachtes Diodenmodell (Schwellspannung 0,7 V), Trafo- und Diodenwiderstände vernachlässigt · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+const CW=[0,47,100,220,470,1000,2200,4700,10000], START={u:12,r:100,c:5,lauf:true,ein:true}; let tc=0, letzt=0;
+function sim(art,U,R,C){ const uh=U*Math.SQRT2, f=50, dt=1e-5, N=Math.round(0.08/dt), out=[]; let uc=0;
+  for(let i=0;i<=N+Math.round(0.06/dt);i++){ const t=i*dt, us=uh*Math.sin(2*Math.PI*f*t), vs=art==='b2u'?Math.max(0,Math.abs(us)-1.4):Math.max(0,us-0.7);
+    let leit=false; if(C>0){ uc*=Math.exp(-dt/(R*C)); if(vs>uc){ uc=vs; leit=vs>0; } } else { uc=vs; leit=vs>0; }
+    if(i>=N) out.push({t:t-N*dt,us,uo:uc,leit,pos:us>0}); }
+  return out; }
+function diode(x1,y1,x2,y2,an,n){ const mx=(x1+x2)/2, my=(y1+y2)/2, a=Math.atan2(y2-y1,x2-x1), c=Math.cos(a), s=Math.sin(a), L=14, B=12;
+  const col=an?KUPFER:GRAPHIT; el('line',{x1,y1,x2,y2,stroke:col,'stroke-width':an?5:2.5});
+  el('path',{d:`M${mx-L*c-B*s},${my-L*s+B*c} L${mx-L*c+B*s},${my-L*s-B*c} L${mx+L*c},${my+L*s} Z`,fill:an?KUPFER:'#fff',stroke:col,'stroke-width':2.5});
+  el('line',{x1:mx+L*c-B*s,y1:my+L*s+B*c,x2:mx+L*c+B*s,y2:my+L*s-B*c,stroke:col,'stroke-width':3.5}); if(n) text(mx-22*s+(s>0?-6:6),my+22*c+5,n,{s:13,f:STAHL}); }
+function zeichne(){ const art=radio('art'), U=+$('u').value, R=+$('r').value, C=CW[+$('c').value]*1e-6, d=sim(art,U,R,C); svg.innerHTML=''; defs();
+  const k=Math.min(d.length-1,Math.round(tc/0.06*(d.length-1))), p=d[k];
+  // Schaltung
+  const qx=70, qy=150, top=70, bot=230; el('circle',{cx:qx,cy:qy,r:24,fill:'#fff',stroke:PETROL,'stroke-width':3}); el('path',{d:`M${qx-12},${qy} q6,-12 12,0 t12,0`,fill:'none',stroke:PETROL,'stroke-width':2.5}); text(qx+30,qy+5,U+' V~',{s:13,f:PETROL,a:'start'});
+  const an=(ok)=>ok&&p.leit;
+  if(art==='b2u'){ const cx=250, cy=150, r=80, T=[cx,cy-r], Bt=[cx,cy+r], Lp=[cx-r,cy], Rp=[cx+r,cy];
+    linie([[qx,qy-24],[qx,top],[cx,top],[cx,cy-r]],GRAPHIT,2.5); linie([[qx,qy+24],[qx,bot],[cx,bot],[cx,cy+r]],GRAPHIT,2.5);
+    // positive Halbwelle: D1 (oben→+) und D4 (−→unten), negative: D2 (unten→+) und D3 (−→oben)
+    diode(T[0],T[1],Rp[0],Rp[1],an(p.pos),'D1'); diode(Lp[0],Lp[1],T[0],T[1],an(!p.pos),'D3'); diode(Bt[0],Bt[1],Rp[0],Rp[1],an(!p.pos),'D2'); diode(Lp[0],Lp[1],Bt[0],Bt[1],an(p.pos),'D4');
+    // Minus-Pol links, Plus rechts
+    linie([[Rp[0],Rp[1]],[480,cy]],an(true)?KUPFER:GRAPHIT,an(true)?4:2.5); linie([[Lp[0],Lp[1]],[Lp[0]-20,cy],[Lp[0]-20,330],[480,330]],GRAPHIT,2.5);
+    text(Rp[0]+16,cy-10,'+',{s:18,f:ROT}); text(Lp[0]-30,cy-10,'−',{s:18,f:BLAU}); }
+  else { const y=top; linie([[qx,qy-24],[qx,top],[200,top]],GRAPHIT,2.5); diode(200,top,320,top,an(true),'D1'); linie([[320,top],[480,top],[480,150]],an(true)?KUPFER:GRAPHIT,an(true)?4:2.5);
+    linie([[qx,qy+24],[qx,330],[480,330]],GRAPHIT,2.5); }
+  // Last und Kondensator
+  const xc=540, xr=640, ya=150, yb=330; linie([[480,ya],[xr,ya]],GRAPHIT,2.5); linie([[480,yb],[xr,yb]],GRAPHIT,2.5);
+  if(C>0){ linie([[xc,ya],[xc,232]],GRAPHIT,2.5); el('line',{x1:xc-24,y1:232,x2:xc+24,y2:232,stroke:PETROL,'stroke-width':5}); el('line',{x1:xc-24,y1:246,x2:xc+24,y2:246,stroke:PETROL,'stroke-width':5}); linie([[xc,246],[xc,yb]],GRAPHIT,2.5); text(xc-30,244,'C',{s:14,f:PETROL,a:'end'}); }
+  linie([[xr,ya],[xr,205]],GRAPHIT,2.5); el('rect',{x:xr-13,y:205,width:26,height:70,fill:'#fff',stroke:PETROL,'stroke-width':3}); linie([[xr,275],[xr,yb]],GRAPHIT,2.5); text(xr+22,245,sub('R','L'),{s:14,f:PETROL,a:'start'});
+  pfeil(720,ya+10,720,yb-10,GRUEN,3); text(732,(ya+yb)/2+5,sub('u','a')+' = '+fmt(p.uo,1)+' V',{s:14,f:GRUEN,a:'start'});
+  // Diagramm
+  const G={x:70,y:390,w:690,h:200}, ym=G.y+G.h/2, ky=G.h/80, X=t=>G.x+t/0.06*G.w;
+  el('rect',{x:G.x,y:G.y,width:G.w,height:G.h,fill:'#fff',stroke:'#D9E1E3'}); [-40,-20,0,20,40].forEach(v=>{ el('line',{x1:G.x,y1:ym-v*ky,x2:G.x+G.w,y2:ym-v*ky,stroke:v?'#EEF2F3':GRAPHIT,'stroke-width':v?1:1.5}); text(G.x-6,ym-v*ky+4,v+' V',{s:11,f:STAHL,a:'end',w:400}); });
+  [0,10,20,30,40,50,60].forEach(ms=>text(X(ms/1000),G.y+G.h+16,ms+' ms',{s:11,f:STAHL,w:400}));
+  const st=Math.max(1,Math.floor(d.length/700));
+  if($('ein').checked) linie(d.filter((_,i)=>i%st===0).map(q=>[X(q.t),ym-q.us*ky]),STAHL,2,{'stroke-dasharray':'6 4'});
+  linie(d.filter((_,i)=>i%st===0).map(q=>[X(q.t),ym-q.uo*ky]),GRUEN,3);
+  el('line',{x1:X(p.t),y1:G.y,x2:X(p.t),y2:G.y+G.h,stroke:KUPFER,'stroke-width':1.5}); el('circle',{cx:X(p.t),cy:ym-p.uo*ky,r:5,fill:GRUEN});
+  // Kennwerte (letzte Periode)
+  const per=d.filter(q=>q.t>=0.04), mx=Math.max(...per.map(q=>q.uo)), mn=Math.min(...per.map(q=>q.uo)), mit=per.reduce((s,q)=>s+q.uo,0)/per.length, uh=U*Math.SQRT2, fp=art==='b2u'?100:50;
+  const s=$('status'); s.className='status'+(mx-mn>0.3*mx?' faellt':'');
+  s.innerHTML=(p.leit?(art==='b2u'?(p.pos?'Positive Halbwelle: D1 und D4 leiten.':'Negative Halbwelle: D2 und D3 leiten.'):'Positive Halbwelle: D1 leitet.'):(C>0?'Keine Diode leitet: Der Kondensator versorgt die Last allein und entlädt sich.':'Keine Diode leitet, die Ausgangsspannung ist null.'))+' Restwelligkeit ΔU = '+fmt(mx-mn,2)+' V.';
+  const rows=[['Scheitelwert der Wechselspannung','û = √2 · U',fmt(uh,2)+' V'],['Scheitelwert am Ausgang',art==='b2u'?'û<sub>a</sub> = û − 2 · 0,7 V':'û<sub>a</sub> = û − 0,7 V',fmt(mx,2)+' V'],
+    ['Pulsfrequenz f<sub>p</sub>',art==='b2u'?'Brücke: f<sub>p</sub> = 2 · f':'Einweg: f<sub>p</sub> = f',fp+' Hz'],['Mittelwert der Ausgangsspannung','abgelesen über eine Periode',fmt(mit,2)+' V'],['Restwelligkeit ΔU','ΔU = u<sub>max</sub> − u<sub>min</sub>',fmt(mx-mn,2)+' V']];
+  if(C>0) rows.push(['Faustformel Restwelligkeit','ΔU ≈ I<sub>L</sub> / (f<sub>p</sub> · C)',fmt(mit/R/(fp*C),2)+' V']);
+  rechenweg(rows); $('uOut').textContent=U+' V'; $('rOut').textContent=R+' Ω'; $('cOut').textContent=CW[+$('c').value]+' µF';
+}
+function lauf(ts){ const dt=letzt?Math.min(.05,(ts-letzt)/1000):0; letzt=ts; if($('lauf').checked) tc=(tc+dt*0.006)%0.06; zeichne(); requestAnimationFrame(lauf); }
+knopfStart(START,()=>{ document.querySelector('input[name=art][value=b2u]').checked=true; }); knopfBeamer(); requestAnimationFrame(lauf);
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

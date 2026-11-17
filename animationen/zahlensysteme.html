@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zahlensysteme und Logikgatter</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Elektro und Mechatronik · LF 3 und 4 · AP1</div>
+<h1>Zahlensysteme und Logikgatter</h1>
+<p class="unter">Tippe die Bits an: Dezimal-, Hexadezimal- und BCD-Wert ändern sich sofort, mit Stellenwerten und Rechenweg. Unten schaltest du zwei Eingänge auf ein Logikgatter und siehst die Wahrheitstabelle.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 600" aria-label="Bit-Leiste und Logikgatter"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Zahl</h2>
+      <label class="regler"><span class="zeile"><span>Dezimalwert</span><output id="dOut"></output></span><input id="d" type="range" min="0" max="255" step="1" value="45"></label>
+      <div class="seg" role="radiogroup"><label><input type="radio" name="sicht" value="hex" checked>Hex</label><label><input type="radio" name="sicht" value="bcd">BCD</label></div>
+      <div class="knoepfe"><button id="plus" class="zweit">+1</button><button id="minus" class="zweit">−1</button><button id="null" class="zweit">0</button></div>
+      <div class="hinweis">Die Bits oben im Bild lassen sich antippen. 8 Bit = 1 Byte, Wertebereich 0 bis 255 (0 bis FF hex).</div>
+    </div>
+    <div class="karte">
+      <h2>Logikgatter</h2>
+      <div class="seg" role="radiogroup" style="flex-wrap:wrap">
+        <label><input type="radio" name="g" value="UND" checked>UND</label><label><input type="radio" name="g" value="ODER">ODER</label><label><input type="radio" name="g" value="NICHT">NICHT</label>
+        <label><input type="radio" name="g" value="NAND">NAND</label><label><input type="radio" name="g" value="NOR">NOR</label><label><input type="radio" name="g" value="XOR">XOR</label>
+      </div>
+      <div class="hinweis">Eingänge A und B im Bild antippen. Schaltzeichen nach DIN EN 60617.</div>
+      <div class="knoepfe"><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte"><h2>Rechenweg</h2><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>Stell 1001 0111 ein. Ist das eine gültige BCD-Zahl? Welche Dezimalzahl ist es dual?</li>
+        <li>Welcher Dezimalwert ist 3C hex? Prüf es mit den Bits.</li>
+        <li>Welches Gatter liefert genau dann 1, wenn A und B verschieden sind?</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>Ja: 1001 = 9, 0111 = 7, also BCD 97. Dual: 128 + 16 + 4 + 2 + 1 = 151.</li>
+        <li>3 · 16 + 12 = 60 = 0011 1100.</li>
+        <li>XOR (Exklusiv-ODER, Antivalenz).</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+let A=1,B=0; const HEX='0123456789ABCDEF';
+const GF={UND:(a,b)=>a&b,ODER:(a,b)=>a|b,NICHT:(a)=>1-a,NAND:(a,b)=>1-(a&b),NOR:(a,b)=>1-(a|b),XOR:(a,b)=>a^b};
+const SYM={UND:'&',ODER:'≥1',NICHT:'1',NAND:'&',NOR:'≥1',XOR:'=1'};
+function zeichne(){ const v=+$('d').value, sicht=radio('sicht'), g=radio('g'); svg.innerHTML=''; defs();
+  const bits=[]; for(let i=7;i>=0;i--) bits.push((v>>i)&1);
+  const x0=60, bw=78;
+  text(400,28,'Dualzahl (8 Bit)',{s:15,f:PETROL});
+  bits.forEach((b,j)=>{ const i=7-j, x=x0+j*bw+(j>=4?12:0);
+    const r=el('rect',{x,y:70,width:bw-10,height:64,rx:8,fill:b?KUPFER:'#fff',stroke:b?KUPFER:PETROL,'stroke-width':2.5,style:'cursor:pointer'});
+    r.addEventListener('click',()=>{ $('d').value=v^(1<<i); $('d').dispatchEvent(new Event('input')); });
+    const t=text(x+(bw-10)/2,114,b,{s:30,f:b?'#fff':PETROL}); t.style.pointerEvents='none';
+    text(x+(bw-10)/2-3,58,'2',{s:15,f:STAHL}); text(x+(bw-10)/2+6,50,i,{s:10,f:STAHL});
+    text(x+(bw-10)/2,156,1<<i,{s:14,f:b?KUPFER:STAHL,w:b?700:500}); });
+  // Nibbles
+  const hi=v>>4, lo=v&15, bcdOk=hi<10&&lo<10;
+  [[x0,hi],[x0+4*bw+12,lo]].forEach(([x,n])=>{ el('path',{d:`M${x},172 v8 h${4*bw-10} v-8`,fill:'none',stroke:PETROL,'stroke-width':1.5});
+    const t=sicht==='hex'?HEX[n]:(n<10?n:'ungültig'); text(x+2*bw-5,206,(sicht==='hex'?'Hex ':'BCD ')+t,{s:18,f:sicht==='bcd'&&n>9?ROT:PETROL}); });
+  // Ergebnis
+  el('rect',{x:60,y:228,width:680,height:56,rx:10,fill:'#fff',stroke:'#D9E1E3'});
+  text(170,264,'dez '+v,{s:22,f:PETROL}); text(400,264,'hex '+HEX[hi]+HEX[lo],{s:22,f:PETROL}); text(630,264,'BCD '+(bcdOk?hi*10+lo:'—'),{s:22,f:bcdOk?PETROL:ROT});
+  // Gatter
+  const gy=330; el('line',{x1:40,y1:gy-14,x2:760,y2:gy-14,stroke:'#D9E1E3'});
+  const nicht=g==='NICHT', q=nicht?GF[g](A):GF[g](A,B), inv=['NICHT','NAND','NOR'].includes(g);
+  const ein=(y,n,val,cb)=>{ el('line',{x1:110,y1:y,x2:220,y2:y,stroke:val?KUPFER:STAHL,'stroke-width':4});
+    const c=el('circle',{cx:90,cy:y,r:22,fill:val?KUPFER:'#fff',stroke:val?KUPFER:PETROL,'stroke-width':2.5,style:'cursor:pointer'}); c.addEventListener('click',cb);
+    const t=text(90,y+7,val,{s:20,f:val?'#fff':PETROL}); t.style.pointerEvents='none'; text(50,y+6,n,{s:18,f:PETROL}); };
+  if(nicht) ein(gy+90,'A',A,()=>{A=1-A;zeichne();}); else { ein(gy+55,'A',A,()=>{A=1-A;zeichne();}); ein(gy+125,'B',B,()=>{B=1-B;zeichne();}); }
+  el('rect',{x:220,y:gy+20,width:110,height:140,fill:'#fff',stroke:PETROL,'stroke-width':3}); text(275,gy+56,SYM[g],{s:24,f:PETROL});
+  if(inv) el('circle',{cx:338,cy:gy+90,r:8,fill:'#fff',stroke:PETROL,'stroke-width':3});
+  el('line',{x1:inv?346:330,y1:gy+90,x2:440,y2:gy+90,stroke:q?GRUEN:STAHL,'stroke-width':4});
+  el('circle',{cx:462,cy:gy+90,r:22,fill:q?GRUEN:'#fff',stroke:q?GRUEN:PETROL,'stroke-width':2.5}); text(462,gy+97,q,{s:20,f:q?'#fff':PETROL}); text(500,gy+96,'Q',{s:18,f:PETROL,a:'start'});
+  // Wahrheitstabelle
+  const tx=560, ty=gy+10, kombi=nicht?[[0],[1]]:[[0,0],[0,1],[1,0],[1,1]], sp=nicht?['A','Q']:['B','A','Q'];
+  sp.forEach((h,k)=>text(tx+20+k*56,ty+20,h,{s:16,f:PETROL}));
+  kombi.forEach((c,r)=>{ const aa=nicht?c[0]:c[1], bb=nicht?0:c[0], qq=nicht?GF[g](aa):GF[g](aa,bb), akt=nicht?aa===A:(aa===A&&bb===B), yy=ty+34+r*32;
+    if(akt) el('rect',{x:tx-6,y:yy-2,width:sp.length*56+4,height:30,rx:6,fill:'#FBEDE2'});
+    const werte=nicht?[aa,qq]:[bb,aa,qq]; werte.forEach((w,k)=>text(tx+20+k*56,yy+20,w,{s:16,f:k===werte.length-1?(w?GRUEN:STAHL):GRAPHIT})); });
+  const FORM={UND:'Q = A ∧ B',ODER:'Q = A ∨ B',NICHT:'Q = ¬A',NAND:'Q = ¬(A ∧ B)',NOR:'Q = ¬(A ∨ B)',XOR:'Q = (A ∧ ¬B) ∨ (¬A ∧ B)'};
+  text(400,590,FORM[g],{s:16,f:PETROL});
+  const st=$('status'); st.className='status'; st.innerHTML='dez '+v+' = '+bits.slice(0,4).join('')+' '+bits.slice(4).join('')+' dual = '+HEX[hi]+HEX[lo]+' hex'+(sicht==='bcd'?(bcdOk?' · BCD '+(hi*10+lo):' · keine gültige BCD-Zahl'):'');
+  const sum=bits.map((b,j)=>b?(1<<(7-j)):0).filter(x=>x);
+  rechenweg([['dual → dezimal',sum.join(' + ')||'0',v],['dual → hex','Viererpäckchen: '+bits.slice(0,4).join('')+' = '+hi+', '+bits.slice(4).join('')+' = '+lo,HEX[hi]+HEX[lo]],
+    ['hex → dezimal',HEX[hi]+' · 16 + '+HEX[lo]+' = '+hi+' · 16 + '+lo,v],['BCD','jede Tetrade eine Dezimalziffer 0 … 9',bcdOk?hi*10+lo:'ungültig (Tetrade > 9)'],['Gatter '+g,FORM[g],'Q = '+q]]);
+  $('dOut').textContent=v;
+}
+document.querySelectorAll('input').forEach(e=>e.addEventListener('input',zeichne)); document.querySelectorAll('input[type=radio]').forEach(e=>e.addEventListener('change',zeichne));
+const setz=n=>{ $('d').value=Math.max(0,Math.min(255,n)); $('d').dispatchEvent(new Event('input')); };
+$('plus').addEventListener('click',()=>setz(+$('d').value+1)); $('minus').addEventListener('click',()=>setz(+$('d').value-1)); $('null').addEventListener('click',()=>setz(0));
+knopfBeamer(); zeichne();
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

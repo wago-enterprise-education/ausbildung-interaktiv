@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Normalverteilung – Mittelwert und Standardabweichung</title>
+<!--LIVEMETA-->
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+</style>
+<!--LIVELD-->
+</head>
+<body>
+<div class="thema">NTG · 4.2 Statistische Kennwerte</div>
+<h1>Normalverteilung: Mittelwert und Standardabweichung</h1>
+<p class="unter">Eine Maschine fertigt Bolzen mit dem Sollmaß 12,00 mm. Stell Mittelwert und Streuung ein und beobachte Histogramm und Glockenkurve.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 520" aria-label="Histogramm mit Glockenkurve und Streubereichen"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Einstellungen</h2>
+      <label class="regler"><span class="zeile"><span>Mittelwert x̄</span><output id="mOut"></output></span><input id="m" type="range" min="11.95" max="12.05" step="0.005" value="12"></label>
+      <label class="regler"><span class="zeile"><span>Standardabweichung s</span><output id="sOut"></output></span><input id="s" type="range" min="0.01" max="0.05" step="0.001" value="0.02"></label>
+      <label class="regler"><span class="zeile"><span>Stichprobengröße n</span><output id="nOut"></output></span><input id="n" type="range" min="50" max="1000" step="50" value="200"></label>
+      <div class="haken">
+        <label><input id="hist" type="checkbox" checked> Histogramm</label>
+        <label><input id="glocke" type="checkbox" checked> Glockenkurve</label>
+        <label><input id="ber" type="checkbox" checked> Bereiche ±1s, ±2s, ±3s</label>
+        <label><input id="tol" type="checkbox"> Toleranzgrenzen und Prozessfähigkeit (C<sub>p</sub>, C<sub>pk</sub>)</label>
+      </div>
+      <div id="tolBox" style="display:none">
+      <label class="regler"><span class="zeile"><span>untere Toleranzgrenze UGW</span><output id="uOut"></output></span><input id="ugw" type="range" min="11.9" max="12" step="0.005" value="11.94"></label>
+      <label class="regler"><span class="zeile"><span>obere Toleranzgrenze OGW</span><output id="oOut"></output></span><input id="ogw" type="range" min="12" max="12.1" step="0.005" value="12.06"></label>
+      </div>
+      <div class="hinweis">Feste Achsen: 11,85 … 12,15 mm, Klassenbreite 0,01 mm, Häufigkeit 0 … 40 %.</div>
+      <div class="knoepfe">
+        <button id="neu">Neue Stichprobe</button>
+        <button id="start" class="zweit">Startwerte</button>
+        <button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button>
+      </div>
+    </div>
+    <div class="karte">
+      <h2>Rechenweg</h2>
+      <table id="werte"></table>
+    </div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>Verdopple s. Was passiert mit Höhe und Breite der Glockenkurve?</li>
+        <li>Nimm n = 50 und zieh mehrmals eine neue Stichprobe. Warum schwankt das Histogramm so stark?</li>
+        <li>Wie viel Prozent der Teile liegen außerhalb von ±3s?</li>
+      </ol>
+      <details><summary>Lösungen</summary>
+        <ol>
+          <li>Die Kurve wird doppelt so breit und halb so hoch. Die Fläche darunter (100 %) bleibt gleich.</li>
+          <li>Bei kleinen Stichproben bestimmt der Zufall stark, in welche Klasse die Teile fallen. Mit größerem n nähert sich das Histogramm der Glockenkurve.</li>
+          <li>Etwa 0,3 %, also rund 3 von 1 000 Teilen.</li>
+        </ol>
+      </details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · Zufallsstichprobe aus einer Normalverteilung · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>x.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const XMIN=11.85, XMAX=12.15, KB=0.01, YMAX=40, START={m:12,s:0.02,n:200};
+const D={x:80,y:40,w:690,h:400}, X=x=>D.x+(Math.max(XMIN,Math.min(XMAX,x))-XMIN)/(XMAX-XMIN)*D.w, Y=p=>D.y+D.h-p/YMAX*D.h;
+let saat=1, z=[];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||'#252B2E','font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:'#EEF2F3','stroke-width':4},o.p);e.innerHTML=s;return e}
+function zufall(seed){ let a=seed>>>0; return ()=>{ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function ziehe(){ const r=zufall(saat); z=[]; for(let i=0;i<1000;i++){ const u=Math.max(1e-12,r()), v=r(); z.push(Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)); } }  // Standardnormal, skaliert später
+function zeichne(){
+  const m=+$('m').value, s=+$('s').value, n=+$('n').value;
+  const xs=z.slice(0,n).map(q=>m+s*q);
+  const xq=xs.reduce((a,b)=>a+b,0)/n, sd=Math.sqrt(xs.reduce((a,b)=>a+(b-xq)**2,0)/(n-1));
+  svg.innerHTML='';
+  // Bereiche
+  if($('ber').checked){ [[3,'#EEF2F3','#D9E1E3'],[2,'#F6E3D2','#F0CDAE'],[1,'#F2C9A3','#E9AE78']].forEach(([k,c,c2])=>{
+      el('rect',{x:X(m-k*s),y:D.y,width:X(m+k*s)-X(m-k*s),height:D.h,fill:c2,'fill-opacity':.55}); }); }
+  // Gitter
+  for(let p=0;p<=YMAX;p+=10){ el('line',{x1:D.x,y1:Y(p),x2:D.x+D.w,y2:Y(p),stroke:'#D9E1E3'}); text(D.x-8,Y(p)+5,fmt(p,0),{s:13,f:'#6E8591',a:'end',w:400}); }
+  for(let x=XMIN;x<=XMAX+1e-9;x+=0.05){ el('line',{x1:X(x),y1:D.y+D.h,x2:X(x),y2:D.y+D.h+6,stroke:'#252B2E'}); text(X(x),D.y+D.h+22,fmt(x,2),{s:13,f:'#6E8591',w:400}); }
+  text(D.x-8,D.y-14,'Häufigkeit in %',{s:14,a:'start'}); text(D.x+D.w,D.y+D.h+44,'Durchmesser in mm',{s:14,a:'end'});
+  // Histogramm
+  const nk=Math.round((XMAX-XMIN)/KB), h=new Array(nk).fill(0); let aussen=0;
+  xs.forEach(x=>{ const i=Math.floor((x-XMIN)/KB+1e-9); if(i>=0&&i<nk) h[i]++; else aussen++; });
+  if($('hist').checked) h.forEach((c,i)=>{ const p=c/n*100; if(!p) return; el('rect',{x:X(XMIN+i*KB)+1,y:Y(Math.min(YMAX,p)),width:X(XMIN+KB)-X(XMIN)-2,height:D.h-(Y(Math.min(YMAX,p))-D.y),fill:'#163A4A','fill-opacity':.8}); });
+  // Glocke
+  if($('glocke').checked){ const pts=[]; for(let x=XMIN;x<=XMAX+1e-9;x+=0.001){ const p=Math.exp(-0.5*((x-m)/s)**2)/(s*Math.sqrt(2*Math.PI))*KB*100; pts.push([X(x),Y(Math.min(YMAX+2,p))]); }
+    el('polyline',{points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:'#C56A24','stroke-width':4}); }
+  el('line',{x1:D.x,y1:D.y+D.h,x2:D.x+D.w,y2:D.y+D.h,stroke:'#252B2E','stroke-width':2}); el('line',{x1:D.x,y1:D.y+D.h,x2:D.x,y2:D.y-6,stroke:'#252B2E','stroke-width':2});
+  el('line',{x1:X(m),y1:D.y,x2:X(m),y2:D.y+D.h,stroke:'#C56A24','stroke-width':2,'stroke-dasharray':'6 4'}); text(X(m),D.y-10,'x̄',{s:18,f:'#C56A24'});
+  // Bereichsbeschriftung
+  const anteil=k=>xs.filter(x=>Math.abs(x-m)<=k*s).length/n*100;
+  if($('ber').checked){ [[1,68.3],[2,95.4],[3,99.7]].forEach(([k,soll],i)=>{ const y=D.y+18+i*22, x1=X(m-k*s), x2=X(m+k*s);
+      el('line',{x1,y1:y-5,x2,y2:y-5,stroke:'#163A4A','stroke-width':1.5}); [x1,x2].forEach(x=>el('line',{x1:x,y1:y-10,x2:x,y2:y,stroke:'#163A4A','stroke-width':1.5})); if(x2-x1>90) text((x1+x2)/2,y,'±'+k+'s: '+fmt(soll,1)+' %',{s:14,f:'#163A4A'}); }); }
+  $('status').innerHTML=`Stichprobe: x̄ = ${fmt(xq,4)} mm · s = ${fmt(sd,4)} mm · n = ${n}`;
+  const tol=$('tol').checked; $('tolBox').style.display=tol?'':'none'; let cp=0,cpk=0,aus=0; const U=+$('ugw').value, O=+$('ogw').value;
+  if(tol){ cp=(O-U)/(6*sd); cpk=Math.min(O-xq,xq-U)/(3*sd); aus=xs.filter(x=>x<U||x>O).length;
+    [[XMIN,U],[O,XMAX]].forEach(([a,b])=>el('rect',{x:X(a),y:D.y,width:Math.max(0,X(b)-X(a)),height:D.h,fill:'#C0392B','fill-opacity':.12}));
+    [[U,'UGW'],[O,'OGW']].forEach(([g,l])=>{ el('line',{x1:X(g),y1:D.y-4,x2:X(g),y2:D.y+D.h,stroke:'#C0392B','stroke-width':3}); text(X(g),D.y+D.h-8,l,{s:14,f:'#C0392B'}); });
+    const ok=cpk>=1.33; $('status').innerHTML+=` · C<sub>p</sub> = ${fmt(cp,2)} · C<sub>pk</sub> = ${fmt(cpk,2)}${ok?' · Prozess fähig':' · Prozess nicht fähig'} · ${aus} Teile außerhalb der Toleranz`; }
+  const rows=[], r=(a,b,c)=>rows.push(`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`);
+  r('Mittelwert der Stichprobe x̄','Σx / n',fmt(xq,4)+' mm');
+  r('Standardabweichung der Stichprobe s','√( Σ(x − x̄)² / (n − 1) )',fmt(sd,4)+' mm');
+  [[1,68.3],[2,95.4],[3,99.7]].forEach(([k,soll])=>r('Anteil in x̄ ± '+k+'s','Theorie '+fmt(soll,1)+' % · Bereich '+fmt(m-k*s,3)+' … '+fmt(m+k*s,3)+' mm',fmt(anteil(k),1)+' %'));
+  if(aussen) r('außerhalb der Achse','',aussen+' Teile');
+  if(tol){ r('Prozessfähigkeit C<sub>p</sub>','(OGW − UGW) / (6 · s) = '+fmt(O-U,3)+' mm / (6 · '+fmt(sd,4)+' mm)',fmt(cp,2));
+    r('kritische Prozessfähigkeit C<sub>pk</sub>','min(OGW − x̄ ; x̄ − UGW) / (3 · s)',fmt(cpk,2));
+    r('Bewertung','häufige Forderung: C<sub>pk</sub> ≥ 1,33. C<sub>p</sub> zeigt die Streuung, C<sub>pk</sub> auch die Lage.',cpk>=1.33?'fähig':'nicht fähig');
+    r('Teile außerhalb der Toleranz','in der Stichprobe',aus+' von '+n); }
+  $('werte').innerHTML=rows.join('');
+  $('uOut').textContent=fmt(+$('ugw').value,3)+' mm'; $('oOut').textContent=fmt(+$('ogw').value,3)+' mm';
+  $('mOut').textContent=fmt(m,3)+' mm'; $('sOut').textContent=fmt(s,3)+' mm'; $('nOut').textContent=n;
+}
+['m','s','n','hist','glocke','ber','tol','ugw','ogw'].forEach(id=>$(id).addEventListener('input',zeichne));
+$('neu').addEventListener('click',()=>{ saat=(saat*7919+13)%100003; ziehe(); zeichne(); });
+$('start').addEventListener('click',()=>{ for(const k in START)$(k).value=START[k]; saat=1; ziehe(); zeichne(); });
+$('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});});
+ziehe(); zeichne();
+})();
+</script>
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wendeschützschaltung mit Selbsthaltung und Verriegelung</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Elektro und Mechatronik · LF 3 · AP1</div>
+<h1>Wendeschützschaltung mit Selbsthaltung und Verriegelung</h1>
+<p class="unter">Drück die Taster im Steuerstromkreis. K1 lässt den Motor rechts laufen, K2 links. Schalte die Verriegelungen ab und sieh, was im Hauptstromkreis passieren würde.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 600" aria-label="Steuerstromkreis und Hauptstromkreis einer Wendeschützschaltung"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Bedienen</h2>
+      <div class="knoepfe" style="flex-wrap:wrap">
+        <button id="b1">S1 Rechts</button><button id="b2">S2 Links</button><button id="b0" class="zweit">S0 Aus</button>
+      </div>
+      <div class="haken">
+        <label><input id="sv" type="checkbox" checked> Schützverriegelung (Öffner K2 vor K1 und K1 vor K2)</label>
+        <label><input id="tv" type="checkbox" checked> Tasterverriegelung (Öffner von S2 vor K1 und S1 vor K2)</label>
+        <label><input id="f2" type="checkbox"> Motorschutzrelais F2 hat ausgelöst</label>
+      </div>
+      <div class="hinweis">Taster auch direkt im Stromlaufplan antippen. Ein Druck dauert in der Animation 0,4 s. Leiter mit Spannung im Steuerstromkreis werden braun. Hauptstromkreis vereinfacht ohne Sicherungen.</div>
+      <div class="knoepfe"><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte"><h2>Was gerade passiert</h2><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>Starte Rechtslauf und drück dann S2. Was passiert mit beiden Verriegelungen, was nur mit Schützverriegelung?</li>
+        <li>Schalte beide Verriegelungen ab, starte Rechtslauf und drück S2. Was würde im Hauptstromkreis passieren?</li>
+        <li>Wozu dient der Schließer von K1 parallel zu S1?</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>Mit Tasterverriegelung: Der Öffner von S2 unterbricht K1, gleichzeitig zieht K2 an. Der Motor wird direkt umgesteuert. Nur mit Schützverriegelung: Nichts passiert, erst S0 drücken, dann S2.</li>
+        <li>K1 und K2 wären gleichzeitig eingeschaltet: Kurzschluss zwischen L1 und L3. Deshalb ist die Schützverriegelung Pflicht.</li>
+        <li>Selbsthaltung: Nach dem Loslassen von S1 hält sich K1 über den eigenen Schließer, bis S0 oder F2 den Stromkreis unterbricht.</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · Betriebsmittelkennzeichen vereinfacht nach DIN EN 81346 · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+let K1=false, K2=false, d0=0, d1=0, d2=0, rot=0, letzt=0;
+function logik(){ const s0=d0>0, s1=d1>0, s2=d2>0, sv=$('sv').checked, tv=$('tv').checked, base=!s0&&!$('f2').checked;
+  for(let i=0;i<3;i++){ K1=base&&(s1||K1)&&(!tv||!s2)&&(!sv||!K2); K2=base&&(s2||K2)&&(!tv||!s1)&&(!sv||!K1); } }
+const YL=50, YN=560;
+function kontakt(x,y1,y2,zu,oeffner,name,live,klick){ const g=el('g',klick?{style:'cursor:pointer'}:{}), c=live?BRAUN:GRAPHIT, w=live?4.5:2.5;
+  el('circle',{cx:x,cy:y1,r:3.5,fill:GRAPHIT},g); el('circle',{cx:x,cy:y2,r:3.5,fill:GRAPHIT},g);
+  if(zu) el('line',{x1:x,y1:y1,x2:x,y2:y2,stroke:c,'stroke-width':w},g); else el('line',{x1:x,y1:y2,x2:x+(oeffner?-14:14),y2:y1+4,stroke:GRAPHIT,'stroke-width':3},g);
+  if(oeffner) el('line',{x1:x,y1:y1,x2:x+(zu?-8:-14),y2:y1,stroke:GRAPHIT,'stroke-width':2},g);
+  if(name) text(x-12,(y1+y2)/2+5,name,{s:12,f:PETROL,a:'end'},g);
+  if(klick){ el('rect',{x:x-40,y:y1-6,width:60,height:y2-y1+12,fill:'transparent'},g); g.addEventListener('pointerdown',ev=>{ev.preventDefault();klick();}); }
+}
+function zeichne(){ logik(); svg.innerHTML=''; defs();
+  const s0=d0>0, s1=d1>0, s2=d2>0, sv=$('sv').checked, tv=$('tv').checked, f2=$('f2').checked;
+  text(200,22,'Steuerstromkreis',{s:15,f:PETROL}); text(650,22,'Hauptstromkreis',{s:15,f:PETROL});
+  el('line',{x1:40,y1:YL,x2:400,y2:YL,stroke:BRAUN,'stroke-width':4}); text(32,YL+5,'L',{s:14,f:BRAUN,a:'end'});
+  el('line',{x1:40,y1:YN,x2:400,y2:YN,stroke:BLAU,'stroke-width':3}); text(32,YN+5,'N',{s:14,f:BLAU,a:'end'});
+  // gemeinsamer Teil: F2 (Öffner), S0 (Öffner)
+  const xm=210, v0=true, v1=v0&&!f2, v2=v1&&!s0;
+  linie([[xm,YL],[xm,90]],BRAUN,4.5); kontakt(xm,90,130,!f2,true,'F2',v0); linie([[xm,130],[xm,150]],v1?BRAUN:GRAPHIT,v1?4.5:2.5);
+  kontakt(xm,150,190,!s0,true,'S0',v1,()=>{d0=0.4;}); linie([[xm,190],[xm,210]],v2?BRAUN:GRAPHIT,v2?4.5:2.5);
+  const zweig=(x,sT,kS,sAnder,kAnder,kSpule,nT,nK,nTA,nKA,nSp,druck)=>{
+    linie([[xm,210],[x,210],[x,235]],v2?BRAUN:GRAPHIT,v2?4.5:2.5); linie([[x,210],[x+55,210],[x+55,235]],v2?BRAUN:GRAPHIT,v2?4.5:2.5);
+    kontakt(x,235,275,sT,false,nT,v2,druck); kontakt(x+55,235,275,kS,false,'',v2); text(x+70,260,nK,{s:12,f:PETROL,a:'start'});
+    const a=v2&&(sT||kS); linie([[x,275],[x,295]],a?BRAUN:GRAPHIT,a?4.5:2.5); linie([[x+55,275],[x+55,295],[x,295]],a?BRAUN:GRAPHIT,a?4.5:2.5);
+    let y=295, l=a;
+    if(tv){ kontakt(x,y+10,y+50,!sAnder,true,nTA,l); l=l&&!sAnder; linie([[x,y],[x,y+10]],a?BRAUN:GRAPHIT,a?4.5:2.5); y+=50; }
+    else { linie([[x,y],[x,y+50]],l?BRAUN:GRAPHIT,l?4.5:2.5); y+=50; }
+    if(sv){ linie([[x,y],[x,y+10]],l?BRAUN:GRAPHIT,l?4.5:2.5); kontakt(x,y+10,y+50,!kAnder,true,nKA,l); l=l&&!kAnder; y+=50; }
+    else { linie([[x,y],[x,y+50]],l?BRAUN:GRAPHIT,l?4.5:2.5); y+=50; }
+    linie([[x,y],[x,440]],l?BRAUN:GRAPHIT,l?4.5:2.5);
+    el('rect',{x:x-22,y:440,width:44,height:40,fill:kSpule?'#F3D9C4':'#fff',stroke:GRAPHIT,'stroke-width':3}); text(x+30,466,nSp,{s:14,f:PETROL,a:'start'});
+    linie([[x,480],[x,YN]],BLAU,2.5); };
+  zweig(110,s1,K1,s2,K2,K1,'S1','K1','S2','K2','K1',()=>{d1=0.4;});
+  zweig(300,s2,K2,s1,K1,K2,'S2','K2','S1','K1','K2',()=>{d2=0.4;});
+  // Hauptstromkreis
+  const R=[80,100,120], LX=[500,780], c1=[540,570,600], c2=[680,710,740], kurz=K1&&K2;
+  ['L1','L2','L3'].forEach((n,i)=>{ el('line',{x1:LX[0],y1:R[i],x2:LX[1],y2:R[i],stroke:[BRAUN,GRAPHIT,STAHL][i],'stroke-width':3}); text(LX[0]-8,R[i]+5,n,{s:12,a:'end'}); });
+  const hk=(xs,zu,nm)=>{ xs.forEach((x,i)=>{ el('circle',{cx:x,cy:R[i],r:3.5,fill:GRAPHIT}); linie([[x,R[i]],[x,170]],zu?KUPFER:GRAPHIT,zu?4:2.5); kontakt(x,170,205,zu,false,'',false); if(zu) el('line',{x1:x,y1:170,x2:x,y2:205,stroke:KUPFER,'stroke-width':4}); });
+    el('line',{x1:xs[0]-6,y1:188,x2:xs[2]+6,y2:188,stroke:STAHL,'stroke-dasharray':'4 4'}); text(xs[2]+14,192,nm,{s:13,f:PETROL,a:'start'}); };
+  hk(c1,K1,'K1'); hk(c2,K2,'K2');
+  c1.forEach(x=>linie([[x,205],[x,330]],K1?KUPFER:GRAPHIT,K1?4:2.5));
+  [[c2[0],250,c1[2]],[c2[1],265,c1[1]],[c2[2],280,c1[0]]].forEach(([x,y,z])=>{ linie([[x,205],[x,y],[z,y]],K2?KUPFER:GRAPHIT,K2?4:2.5); el('circle',{cx:z,cy:y,r:4,fill:GRAPHIT}); });
+  ['U','V','W'].forEach((n,i)=>text(c1[i]-10,325,n,{s:12,f:STAHL,a:'end'}));
+  const mx=570, my=400; el('circle',{cx:mx,cy:my,r:52,fill:'#fff',stroke:PETROL,'stroke-width':3}); text(mx,my-4,'M',{s:22,f:PETROL}); text(mx,my+20,'3~',{s:15,f:PETROL});
+  c1.forEach(x=>linie([[x,330],[x,my-Math.sqrt(52*52-(x-mx)**2)]],K1||K2?KUPFER:GRAPHIT,2.5));
+  if((K1||K2)&&!kurz){ const g=el('g',{transform:`rotate(${rot} ${mx} ${my})`}); el('path',{d:`M${mx+66},${my} A66,66 0 0 1 ${mx},${my+66}`,fill:'none',stroke:GRUEN,'stroke-width':4,'marker-end':'url(#m3)'},g); }
+  text(mx,my+86,kurz?'':K1?'Rechtslauf':K2?'Linkslauf':'Stillstand',{s:15,f:K1||K2?GRUEN:STAHL});
+  if(kurz){ el('path',{d:`M${c2[0]-10},${R[0]+20} l16,30 l-10,0 l14,30`,stroke:ROT,'stroke-width':5,fill:'none'}); text(690,330,'Kurzschluss',{s:18,f:ROT}); text(690,352,'L1 gegen L3!',{s:16,f:ROT}); }
+  const st=$('status'); st.className='status'+(kurz?' faellt':(K1||K2?' gut':''));
+  st.innerHTML=kurz?'K1 und K2 sind gleichzeitig angezogen: Kurzschluss zwischen L1 und L3. Ohne Verriegelung würden die Sicherungen auslösen oder die Schütze verschweißen.':f2?'F2 hat ausgelöst: Der Steuerstromkreis ist unterbrochen, kein Schütz kann anziehen.':K1?'K1 hält sich selbst über seinen Schließer: Rechtslauf.':K2?'K2 hält sich selbst über seinen Schließer: Linkslauf.':'Beide Schütze abgefallen, der Motor steht.';
+  rechenweg([['Schütz K1 (Rechtslauf)',K1?'angezogen, Selbsthaltung aktiv':'abgefallen',K1?'EIN':'AUS'],['Schütz K2 (Linkslauf)',K2?'angezogen, Selbsthaltung aktiv':'abgefallen',K2?'EIN':'AUS'],
+    ['Schützverriegelung',sv?'Öffner des anderen Schützes in Reihe zur Spule':'abgeschaltet!',sv?'aktiv':'aus'],['Tasterverriegelung',tv?'Öffner des Gegentasters in Reihe':'abgeschaltet',tv?'aktiv':'aus']]);
+}
+function lauf(ts){ const dt=letzt?Math.min(.05,(ts-letzt)/1000):0; letzt=ts; d0=Math.max(0,d0-dt); d1=Math.max(0,d1-dt); d2=Math.max(0,d2-dt); if(!(K1&&K2)) rot+=(K1?1:K2?-1:0)*dt*180; zeichne(); requestAnimationFrame(lauf); }
+$('b1').addEventListener('click',()=>{d1=0.4;}); $('b2').addEventListener('click',()=>{d2=0.4;}); $('b0').addEventListener('click',()=>{d0=0.4;});
+knopfBeamer(); requestAnimationFrame(lauf);
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

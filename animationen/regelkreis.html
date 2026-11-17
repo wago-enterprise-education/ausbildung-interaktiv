@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Regelkreis: Füllstandsregelung mit P, I, PI, PID</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Automatisierung und Mechatronik · LF 9 bis 11 · AP2</div>
+<h1>Regelkreis: Füllstandsregelung mit P-, I-, PI- und PID-Regler</h1>
+<p class="unter">Der Regler vergleicht Sollwert w und Istwert x und stellt das Zulaufventil (Stellgröße y). Sprung auf den Sollwert oder Störung am Abfluss auslösen und im Liniendiagramm sehen, wie schnell, wie genau und wie ruhig der Regler ausregelt.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 600" aria-label="Behälter mit Regelkreis und Liniendiagramm"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Regler</h2>
+      <div class="seg" role="radiogroup"><label><input type="radio" name="typ" value="P">P</label><label><input type="radio" name="typ" value="I">I</label><label><input type="radio" name="typ" value="PI" checked>PI</label><label><input type="radio" name="typ" value="PID">PID</label></div>
+      <label class="regler" id="wKp"><span class="zeile"><span>Proportionalbeiwert K<sub>P</sub></span><output id="kpOut"></output></span><input id="kp" type="range" min="0.5" max="20" step="0.5" value="4"></label>
+      <label class="regler" id="wTn"><span class="zeile"><span>Nachstellzeit T<sub>n</sub></span><output id="tnOut"></output></span><input id="tn" type="range" min="1" max="60" step="1" value="12"></label>
+      <label class="regler" id="wTv"><span class="zeile"><span>Vorhaltzeit T<sub>v</sub></span><output id="tvOut"></output></span><input id="tv" type="range" min="0" max="5" step="0.25" value="0.5"></label>
+    </div>
+    <div class="karte">
+      <h2>Strecke</h2>
+      <label class="regler"><span class="zeile"><span>Sollwert w</span><output id="wOut"></output></span><input id="w" type="range" min="0" max="90" step="1" value="60"></label>
+      <label class="regler"><span class="zeile"><span>Abfluss (Störgröße z)</span><output id="zOut"></output></span><input id="z" type="range" min="0" max="60" step="1" value="20"></label>
+      <div class="knoepfe" style="flex-wrap:wrap"><button id="sprung">Sollwertsprung +20 cm</button><button id="stoer" class="zweit">Störung: Abfluss +20 %</button><button id="leer" class="zweit">Behälter leeren</button></div>
+      <div class="haken"><label><input id="lauf" type="checkbox" checked> Zeit läuft</label><label><input id="schnell" type="checkbox"> doppelte Geschwindigkeit</label></div>
+      <div class="hinweis">Diagramm: die letzten 60 s. Ventil mit Stellzeit (Verzögerung 2 s) und 1 s Totzeit der Messung. Stellgröße begrenzt auf 0 bis 100 %.</div>
+      <div class="knoepfe"><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte"><h2>Regelgrößen</h2><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>Stell den P-Regler ein und erhöhe den Abfluss. Warum bleibt eine Regelabweichung?</li>
+        <li>Erhöhe beim P-Regler K<sub>P</sub> auf 20. Was passiert?</li>
+        <li>PI-Regler: Verkleinere T<sub>n</sub> auf 2 s. Was beobachtest du nach einem Sollwertsprung?</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>Der P-Regler braucht eine Regelabweichung e, um eine Stellgröße y = K<sub>P</sub> · e auszugeben. Gegen den Abfluss muss das Ventil offen bleiben, also bleibt e ≠ 0 (bleibende Regelabweichung). Der I-Anteil beseitigt sie.</li>
+        <li>Der Regler wird schneller, schwingt aber wegen Totzeit und Ventilverzögerung über. Zu großes K<sub>P</sub> macht den Kreis instabil.</li>
+        <li>Starkes Überschwingen: Der I-Anteil integriert zu schnell. Größeres T<sub>n</sub> beruhigt den Kreis, regelt aber langsamer aus.</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · vereinfachtes Streckenmodell (integrierende Strecke) · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+let t=0, h=40, yv=0, iA=0, xf=40, hist=[], mess=[], letzt=0, y=0, dAnt=0, eJetzt=0;
+function schritt(dt){ if(!(dt>0)) return; const typ=radio('typ'), Kp=+$('kp').value, Tn=+$('tn').value, Tv=+$('tv').value, w=+$('w').value, z=+$('z').value/100;
+  mess.push([t,h]); while(mess.length>1&&mess[1][0]<=t-1) mess.shift(); const x=mess[0][1];
+  const e=w-x; eJetzt=e; const Tf=0.3, dx=(x-xf)/Tf; xf+=(x-xf)*Math.min(1,dt/Tf); // D-Anteil: gefilterte Ableitung des Istwerts (kein Stoß beim Sollwertsprung)
+  dAnt=typ==='PID'?-Kp*Tv*dx:0; let yr;
+  if(typ==='P') yr=Kp*e; else { const pAnt=typ==='I'?0:Kp*e, dI=typ==='I'?e*dt/Tn*4:Kp*e*dt/Tn, yv0=pAnt+iA+dI+dAnt;
+    if(!((yv0>100&&dI>0)||(yv0<0&&dI<0))) iA+=dI; // Anti-Windup: nicht weiter integrieren, solange das Ventil am Anschlag ist
+    iA=Math.max(0,Math.min(100,iA)); yr=pAnt+iA+dAnt; }
+  y=Math.max(0,Math.min(100,yr));
+  yv+=(y-yv)*Math.min(1,dt/2); h+=(5*yv/100-5*z*Math.sqrt(Math.max(0,h)/60))*dt; h=Math.max(0,Math.min(100,h));
+  t+=dt; hist.push({t,w,x,y,h}); while(hist.length&&hist[0].t<t-60) hist.shift(); }
+function zeichne(){ const typ=radio('typ'), w=+$('w').value, z=+$('z').value; svg.innerHTML=''; defs();
+  $('wKp').style.display=typ==='I'?'none':''; $('wTn').style.display=typ==='P'?'none':''; $('wTv').style.display=typ==='PID'?'':'none';
+  // Behälter
+  const bx=60, by=110, bw=150, bh=260, Yh=v=>by+bh-v/100*bh;
+  el('rect',{x:bx,y:Yh(h),width:bw,height:h/100*bh,fill:BLAU,opacity:.35}); el('path',{d:`M${bx},${by} V${by+bh} H${bx+bw} V${by}`,fill:'none',stroke:PETROL,'stroke-width':4});
+  el('line',{x1:bx-8,y1:Yh(w),x2:bx+bw+8,y2:Yh(w),stroke:GRUEN,'stroke-width':2.5,'stroke-dasharray':'8 5'}); text(bx-12,Yh(w)+5,'w',{s:15,f:GRUEN,a:'end'});
+  for(let v=0;v<=100;v+=20){ el('line',{x1:bx+bw,y1:Yh(v),x2:bx+bw+8,y2:Yh(v),stroke:STAHL}); text(bx+bw+12,Yh(v)+4,v,{s:11,f:STAHL,a:'start',w:500}); }
+  // Zulauf mit Ventil
+  linie([[bx+40,60],[bx+40,by-10]],BLAU,6); el('path',{d:`M${bx+28},70 l24,16 v-16 l-24,16 z`,fill:yv>1?KUPFER:'#fff',stroke:PETROL,'stroke-width':2}); text(bx+60,64,'Ventil y = '+fmt(yv,0)+' %',{s:13,f:KUPFER,a:'start'});
+  if(yv>1) for(let k=0;k<4;k++){ const yy=by-10+((t*80+k*30)%((by+bh)-Yh(h)+10)); if(yy<Yh(h)) el('circle',{cx:bx+40,cy:yy,r:3,fill:BLAU}); }
+  // Abfluss
+  linie([[bx+bw-30,by+bh],[bx+bw-30,by+bh+30],[bx+bw+40,by+bh+30]],BLAU,6); el('path',{d:`M${bx+bw+10},${by+bh+22} l0,16 l20,-16 l0,16 z`,fill:z>0?STAHL:'#fff',stroke:PETROL,'stroke-width':2}); text(bx+bw+44,by+bh+50,'Abfluss z = '+z+' %',{s:13,f:STAHL,a:'end'});
+  // Sensor + Regler
+  el('rect',{x:bx+bw-28,y:by-24,width:16,height:24,fill:PETROL}); text(bx+bw-20,by-30,'LT',{s:12,f:PETROL}); el('line',{x1:bx+bw-20,y1:by,x2:bx+bw-20,y2:Yh(h),stroke:PETROL,'stroke-dasharray':'3 4'});
+  el('rect',{x:70,y:450,width:130,height:56,rx:8,fill:'#fff',stroke:PETROL,'stroke-width':2.5}); text(135,476,typ+'-Regler',{s:15,f:PETROL}); text(135,496,'e = w − x = '+fmt(w-(hist.length?hist[hist.length-1].x:h),1),{s:12,f:STAHL,w:500});
+  text(135,526,'x vom Sensor LT · y an das Ventil',{s:11,f:STAHL,w:500});
+  // Diagramm
+  const G={x:300,y:60,w:470,h:440}, X=tt=>G.x+G.w-(t-tt)/60*G.w, Y=v=>G.y+G.h-v/100*G.h;
+  el('rect',{x:G.x,y:G.y,width:G.w,height:G.h,fill:'#fff',stroke:'#D9E1E3'});
+  for(let v=0;v<=100;v+=20){ el('line',{x1:G.x,y1:Y(v),x2:G.x+G.w,y2:Y(v),stroke:'#EEF2F3'}); text(G.x-6,Y(v)+4,v,{s:11,f:STAHL,a:'end',w:500}); }
+  for(let s=0;s<=60;s+=10){ text(G.x+G.w-s/60*G.w,G.y+G.h+18,s?'−'+s+' s':'jetzt',{s:11,f:STAHL,w:500}); }
+  if(hist.length>1){ linie(hist.map(p=>[X(p.t),Y(p.y)]),KUPFER,2,{opacity:.7}); linie(hist.map(p=>[X(p.t),Y(p.w)]),GRUEN,2.5,{'stroke-dasharray':'8 5'}); linie(hist.map(p=>[X(p.t),Y(p.h)]),PETROL,3.5); }
+  [['Istwert x (cm)',PETROL],['Sollwert w',GRUEN],['Stellgröße y (%)',KUPFER]].forEach(([n,c],i)=>{ el('rect',{x:G.x+10+i*155,y:G.y+G.h+32,width:18,height:5,fill:c}); text(G.x+34+i*155,G.y+G.h+39,n,{s:12,f:c,a:'start'}); });
+  // Kennwerte
+  let ueber=0, e=w-h; if(hist.length){ const seit=hist.filter(p=>p.w===w); const mx=Math.max(...seit.map(p=>p.h)); ueber=Math.max(0,mx-w); }
+  const st=$('status'), ruhig=Math.abs(e)<1; st.className='status'+(ruhig?' gut':''); st.innerHTML=(ruhig?'Ausgeregelt: x ≈ w (Abweichung '+fmt(e,1)+' cm)':'Regelabweichung e = '+fmt(e,1)+' cm')+(typ==='I'?' · Ein reiner I-Regler an einer integrierenden Strecke wie dem Behälter neigt zum Schwingen. Hier nimmt man P oder PI.':'');
+  rechenweg([['Regelabweichung','e = w − x',fmt(e,1)+' cm'],['Stellgröße','y',fmt(y,0)+' %'],['max. Überschwingen','seit letztem Sollwert',fmt(ueber,1)+' cm'],['Reglergleichung',{P:'y = K<sub>P</sub> · e',I:'y = (1/T<sub>i</sub>) · ∫ e dt',PI:'y = K<sub>P</sub> · (e + 1/T<sub>n</sub> · ∫ e dt)',PID:'y = K<sub>P</sub> · (e + 1/T<sub>n</sub> · ∫ e dt + T<sub>v</sub> · de/dt)'}[typ],'']]);
+  $('kpOut').textContent=fmt(+$('kp').value,1); $('tnOut').textContent=$('tn').value+' s'; $('tvOut').textContent=fmt(+$('tv').value,2)+' s'; $('wOut').textContent=w+' cm'; $('zOut').textContent=z+' %';
+}
+function lauf(ts){ const dt=letzt?Math.min(.05,(ts-letzt)/1000):0; letzt=ts; if($('lauf').checked){ const n=$('schnell').checked?2:1; for(let k=0;k<n*4;k++) schritt(dt/4); } zeichne(); requestAnimationFrame(lauf); }
+const setze=(id,v)=>{ $(id).value=v; $(id).dispatchEvent(new Event('input')); };
+$('sprung').addEventListener('click',()=>setze('w',Math.min(90,+$('w').value+20>90?+$('w').value-20:+$('w').value+20)));
+$('stoer').addEventListener('click',()=>setze('z',Math.min(60,+$('z').value+20>60?Math.max(0,+$('z').value-20):+$('z').value+20)));
+$('leer').addEventListener('click',()=>{ h=0; xf=0; mess=[]; });
+document.querySelectorAll('input[name=typ]').forEach(e=>e.addEventListener('change',()=>{ const ty=radio('typ'); iA=ty==='P'?0:Math.max(0,Math.min(100,y-(ty==='I'?0:+$('kp').value*eJetzt))); }));
+knopfBeamer(); requestAnimationFrame(lauf);
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

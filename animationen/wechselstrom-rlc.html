@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wechselstrom R, L, C mit Zeigerdiagramm</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Elektro · LF 1 und 5 · AP1 + AP2</div>
+<h1>Wechselstrom: R, L und C mit Zeigerdiagramm</h1>
+<p class="unter">Widerstand, Spule und Kondensator reagieren unterschiedlich auf Wechselstrom. Stell die Bauteile ein und sieh zu, wie sich Zeigerdiagramm, Liniendiagramm und Leistungsdreieck verändern.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 700" aria-label="Schaltung, Leistungsdreieck, Zeigerdiagramm und Liniendiagramm"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Einstellungen</h2>
+      <div class="zeile">Schaltung</div>
+      <div class="seg" role="radiogroup">
+        <label><input type="radio" name="sch" value="reihe" checked>Reihenschaltung</label>
+        <label><input type="radio" name="sch" value="parallel">Parallelschaltung</label>
+      </div>
+      <label class="regler"><span class="zeile"><span>Spannung U</span><output id="uOut"></output></span><input id="u" type="range" min="12" max="400" step="1" value="230"></label>
+      <label class="regler"><span class="zeile"><span>Frequenz f</span><output id="fOut"></output></span><input id="f" type="range" min="10" max="500" step="1" value="50"></label>
+      <label class="regler"><span class="zeile"><span>Widerstand R</span><output id="rOut"></output></span><input id="r" type="range" min="1" max="500" step="1" value="100"></label>
+      <label class="regler"><span class="zeile"><span>Induktivität L</span><output id="lOut"></output></span><input id="l" type="range" min="10" max="2000" step="10" value="500"></label>
+      <label class="regler"><span class="zeile"><span>Kapazität C</span><output id="cOut"></output></span><input id="c" type="range" min="1" max="1000" step="1" value="47"></label>
+      <div class="haken">
+        <label><input id="mitL" type="checkbox" checked> Spule L eingebaut</label>
+        <label><input id="mitC" type="checkbox" checked> Kondensator C eingebaut</label>
+        <label><input id="laeuft" type="checkbox" checked> Zeiger drehen (Zeitlupe)</label>
+        <label><input id="festhalten" type="checkbox"> Maßstäbe festhalten</label>
+      </div>
+      <div class="hinweis">Ausgebaute Bauteile sind in der Reihenschaltung überbrückt, in der Parallelschaltung abgeklemmt. Die Maßstäbe springen in festen Stufen (siehe Maßstabsleisten). Zum Vergleich zweier Einstellungen „Maßstäbe festhalten“ anhaken.</div>
+      <div class="knoepfe"><button id="start" class="zweit">Startwerte</button><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte">
+      <h2>Rechenweg</h2>
+      <table id="werte"></table>
+    </div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>Reihenschaltung, 230 V, 50 Hz, R = 100 Ω, L = 500 mH, Kondensator ausgebaut. Berechne X<sub>L</sub>, Z, I und cos φ.</li>
+        <li>Bau den Kondensator mit 47 µF wieder ein. Bei welcher Frequenz wird der Strom am größten? Vergleiche dann U<sub>L</sub> mit der Netzspannung.</li>
+        <li>Parallelschaltung, 230 V, 50 Hz, R = 100 Ω, L = 500 mH. Welcher Kondensator macht cos φ = 1 (Kompensation)?</li>
+      </ol>
+      <details><summary>Lösungen</summary>
+        <ol>
+          <li>X<sub>L</sub> = 2π · 50 Hz · 0,5 H = 157,1 Ω. Z = √(100² + 157,1²) Ω = 186,2 Ω. I = 230 V / 186,2 Ω = 1,24 A. cos φ = R / Z = 0,54 (φ = 57,5°).</li>
+          <li>Bei der Resonanzfrequenz f<sub>0</sub> = 1 / (2π · √(L · C)) = 32,8 Hz. Dann heben sich X<sub>L</sub> und X<sub>C</sub> auf, Z = R und I = 2,3 A. U<sub>L</sub> = I · X<sub>L</sub> = 2,3 A · 103 Ω = 237 V, also mehr als die Netzspannung (Spannungsüberhöhung).</li>
+          <li>Der Blindstrom der Spule muss aufgehoben werden: X<sub>C</sub> = X<sub>L</sub>, also C = 1 / (ω² · L) = 1 / ((314,2 1/s)² · 0,5 H) = 20,3 µF. Mit 20 µF ist cos φ fast 1.</li>
+        </ol>
+      </details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · Ideale Bauteile, Effektivwerte in den Rechnungen, Formelzeichen nach Tabellenbuch Elektrotechnik · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const FU='#163A4A', FI='#C56A24', FR='#2E7D5B', FL='#8A3B9E', FC='#6E8591', FARBEN=[FU,FI,FR,FL,FC];
+const START={u:230,f:50,r:100,l:500,c:47};
+let th=Math.PI/6, letzt=0, festV=0, festI=0, festP=0;
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||'#252B2E','font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:'#EEF2F3','stroke-width':4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash){ if(Math.hypot(x2-x1,y2-y1)<2) return; const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'marker-end':`url(#m${FARBEN.indexOf(c)})`,'stroke-linecap':'round'}; if(dash) a['stroke-dasharray']=dash; el('line',a); }
+// Maßstab in festen Stufen: Wert je 50 px
+const STUFEN=[]; for(let e=-3;e<=5;e++) [1,1.5,2,2.5,3,4,5,6,8].forEach(m=>STUFEN.push(m*Math.pow(10,e)));
+function stufe(max,px,fest){ const need=max*50/px; if(fest && $('festhalten').checked && fest>=need) return fest; return STUFEN.find(s=>s>=need)||STUFEN[STUFEN.length-1]; }
+function einheit(v,e){ return fmt(v, v<1?3:(v<10?1:0))+' '+e; }
+function rechne(){
+  const sch=document.querySelector('input[name=sch]:checked').value, U=+$('u').value, f=+$('f').value, R=+$('r').value, L=+$('l').value/1000, C=+$('c').value*1e-6;
+  const mL=$('mitL').checked, mC=$('mitC').checked, w=2*Math.PI*f, XL=w*L, XC=1/(w*C);
+  const o={sch,U,f,R,L,C,mL,mC,w,XL,XC};
+  if(sch==='reihe'){ const X=(mL?XL:0)-(mC?XC:0); o.X=X; o.Z=Math.hypot(R,X); o.I=U/o.Z; o.phi=Math.atan2(X,R); o.UR=o.I*R; o.UL=mL?o.I*XL:0; o.UC=mC?o.I*XC:0; }
+  else { o.IR=U/R; o.IL=mL?U/XL:0; o.IC=mC?U/XC:0; const B=o.IL-o.IC; o.I=Math.hypot(o.IR,B); o.Z=U/o.I; o.phi=Math.atan2(B,o.IR); }
+  o.S=U*o.I; o.P=o.S*Math.cos(o.phi); o.Q=o.S*Math.sin(o.phi); o.f0=(mL&&mC)?1/(2*Math.PI*Math.sqrt(L*C)):null;
+  return o;
+}
+function massstab(x,y,wert,einh,farbe){ el('line',{x1:x,y1:y,x2:x+50,y2:y,stroke:farbe,'stroke-width':3}); [x,x+50].forEach(xx=>el('line',{x1:xx,y1:y-5,x2:xx,y2:y+5,stroke:farbe,'stroke-width':2})); text(x+58,y+5,einheit(wert,einh),{s:12,f:farbe,a:'start',w:400}); }
+function bauteil(typ,x,y,vert,aktiv){ // R: Rechteck leer, L: Rechteck gefüllt, C: zwei Platten
+  const op=aktiv?1:.25, g=el('g',{opacity:op});
+  if(typ==='C'){ if(vert){ el('rect',{x:x-20,y:y-8,width:40,height:16,fill:'#EEF2F3'},g); el('line',{x1:x-18,y1:y-6,x2:x+18,y2:y-6,stroke:FU,'stroke-width':4},g); el('line',{x1:x-18,y1:y+6,x2:x+18,y2:y+6,stroke:FU,'stroke-width':4},g);} else { el('rect',{x:x-8,y:y-20,width:16,height:40,fill:'#EEF2F3'},g); el('line',{x1:x-6,y1:y-18,x2:x-6,y2:y+18,stroke:FU,'stroke-width':4},g); el('line',{x1:x+6,y1:y-18,x2:x+6,y2:y+18,stroke:FU,'stroke-width':4},g);} }
+  else { const bw=vert?18:46, bh=vert?46:18; el('rect',{x:x-bw/2,y:y-bh/2,width:bw,height:bh,fill:typ==='L'?FU:'#fff',stroke:FU,'stroke-width':2.5},g); }
+}
+function schaltung(o){
+  text(200,22,o.sch==='reihe'?'Reihenschaltung':'Parallelschaltung',{s:16,f:FU});
+  const qx=80, qy=125; const quelle=()=>{ el('circle',{cx:qx,cy:qy,r:18,fill:'#fff',stroke:FU,'stroke-width':2.5}); el('path',{d:`M${qx-10},${qy} q5,-10 10,0 t10,0`,fill:'none',stroke:FU,'stroke-width':2}); text(qx-24,qy-4,fmt(o.U,0)+' V',{s:13,a:'end',f:FU}); text(qx-24,qy+13,fmt(o.f,0)+' Hz',{s:12,a:'end',f:FC,w:400}); };
+  if(o.sch==='reihe'){
+    const y0=55, y1=200, xr=380;
+    el('polyline',{points:`${qx},${qy-18} ${qx},${y0} ${xr},${y0} ${xr},${y1} ${qx},${y1} ${qx},${qy+18}`,fill:'none',stroke:'#252B2E','stroke-width':2.5});
+    quelle();
+    [['R',130,true,sub('U','R'),o.UR,FR],['L',225,o.mL,sub('U','L'),o.UL,FL],['C',320,o.mC,sub('U','C'),o.UC,FC]].forEach(([t,x,a,n,v,c])=>{ bauteil(t,x,y0,false,a); text(x,y0-18,t,{s:14,f:FU}); text(x,y0+40,a?n+' = '+einheit(v,'V'):'überbrückt',{s:13,f:a?c:'#6E8591',w:a?600:400}); });
+    text(215,y1+22,'I = '+einheit(o.I,'A'),{s:14,f:FI});
+    pfeil(150,y1,110,y1,FI,2.5);
+  } else {
+    const y0=45, y1=205;
+    el('polyline',{points:`${qx},${qy-18} ${qx},${y0} 360,${y0}`,fill:'none',stroke:'#252B2E','stroke-width':2.5});
+    el('polyline',{points:`${qx},${qy+18} ${qx},${y1} 360,${y1}`,fill:'none',stroke:'#252B2E','stroke-width':2.5});
+    quelle(); pfeil(85,y0,110,y0,FI,2.5); text(100,y0-10,'I = '+einheit(o.I,'A'),{s:13,f:FI,a:'start'});
+    [['R',160,true,sub('I','R'),o.IR,FR],['L',260,o.mL,sub('I','L'),o.IL,FL],['C',360,o.mC,sub('I','C'),o.IC,FC]].forEach(([t,x,a,n,v,c])=>{
+      el('line',{x1:x,y1:y0,x2:x,y2:y1,stroke:'#252B2E','stroke-width':2.5,opacity:a?1:.25,'stroke-dasharray':a?'':'5 5'}); el('circle',{cx:x,cy:y0,r:4,fill:'#252B2E'}); el('circle',{cx:x,cy:y1,r:4,fill:'#252B2E'});
+      bauteil(t,x,qy,true,a); text(x+16,qy-28,t,{s:14,f:FU,a:'start'}); text(x,y1+22,a?n+' = '+einheit(v,'A'):'abgeklemmt',{s:13,f:a?c:'#6E8591',w:a?600:400}); });
+  }
+}
+function zeiger(o){
+  const cx=200, cy=480, RM=160; text(cx,292,'Zeigerdiagramm',{s:16,f:FU});
+  el('circle',{cx,cy,r:RM,fill:'none',stroke:'#D9E1E3','stroke-width':1.5,'stroke-dasharray':'4 6'});
+  const P=(r,a)=>[cx+r*Math.cos(a),cy-r*Math.sin(a)];
+  if(o.sch==='reihe'){
+    // Bezug: Strom I bei Winkel th; U_R in Phase, U_L +90°, U_C −90°
+    const pts=[[o.UR,0],[o.UR,o.UL],[o.UR,o.UL-o.UC]], maxV=Math.max(o.U,...pts.map(p=>Math.hypot(p[0],p[1])));
+    const sV=stufe(maxV,RM,festV); festV=sV; const kV=50/sV, sI=stufe(o.I,RM*0.55,festI); festI=sI; const kI=50/sI;
+    const v=(a,b)=>[cx+(a*Math.cos(th)-b*Math.sin(th))*kV, cy-(a*Math.sin(th)+b*Math.cos(th))*kV];
+    const p0=[cx,cy], p1=v(o.UR,0), p2=v(o.UR,o.UL), p3=v(o.UR,o.UL-o.UC);
+    pfeil(p0[0],p0[1],p1[0],p1[1],FR,4); if(o.mL) pfeil(p1[0],p1[1],p2[0],p2[1],FL,4); if(o.mC) pfeil(p2[0],p2[1],p3[0],p3[1],FC,4);
+    pfeil(cx,cy,p3[0],p3[1],FU,5);
+    const ip=P(o.I*kI,th); pfeil(cx,cy,ip[0],ip[1],FI,3.5,'7 4');
+    const lab=(p,q,s,c)=>{ if(Math.hypot(q[0]-p[0],q[1]-p[1])<16) return; text((p[0]+q[0])/2+10,(p[1]+q[1])/2-6,s,{s:15,f:c,a:'start'}); };
+    lab(p0,p1,sub('U','R'),FR); if(o.mL) lab(p1,p2,sub('U','L'),FL); if(o.mC) lab(p2,p3,sub('U','C'),FC);
+    { const mx=cx+(p3[0]-cx)*.55, my=cy+(p3[1]-cy)*.55, L=Math.hypot(p3[0]-cx,p3[1]-cy)||1, nx=-(p3[1]-cy)/L, ny=(p3[0]-cx)/L; text(mx-nx*16,my-ny*16+5,'U',{s:16,f:FU}); } text(ip[0]+12*Math.cos(th),ip[1]-12*Math.sin(th)+16,'I',{s:16,f:FI});
+    massstab(30,668,sV,'V',FU); massstab(210,668,sI,'A',FI);
+  } else {
+    const pts=[[o.IR,0],[o.IR,-o.IL],[o.IR,o.IC-o.IL]], maxI=Math.max(...pts.map(p=>Math.hypot(p[0],p[1])));
+    const sI=stufe(maxI,RM,festI); festI=sI; const kI=50/sI, sV=stufe(o.U,RM*0.85,festV); festV=sV; const kV=50/sV;
+    const v=(a,b)=>[cx+(a*Math.cos(th)-b*Math.sin(th))*kI, cy-(a*Math.sin(th)+b*Math.cos(th))*kI];
+    const p0=[cx,cy], p1=v(o.IR,0), p2=v(o.IR,-o.IL), p3=v(o.IR,o.IC-o.IL);
+    const up=P(o.U*kV,th); pfeil(cx,cy,up[0],up[1],FU,3.5,'7 4');
+    pfeil(p0[0],p0[1],p1[0],p1[1],FR,4); if(o.mL) pfeil(p1[0],p1[1],p2[0],p2[1],FL,4); if(o.mC) pfeil(p2[0],p2[1],p3[0],p3[1],FC,4);
+    pfeil(cx,cy,p3[0],p3[1],FI,5);
+    const lab=(p,q,s,c)=>{ if(Math.hypot(q[0]-p[0],q[1]-p[1])<16) return; text((p[0]+q[0])/2+10,(p[1]+q[1])/2-6,s,{s:15,f:c,a:'start'}); };
+    lab(p0,p1,sub('I','R'),FR); if(o.mL) lab(p1,p2,sub('I','L'),FL); if(o.mC) lab(p2,p3,sub('I','C'),FC);
+    { const mx=cx+(p3[0]-cx)*.55, my=cy+(p3[1]-cy)*.55, L=Math.hypot(p3[0]-cx,p3[1]-cy)||1, nx=-(p3[1]-cy)/L, ny=(p3[0]-cx)/L; text(mx-nx*16,my-ny*16+5,'I',{s:16,f:FI}); } text(up[0]+14*Math.cos(th),up[1]-14*Math.sin(th)+6,'U',{s:16,f:FU});
+    massstab(30,668,sI,'A',FI); massstab(210,668,sV,'V',FU);
+  }
+  // Winkel φ zwischen I und U
+  if(Math.abs(o.phi)>0.03){ const r=42, aI=o.sch==='reihe'?th:th-o.phi, aU=aI+o.phi, a0=Math.min(aI,aU), a1=Math.max(aI,aU);
+    el('path',{d:`M${cx+r*Math.cos(a0)},${cy-r*Math.sin(a0)} A${r},${r} 0 0 0 ${cx+r*Math.cos(a1)},${cy-r*Math.sin(a1)}`,fill:'none',stroke:FI,'stroke-width':2.5});
+    text(cx+(r+14)*Math.cos((a0+a1)/2),cy-(r+14)*Math.sin((a0+a1)/2)+5,'φ',{s:16,f:FI}); }
+  el('circle',{cx,cy,r:4,fill:'#252B2E'});
+}
+function linie(o){
+  const D={x:450,y:325,w:320,h:300}, ym=D.y+D.h/2, A=D.h/2-14; text(D.x+D.w/2,310,'Liniendiagramm (eine Periode)',{s:16,f:FU});
+  el('rect',{x:D.x,y:D.y,width:D.w,height:D.h,fill:'#fff',stroke:'#D9E1E3'});
+  const T=1000/o.f; [0,.25,.5,.75,1].forEach(q=>{ const x=D.x+q*D.w; el('line',{x1:x,y1:D.y,x2:x,y2:D.y+D.h,stroke:'#EEF2F3'}); text(x,D.y+D.h+18,fmt(q*T,Number.isInteger(+(q*T).toFixed(3))?0:1),{s:12,f:FC,w:400}); });
+  el('line',{x1:D.x,y1:ym,x2:D.x+D.w,y2:ym,stroke:'#252B2E','stroke-width':1.5}); text(D.x+D.w,D.y+D.h+36,'t in ms',{s:13,a:'end'});
+  const pu=o.sch==='reihe'?o.phi:0, pi=o.sch==='reihe'?0:-o.phi;
+  const kurve=(amp,ph,c,dash)=>{ const pts=[]; for(let i=0;i<=200;i++){ const wt=i/200*2*Math.PI; pts.push((D.x+i/200*D.w).toFixed(1)+','+(ym-amp*Math.sin(wt+ph)).toFixed(1)); } const a={points:pts.join(' '),fill:'none',stroke:c,'stroke-width':3}; if(dash)a['stroke-dasharray']=dash; el('polyline',a); };
+  kurve(A,pu,FU); kurve(A*0.7,pi,FI,'7 4');
+  text(D.x+8,D.y+18,'u: û = '+einheit(o.U*Math.SQRT2,'V'),{s:13,f:FU,a:'start'}); text(D.x+8,D.y+36,'i (gestrichelt): î = '+einheit(o.I*Math.SQRT2,'A'),{s:13,f:FI,a:'start'});
+  text(D.x+D.w-8,D.y+D.h-8,'Höhen nicht maßstäblich',{s:11,f:FC,a:'end',w:400});
+  const tc=((th%(2*Math.PI))+2*Math.PI)%(2*Math.PI), xc=D.x+tc/(2*Math.PI)*D.w; el('line',{x1:xc,y1:D.y,x2:xc,y2:D.y+D.h,stroke:FI,'stroke-width':1.5,opacity:.6});
+}
+function leistung(o){
+  const x0=450, y0=150; text(615,22,'Leistungsdreieck',{s:16,f:FU});
+  const sP=stufe(Math.max(o.P/290,Math.abs(o.Q)/105)*290,290,festP); festP=sP; const k=50/sP;
+  const P=o.P*k, Q=o.Q*k;
+  pfeil(x0,y0,x0+P,y0,FR,4); pfeil(x0+P,y0,x0+P,y0-Q,FL,4); pfeil(x0,y0,x0+P,y0-Q,FI,4);
+  text(x0+P/2,y0+(Q>=0?22:-10),'P = '+einheit(o.P,'W'),{s:13,f:FR});
+  if(Math.abs(Q)>12) text(x0+P+8,y0-Q/2+5,'Q = '+einheit(Math.abs(o.Q),'var')+(o.Q>0?' (induktiv)':' (kapazitiv)'),{s:13,f:FL,a:'start'});
+  text(x0+P/2-8,y0-Q/2+(Q>=0?-10:22),'S = '+einheit(o.S,'VA'),{s:13,f:FI,a:'end'});
+  massstab(450,275,sP,'W bzw. var, VA',FC);
+}
+function zeichne(){
+  const o=rechne(); svg.innerHTML=''; defs(); schaltung(o); leistung(o); zeiger(o); linie(o);
+  const g=o.phi*180/Math.PI, s=$('status'); s.classList.remove('gut');
+  let t= Math.abs(g)<1 ? 'Resonanz bzw. rein ohmsch: Strom und Spannung sind in Phase, cos φ = 1.' : g>0 ? 'Induktiv: Die Spannung eilt dem Strom um φ = '+fmt(g,1)+'° voraus.' : 'Kapazitiv: Der Strom eilt der Spannung um φ = '+fmt(-g,1)+'° voraus.';
+  if(o.sch==='reihe' && Math.max(o.UL,o.UC)>o.U*1.001) t+=' Achtung: '+(o.UL>=o.UC?'U<sub>L</sub>':'U<sub>C</sub>')+' = '+einheit(Math.max(o.UL,o.UC),'V')+' ist größer als die angelegte Spannung (Spannungsüberhöhung).';
+  if(o.sch==='parallel' && Math.max(o.IL,o.IC)>o.I*1.001 && o.mL && o.mC) t+=' Spule und Kondensator führen mehr Strom als die Zuleitung (Stromüberhöhung).';
+  if(Math.abs(g)<1) s.classList.add('gut'); s.innerHTML=t;
+  const rows=[], r=(n,rw,v)=>rows.push(`<tr><td>${n}<div class="rw">${rw}</div></td><td>${v}</td></tr>`);
+  r('Kreisfrequenz ω','ω = 2π · f',fmt(o.w,1)+' 1/s');
+  if(o.mL) r('induktiver Blindwiderstand X<sub>L</sub>','X<sub>L</sub> = ω · L',einheit(o.XL,'Ω'));
+  if(o.mC) r('kapazitiver Blindwiderstand X<sub>C</sub>','X<sub>C</sub> = 1 / (ω · C)',einheit(o.XC,'Ω'));
+  if(o.sch==='reihe'){
+    r('Scheinwiderstand Z','Z = √(R² + (X<sub>L</sub> − X<sub>C</sub>)²)',einheit(o.Z,'Ω'));
+    r('Strom I','I = U / Z',einheit(o.I,'A'));
+    r('Teilspannungen','U<sub>R</sub> = I · R, U<sub>L</sub> = I · X<sub>L</sub>, U<sub>C</sub> = I · X<sub>C</sub>',fmt(o.UR,1)+' / '+fmt(o.UL,1)+' / '+fmt(o.UC,1)+' V');
+    r('Phasenverschiebung φ','tan φ = (X<sub>L</sub> − X<sub>C</sub>) / R',fmt(o.phi*180/Math.PI,1)+'°');
+  } else {
+    r('Zweigströme','I<sub>R</sub> = U / R, I<sub>L</sub> = U / X<sub>L</sub>, I<sub>C</sub> = U / X<sub>C</sub>',fmt(o.IR,2)+' / '+fmt(o.IL,2)+' / '+fmt(o.IC,2)+' A');
+    r('Gesamtstrom I','I = √(I<sub>R</sub>² + (I<sub>L</sub> − I<sub>C</sub>)²)',einheit(o.I,'A'));
+    r('Scheinwiderstand Z','Z = U / I',einheit(o.Z,'Ω'));
+    r('Phasenverschiebung φ','tan φ = (I<sub>L</sub> − I<sub>C</sub>) / I<sub>R</sub>',fmt(o.phi*180/Math.PI,1)+'°');
+  }
+  r('Leistungsfaktor cos φ',o.sch==='reihe'?'cos φ = R / Z':'cos φ = I<sub>R</sub> / I',fmt(Math.cos(o.phi),3));
+  r('Scheinleistung S','S = U · I',einheit(o.S,'VA'));
+  r('Wirkleistung P','P = S · cos φ',einheit(o.P,'W'));
+  r('Blindleistung Q','Q = S · sin φ',einheit(Math.abs(o.Q),'var'));
+  if(o.f0) r('Resonanzfrequenz f<sub>0</sub>','f<sub>0</sub> = 1 / (2π · √(L · C))',fmt(o.f0,1)+' Hz');
+  $('werte').innerHTML=rows.join('');
+  $('uOut').textContent=fmt(o.U,0)+' V'; $('fOut').textContent=fmt(o.f,0)+' Hz'; $('rOut').textContent=fmt(o.R,0)+' Ω'; $('lOut').textContent=fmt(o.L*1000,0)+' mH'; $('cOut').textContent=fmt(o.C*1e6,0)+' µF';
+  $('l').disabled=!o.mL; $('c').disabled=!o.mC;
+}
+function schritt(ts){ const dt=letzt?Math.min(.05,(ts-letzt)/1000):0; letzt=ts; if($('laeuft').checked) th+=dt*2*Math.PI*0.2; zeichne(); requestAnimationFrame(schritt); }
+$('start').addEventListener('click',()=>{ for(const k in START) $(k).value=START[k]; $('mitL').checked=true; $('mitC').checked=true; document.querySelector('input[name=sch][value=reihe]').checked=true;
+  document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); });
+$('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});});
+requestAnimationFrame(schritt);
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

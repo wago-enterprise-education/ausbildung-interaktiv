@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPS: Zeiten, Zähler und Flanken</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Elektro und Mechatronik · LF 3 und 7 · AP1 + AP2</div>
+<h1>SPS: Zeiten, Zähler und Flanken (IEC 61131-3)</h1>
+<p class="unter">Schalte den Eingang und beobachte im Zeitdiagramm, wie der Baustein reagiert. Einschaltverzögerung TON, Ausschaltverzögerung TOF, Impuls TP, Vorwärtszähler CTU und Flankenerkennung R_TRIG.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 600" aria-label="Funktionsbaustein und Zeitdiagramm"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Einstellungen</h2>
+      <div class="seg" role="radiogroup" style="flex-wrap:wrap">
+        <label><input type="radio" name="fb" value="TON" checked>TON</label>
+        <label><input type="radio" name="fb" value="TOF">TOF</label>
+        <label><input type="radio" name="fb" value="TP">TP</label>
+        <label><input type="radio" name="fb" value="CTU">CTU</label>
+        <label><input type="radio" name="fb" value="RTRIG">R_TRIG</label>
+      </div>
+      <label class="regler" id="wPT"><span class="zeile"><span>Zeitwert PT</span><output id="ptOut"></output></span><input id="pt" type="range" min="0.5" max="10" step="0.5" value="3"></label>
+      <label class="regler" id="wPV"><span class="zeile"><span>Vorgabewert PV</span><output id="pvOut"></output></span><input id="pv" type="range" min="1" max="10" step="1" value="3"></label>
+      <div class="knoepfe" style="flex-wrap:wrap"><button id="tast">Eingang tippen</button><button id="halt" class="zweit">Eingang halten (an/aus)</button><button id="reset" class="zweit">R (Zähler zurücksetzen)</button></div>
+      <div class="haken"><label><input id="lauf" type="checkbox" checked> Zeit läuft</label></div>
+      <div class="hinweis">Zeitdiagramm: die letzten 20 Sekunden, 1 s ≙ 32 Bildpunkte. „Tippen“ hält den Eingang 0,5 s lang auf 1. Bei R_TRIG ist der Ausgang nur einen SPS-Zyklus lang 1, hier zur Sichtbarkeit auf 0,2 s gedehnt.</div>
+      <div class="knoepfe"><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte"><h2>So arbeitet der Baustein</h2><div id="erkl"></div><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>TON mit PT = 3 s: Tippe den Eingang nur kurz. Warum schaltet Q nicht?</li>
+        <li>TP mit PT = 3 s: Tippe mehrfach schnell hintereinander. Wird der Impuls länger?</li>
+        <li>Welcher Baustein passt für einen Lüfter, der nach dem Ausschalten des Lichts noch 2 Minuten nachlaufen soll?</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>Die Einschaltverzögerung schaltet Q erst, wenn IN mindestens PT lang ununterbrochen 1 ist. Fällt IN vorher ab, startet die Zeit beim nächsten Mal von vorne.</li>
+        <li>Nein. TP gibt einen Impuls fester Länge PT aus. Weitere Flanken während des Impulses werden ignoriert.</li>
+        <li>TOF mit PT = T#2m: Q folgt sofort IN = 1 und bleibt nach dem Abschalten noch PT lang auf 1.</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · Verhalten nach IEC 61131-3 (Standardbausteine) · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+let now=0, letzt=0, IN=false, tippBis=-1, halten=false, hist=[], st={q:false,et:0,start:-1,cv:0,inAlt:false,puls:-1};
+function reset(){ st={q:false,et:0,start:-1,cv:0,inAlt:IN,puls:-1}; hist=[]; }
+function schritt(dt){ const fb=radio('fb'), PT=+$('pt').value, PV=+$('pv').value; IN=halten||now<tippBis; const rise=IN&&!st.inAlt, fall=!IN&&st.inAlt;
+  if(fb==='TON'){ if(IN){ if(st.start<0) st.start=now; st.et=Math.min(PT,now-st.start); st.q=st.et>=PT; } else { st.start=-1; st.et=0; st.q=false; } }
+  if(fb==='TOF'){ if(IN){ st.q=true; st.et=0; st.start=-1; } else { if(fall) st.start=now; if(st.start>=0){ st.et=Math.min(PT,now-st.start); st.q=st.et<PT; } } }
+  if(fb==='TP'){ if(rise&&!st.q&&st.start<0) st.start=now; if(st.start>=0){ st.et=Math.min(PT,now-st.start); st.q=st.et<PT; if(st.et>=PT&&!IN){ st.start=-1; st.et=0; } } }
+  if(fb==='CTU'){ if(rise&&st.cv<32767) st.cv++; st.q=st.cv>=PV; }
+  if(fb==='RTRIG'){ if(rise) st.puls=now; st.q=st.puls>=0&&now-st.puls<0.2; }
+  st.inAlt=IN; hist.push({t:now,i:IN,q:st.q,et:st.et,cv:st.cv}); while(hist.length&&hist[0].t<now-20.5) hist.shift(); }
+function zeichne(){ const fb=radio('fb'), PT=+$('pt').value, PV=+$('pv').value; svg.innerHTML=''; defs();
+  $('wPT').style.display=['TON','TOF','TP'].includes(fb)?'':'none'; $('wPV').style.display=fb==='CTU'?'':'none'; $('reset').style.display=fb==='CTU'?'':'none';
+  // Baustein (FUP)
+  const bx=300, by=30, bw=200, bh=150; el('rect',{x:bx,y:by,width:bw,height:bh,fill:'#fff',stroke:PETROL,'stroke-width':3,rx:4}); text(bx+bw/2,by+24,fb==='RTRIG'?'R_TRIG':fb,{s:18,f:PETROL});
+  const ein=(y,n,v,c)=>{ el('line',{x1:bx-80,y1:y,x2:bx,y2:y,stroke:c,'stroke-width':3}); text(bx+8,y+5,n,{s:14,a:'start'}); text(bx-86,y+5,v,{s:14,f:c,a:'end'}); };
+  const aus=(y,n,v,c)=>{ el('line',{x1:bx+bw,y1:y,x2:bx+bw+80,y2:y,stroke:c,'stroke-width':3}); text(bx+bw-8,y+5,n,{s:14,a:'end'}); text(bx+bw+86,y+5,v,{s:14,f:c,a:'start'}); };
+  const tz=s=>'T#'+fmt(s,1).replace(',','.')+'s';
+  if(fb==='CTU'){ ein(by+60,'CU',IN?'1':'0',IN?KUPFER:STAHL); ein(by+95,'R','0',STAHL); ein(by+130,'PV',PV,PETROL); aus(by+60,'Q',st.q?'1':'0',st.q?GRUEN:STAHL); aus(by+110,'CV',st.cv,PETROL); }
+  else if(fb==='RTRIG'){ ein(by+70,'CLK',IN?'1':'0',IN?KUPFER:STAHL); aus(by+70,'Q',st.q?'1':'0',st.q?GRUEN:STAHL); }
+  else { ein(by+60,'IN',IN?'1':'0',IN?KUPFER:STAHL); ein(by+115,'PT',tz(PT),PETROL); aus(by+60,'Q',st.q?'1':'0',st.q?GRUEN:STAHL); aus(by+115,'ET',tz(st.et),PETROL); }
+  // Zeitdiagramm
+  const G={x:90,w:640}, X=t=>G.x+G.w-(now-t)*32, spuren=fb==='CTU'?[['CU','i',KUPFER],['CV','cv',PETROL],['Q','q',GRUEN]]:fb==='RTRIG'?[['CLK','i',KUPFER],['Q','q',GRUEN]]:[['IN','i',KUPFER],['ET','et',PETROL],['Q','q',GRUEN]];
+  spuren.forEach(([n,k,c],j)=>{ const y0=250+j*110, h=70; el('line',{x1:G.x,y1:y0+h,x2:G.x+G.w,y2:y0+h,stroke:'#D9E1E3','stroke-width':1.5}); text(G.x-12,y0+h-20,n,{s:15,f:c,a:'end'});
+    const mx=k==='et'?PT:k==='cv'?Math.max(PV,...hist.map(p=>p.cv),1):1; if(k!=='i'&&k!=='q') { el('line',{x1:G.x,y1:y0+h-h*(k==='cv'?PV/mx:1),x2:G.x+G.w,y2:y0+h-h*(k==='cv'?PV/mx:1),stroke:c,'stroke-dasharray':'4 5',opacity:.5}); text(G.x-12,y0+h-h*(k==='cv'?PV/mx:1)+5,k==='cv'?'PV':'PT',{s:11,f:c,a:'end',w:400}); }
+    const pts=[]; let alt=null; for(const p of hist){ const v=(k==='i'||k==='q')?(p[k]?1:0):p[k]/mx; const y=y0+h-v*h; if(alt!==null&&(k==='i'||k==='q'||k==='cv')&&alt!==y) pts.push([X(p.t),alt]); pts.push([X(p.t),y]); alt=y; }
+    if(pts.length) linie(pts.map(([x,y])=>[Math.max(G.x,x),y]),c,3); });
+  for(let s=0;s<=20;s+=5){ const x=G.x+G.w-s*32; el('line',{x1:x,y1:240,x2:x,y2:580,stroke:'#EEF2F3'}); text(x,594,s===0?'jetzt':'−'+s+' s',{s:11,f:STAHL,w:400}); }
+  const E={TON:'Einschaltverzögerung: Q wird 1, wenn IN mindestens PT lang 1 war. Fällt IN ab, wird Q sofort 0 und ET zurückgesetzt.',TOF:'Ausschaltverzögerung: Q folgt IN = 1 sofort. Nach der fallenden Flanke von IN bleibt Q noch PT lang 1.',
+    TP:'Impuls: Eine steigende Flanke an IN startet einen Impuls fester Länge PT, unabhängig davon, wie lange IN anliegt.',CTU:'Vorwärtszähler: Jede steigende Flanke an CU erhöht CV um 1. Q wird 1, sobald CV ≥ PV. R setzt CV auf 0.',RTRIG:'Steigende Flanke: Q ist genau einen Zyklus lang 1, wenn CLK von 0 auf 1 wechselt. Typisch, um aus einem Dauersignal einen einmaligen Befehl zu machen.'};
+  $('erkl').innerHTML='<p>'+E[fb]+'</p>';
+  const s=$('status'); s.className='status'+(st.q?' gut':''); s.innerHTML=(fb==='CTU'?'CV = '+st.cv+(st.q?' ≥ PV: Q = 1':' < PV: Q = 0'):'Q = '+(st.q?'1':'0')+(['TON','TOF','TP'].includes(fb)?' · ET = '+fmt(st.et,1)+' s':''))+(halten?' · Eingang wird gehalten':'');
+  rechenweg([['Eingang',fb==='CTU'?'CU':fb==='RTRIG'?'CLK':'IN',IN?'1':'0'],['Ausgang Q','',st.q?'1':'0']].concat(['TON','TOF','TP'].includes(fb)?[['abgelaufene Zeit ET','0 … PT',fmt(st.et,1)+' s']]:fb==='CTU'?[['Zählwert CV','',st.cv]]:[]));
+  $('ptOut').textContent=fmt(PT,1)+' s'; $('pvOut').textContent=PV;
+}
+function lauf(ts){ const dt=letzt?Math.min(.05,(ts-letzt)/1000):0; letzt=ts; if($('lauf').checked){ now+=dt; schritt(dt); } zeichne(); requestAnimationFrame(lauf); }
+$('tast').addEventListener('click',()=>{ tippBis=now+0.5; }); $('halt').addEventListener('click',()=>{ halten=!halten; $('halt').textContent=halten?'Eingang loslassen':'Eingang halten (an/aus)'; });
+$('reset').addEventListener('click',()=>{ st.cv=0; st.q=false; });
+document.querySelectorAll('input[name=fb]').forEach(e=>e.addEventListener('change',reset));
+knopfBeamer(); requestAnimationFrame(lauf);
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

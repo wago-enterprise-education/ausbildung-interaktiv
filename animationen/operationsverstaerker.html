@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operationsverstärker: invertierend und nichtinvertierend</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Geräte und Systeme · LF 6 und 7 · AP2</div>
+<h1>Operationsverstärker: invertierend und nichtinvertierend</h1>
+<p class="unter">Widerstände und Eingangsspannung einstellen: Die Verstärkung folgt aus R<sub>1</sub> und R<sub>2</sub>. Kommt der Ausgang an die Versorgungsspannung, wird das Signal abgeschnitten (Übersteuerung). Idealer OPV, Aussteuergrenze 1,5 V unter der Versorgung.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 600" aria-label="OPV-Schaltung, Übertragungskennlinie und Liniendiagramm"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Schaltung</h2>
+      <div class="seg" role="radiogroup"><label><input type="radio" name="art" value="inv" checked>invertierend</label><label><input type="radio" name="art" value="nin">nichtinvertierend</label><label><input type="radio" name="art" value="fol">Spannungsfolger</label></div>
+      <label class="regler" id="wR1"><span class="zeile"><span>R₁</span><output id="r1Out"></output></span><input id="r1" type="range" min="0" max="9" step="1" value="3" data-liste="1,2.2,3.3,4.7,10,22,33,47,100,220"></label>
+      <label class="regler" id="wR2"><span class="zeile"><span>R₂ (Rückkopplung)</span><output id="r2Out"></output></span><input id="r2" type="range" min="0" max="9" step="1" value="4" data-liste="1,2.2,3.3,4.7,10,22,33,47,100,220"></label>
+      <label class="regler"><span class="zeile"><span>Eingangsspannung U<sub>e</sub> (Scheitelwert bei Sinus)</span><output id="ueOut"></output></span><input id="ue" type="range" min="-10" max="10" step="0.1" value="2"></label>
+      <label class="regler"><span class="zeile"><span>Versorgung ±U<sub>B</sub></span><output id="ubOut"></output></span><input id="ub" type="range" min="0" max="2" step="1" value="2" data-liste="5,12,15"></label>
+      <div class="haken"><label><input id="sin" type="checkbox" checked> Sinus am Eingang (sonst Gleichspannung)</label></div>
+      <div class="knoepfe"><button id="start" class="zweit">Startwerte</button><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte"><h2>Rechenweg</h2><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>Invertierend, R₁ = 10 kΩ, R₂ = 47 kΩ, U<sub>e</sub> = 1 V: Wie groß ist U<sub>a</sub>?</li>
+        <li>Erhöhe U<sub>e</sub> beim Sinus, bis das Signal oben und unten abgeschnitten wird. Ab welcher Eingangsspannung passiert das bei ±15 V?</li>
+        <li>Wozu braucht man einen Spannungsfolger, wenn er doch gar nicht verstärkt?</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>V = −R₂ / R₁ = −4,7. U<sub>a</sub> = −4,7 V.</li>
+        <li>Grenze ±13,5 V. Bei V = −4,7: |U<sub>e</sub>| > 13,5 V / 4,7 ≈ 2,9 V.</li>
+        <li>Er hat einen sehr hohen Eingangs- und einen sehr kleinen Ausgangswiderstand. So belastet er die Signalquelle nicht (Impedanzwandler).</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · idealer Operationsverstärker · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+const RL=[1,2.2,3.3,4.7,10,22,33,47,100,220], UBL=[5,12,15]; const START={art:'inv',r1:3,r2:4,ue:2,ub:2,sin:true}; let ph=0, letzt=0;
+function zeichne(){ const art=radio('art'), R1=RL[+$('r1').value], R2=RL[+$('r2').value], Ue=+$('ue').value, UB=UBL[+$('ub').value], sn=$('sin').checked, Ug=UB-1.5;
+  const V=art==='inv'?-R2/R1:art==='nin'?1+R2/R1:1, lim=u=>Math.max(-Ug,Math.min(Ug,u)), ue=sn?Ue*Math.sin(ph):Ue, ua=lim(V*ue), ueber=Math.abs(V*Ue)>Ug;
+  $('wR1').style.display=art==='fol'?'none':''; $('wR2').style.display=art==='fol'?'none':'';
+  svg.innerHTML=''; defs();
+  // Schaltung
+  const ox=330, oy=110; el('path',{d:`M${ox},${oy-60} L${ox},${oy+60} L${ox+110},${oy} Z`,fill:'#fff',stroke:PETROL,'stroke-width':3});
+  text(ox+14,oy-26,art==='inv'?'−':'+',{s:20,f:PETROL,a:'start'}); text(ox+14,oy+40,art==='inv'?'+':'−',{s:20,f:PETROL,a:'start'});
+  const yI=oy-30, yN=oy+30, yInv=art==='inv'?yI:yN, yNi=art==='inv'?yN:yI;
+  const wid=(x,y,lab,val)=>{ el('rect',{x:x-30,y:y-10,width:60,height:20,fill:'#fff',stroke:GRAPHIT,'stroke-width':2}); text(x,y-16,lab+' = '+fmt(val,1)+' kΩ',{s:12,f:GRAPHIT}); };
+  linie([[ox+110,oy],[ox+200,oy]],KUPFER,3); el('circle',{cx:ox+200,cy:oy,r:4,fill:KUPFER}); text(ox+210,oy+5,'U_a',{s:14,f:KUPFER,a:'start'}).innerHTML='U<tspan dy="4" font-size="11">a</tspan>';
+  if(art==='fol'){ linie([[ox,yInv],[ox-30,yInv],[ox-30,oy+90],[ox+160,oy+90],[ox+160,oy]],PETROL,2.5); linie([[ox,yNi],[ox-160,yNi]],BLAU,2.5); }
+  else if(art==='inv'){ linie([[ox,yInv],[ox-60,yInv]],PETROL,2.5); wid(ox-100,yInv,'R₁',R1); linie([[ox-130,yInv],[ox-160,yInv]],BLAU,2.5); linie([[ox-50,yInv],[ox-50,oy-90],[ox+20,oy-90]],PETROL,2.5); wid(ox+60,oy-90,'R₂',R2); linie([[ox+90,oy-90],[ox+160,oy-90],[ox+160,oy]],PETROL,2.5);
+    linie([[ox,yNi],[ox-30,yNi],[ox-30,oy+80]],PETROL,2.5); el('path',{d:`M${ox-42},${oy+80} h24 M${ox-38},${oy+86} h16 M${ox-34},${oy+92} h8`,stroke:PETROL,'stroke-width':2}); }
+  else { linie([[ox,yNi],[ox-160,yNi]],BLAU,2.5); linie([[ox,yInv],[ox-50,yInv],[ox-50,oy+100]],PETROL,2.5); el('rect',{x:ox-60,y:oy+100,width:20,height:50,fill:'#fff',stroke:GRAPHIT,'stroke-width':2}); text(ox-70,oy+130,'R₁ = '+fmt(R1,1)+' kΩ',{s:12,f:GRAPHIT,a:'end'});
+    linie([[ox-50,oy+150],[ox-50,oy+165]],PETROL,2.5); el('path',{d:`M${ox-62},${oy+165} h24 M${ox-58},${oy+171} h16`,stroke:PETROL,'stroke-width':2});
+    linie([[ox-50,oy+90],[ox+20,oy+90]],PETROL,2.5); wid(ox+60,oy+90,'R₂',R2); linie([[ox+90,oy+90],[ox+160,oy+90],[ox+160,oy]],PETROL,2.5); }
+  el('circle',{cx:ox-160,cy:art==='inv'?yInv:yNi,r:4,fill:BLAU}); text(ox-170,(art==='inv'?yInv:yNi)+5,'Ue',{s:14,f:BLAU,a:'end'}).innerHTML='U<tspan dy="4" font-size="11">e</tspan>';
+  text(ox+62,oy-38,'+'+UB+' V',{s:11,f:STAHL,w:500,a:'start'}); text(ox+62,oy+46,'−'+UB+' V',{s:11,f:STAHL,w:500,a:'start'});
+  // Übertragungskennlinie
+  const K={x:60,y:300,s:250}, kx=u=>K.x+K.s/2+u/10*K.s/2, ky=u=>K.y+K.s/2-u/15*K.s/2;
+  el('rect',{x:K.x,y:K.y,width:K.s,height:K.s,fill:'#fff',stroke:'#D9E1E3'}); el('line',{x1:K.x,y1:ky(0),x2:K.x+K.s,y2:ky(0),stroke:STAHL}); el('line',{x1:kx(0),y1:K.y,x2:kx(0),y2:K.y+K.s,stroke:STAHL});
+  [Ug,-Ug].forEach(u=>el('line',{x1:K.x,y1:ky(u),x2:K.x+K.s,y2:ky(u),stroke:ROT,'stroke-dasharray':'4 4',opacity:.6}));
+  const kp=[]; for(let u=-10;u<=10;u+=0.05) kp.push([kx(u),ky(lim(V*u))]); linie(kp,KUPFER,3);
+  el('circle',{cx:kx(ue),cy:ky(ua),r:7,fill:KUPFER,stroke:'#fff','stroke-width':2});
+  text(K.x+K.s/2,K.y-10,'Übertragungskennlinie',{s:13,f:PETROL}); text(K.x+K.s-4,ky(0)+16,'Ue ±10 V',{s:11,f:STAHL,a:'end',w:500}); text(kx(0)+6,K.y+14,'Ua ±15 V',{s:11,f:STAHL,a:'start',w:500});
+  // Liniendiagramm
+  const L={x:370,y:300,w:400,h:250}, lx=t=>L.x+t*L.w, ly=u=>L.y+L.h/2-u/15*L.h/2;
+  el('rect',{x:L.x,y:L.y,width:L.w,height:L.h,fill:'#fff',stroke:'#D9E1E3'}); el('line',{x1:L.x,y1:ly(0),x2:L.x+L.w,y2:ly(0),stroke:STAHL});
+  for(let u=-15;u<=15;u+=5) if(u) text(L.x-6,ly(u)+4,u,{s:10,f:STAHL,a:'end',w:500});
+  [Ug,-Ug].forEach(u=>el('line',{x1:L.x,y1:ly(u),x2:L.x+L.w,y2:ly(u),stroke:ROT,'stroke-dasharray':'4 4',opacity:.6}));
+  const pe=[], pa=[]; for(let i=0;i<=200;i++){ const t=i/200, e=sn?Ue*Math.sin(2*Math.PI*2*t):Ue; pe.push([lx(t),ly(e)]); pa.push([lx(t),ly(lim(V*e))]); }
+  linie(pe,BLAU,2.5); linie(pa,KUPFER,3); text(L.x+L.w/2,L.y-10,'Liniendiagramm (2 Perioden)',{s:13,f:PETROL});
+  text(L.x+10,L.y+L.h-10,'Ue',{s:12,f:BLAU,a:'start'}); text(L.x+40,L.y+L.h-10,'Ua',{s:12,f:KUPFER,a:'start'}); text(L.x+L.w-6,L.y+L.h-10,'Grenze ±'+fmt(Ug,1)+' V',{s:11,f:ROT,a:'end',w:500});
+  const st=$('status'); st.className='status'+(ueber?' faellt':' gut'); st.innerHTML='V = '+fmt(V,2)+(ueber?' · Übersteuert: '+fmt(V*Ue,1)+' V wären nötig, möglich sind nur ±'+fmt(Ug,1)+' V':' · U<sub>a</sub> = '+fmt(V*Ue,2)+' V'+(sn?' (Scheitelwert)':''));
+  rechenweg([['Verstärkung',art==='inv'?'V = −R₂ / R₁ = −'+fmt(R2,1)+' / '+fmt(R1,1):art==='nin'?'V = 1 + R₂ / R₁ = 1 + '+fmt(R2,1)+' / '+fmt(R1,1):'V = 1',fmt(V,2)],['Ausgangsspannung','U<sub>a</sub> = V · U<sub>e</sub> = '+fmt(V,2)+' · '+fmt(Ue,1)+' V',ueber?'begrenzt auf '+(V*Ue>0?'+':'−')+fmt(Ug,1)+' V':fmt(V*Ue,2)+' V'],['Aussteuergrenze','±(U<sub>B</sub> − 1,5 V)','±'+fmt(Ug,1)+' V'],['Eingangswiderstand',art==='inv'?'r<sub>e</sub> ≈ R₁':'r<sub>e</sub> sehr groß',art==='inv'?fmt(R1,1)+' kΩ':'≫ 1 MΩ']]);
+  $('r1Out').textContent=fmt(R1,1)+' kΩ'; $('r2Out').textContent=fmt(R2,1)+' kΩ'; $('ueOut').textContent=fmt(Ue,1)+' V'; $('ubOut').textContent=UB+' V';
+}
+function lauf(ts){ const dt=letzt?Math.min(.05,(ts-letzt)/1000):0; letzt=ts; ph=(ph+dt*1.2)%(2*Math.PI); zeichne(); requestAnimationFrame(lauf); }
+knopfStart(START,()=>{ document.querySelector('input[name=art][value=inv]').checked=true; }); knopfBeamer(); requestAnimationFrame(lauf);
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

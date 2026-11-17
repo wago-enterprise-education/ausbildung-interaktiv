@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Virtuelles Oszilloskop: ablesen und auswerten</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Elektro und Mechatronik · LF 1 · AP1</div>
+<h1>Virtuelles Oszilloskop: ablesen und auswerten</h1>
+<p class="unter">Ein Funktionsgenerator liefert ein Signal. Stell Zeitbasis und Ablenkkoeffizient so ein, dass du gut ablesen kannst, und bestimme Scheitelwert, Periodendauer, Frequenz und Effektivwert.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 600" aria-label="Oszilloskop-Bildschirm mit 10 mal 8 Kästchen"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Funktionsgenerator</h2>
+      <div class="seg" role="radiogroup">
+        <label><input type="radio" name="form" value="sin" checked>Sinus</label>
+        <label><input type="radio" name="form" value="rech">Rechteck</label>
+        <label><input type="radio" name="form" value="drei">Dreieck</label>
+      </div>
+      <label class="regler"><span class="zeile"><span>Frequenz f</span><output id="fOut"></output></span><input id="f" type="range" min="0" max="12" step="1" value="4" data-liste="10,20,50,100,200,500,1000,2000,5000,10000,20000,50000,100000"></label>
+      <label class="regler"><span class="zeile"><span>Scheitelwert û</span><output id="aOut"></output></span><input id="a" type="range" min="0.1" max="20" step="0.1" value="5"></label>
+      <label class="regler"><span class="zeile"><span>Gleichanteil (Offset)</span><output id="oOut"></output></span><input id="o" type="range" min="-10" max="10" step="0.5" value="0"></label>
+      <div class="haken"><label><input id="geheim" type="checkbox"> Generatorwerte verbergen (selbst ablesen!)</label></div>
+    </div>
+    <div class="karte">
+      <h2>Oszilloskop</h2>
+      <label class="regler"><span class="zeile"><span>Ablenkkoeffizient Y</span><output id="vOut"></output></span><input id="v" type="range" min="0" max="10" step="1" value="7" data-liste="0.01,0.02,0.05,0.1,0.2,0.5,1,2,5,10,20"></label>
+      <label class="regler"><span class="zeile"><span>Zeitbasis X</span><output id="tOut"></output></span><input id="t" type="range" min="0" max="18" step="1" value="9" data-liste="0.001,0.002,0.005,0.01,0.02,0.05,0.1,0.2,0.5,1,2,5,10,20,50,100,200,500,1000"></label>
+      <div class="zeile">Kopplung</div>
+      <div class="seg" role="radiogroup">
+        <label><input type="radio" name="kop" value="dc" checked>DC</label>
+        <label><input type="radio" name="kop" value="ac">AC</label>
+      </div>
+      <div class="hinweis">Der Bildschirm hat 10 Kästchen (div) waagerecht und 8 senkrecht. Getriggert wird auf die steigende Flanke durch die Mitte.</div>
+      <div class="knoepfe"><button id="start" class="zweit">Startwerte</button><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte"><h2>Auswertung</h2><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>Hak „Generatorwerte verbergen“ an und lies Scheitelwert und Periodendauer ab. Berechne f und den Effektivwert.</li>
+        <li>Stell 230 V Netzspannung nach: û = ? Welche Einstellung für Y passt, wenn du über einen Tastkopf 10 : 1 misst?</li>
+        <li>Schalte bei Offset 5 V zwischen DC- und AC-Kopplung. Was verschwindet?</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>û = Kästchen von der Mitte bis zur Spitze · Y. T = Kästchen einer Periode · X. f = 1 / T. Beim Sinus U = û / √2.</li>
+        <li>û = √2 · 230 V = 325 V. Mit 10 : 1 kommen 32,5 V am Eingang an: Y = 10 V/div ergibt gut 3 Kästchen. Netzspannung nur mit geeignetem Differenztastkopf messen!</li>
+        <li>Der Gleichanteil. AC-Kopplung schaltet einen Kondensator in den Eingang, man sieht nur noch den Wechselanteil.</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · idealer Generator, Tastkopf 1 : 1 · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+const FW=[10,20,50,100,200,500,1000,2000,5000,10000,20000,50000,100000], VW=[0.01,0.02,0.05,0.1,0.2,0.5,1,2,5,10,20], TW=[1e-6,2e-6,5e-6,1e-5,2e-5,5e-5,1e-4,2e-4,5e-4,1e-3,2e-3,5e-3,0.01,0.02,0.05,0.1,0.2,0.5,1];
+const START={f:4,a:5,o:0,v:7,t:9,geheim:false}; let roll=0, letzt=0;
+const zt=t=>t>=1?fmt(t,t<10?2:1)+' s':t>=1e-3?fmt(t*1e3,t<1e-2?2:1)+' ms':fmt(t*1e6,t<1e-5?2:1)+' µs', hz=f=>f>=1000?fmt(f/1000,f<1e4?2:1)+' kHz':fmt(f,f<100?1:0)+' Hz';
+const vt=v=>v>=1?fmt(v,v<10?2:1)+' V':fmt(v*1000,0)+' mV';
+function sig(form,ph){ const p=((ph%1)+1)%1; if(form==='sin') return Math.sin(2*Math.PI*p); if(form==='rech') return p<0.5?1:-1; return p<0.25?4*p:(p<0.75?2-4*p:4*p-4); }
+function zeichne(){ const form=radio('form'), f=FW[+$('f').value], A=+$('a').value, O=+$('o').value, V=VW[+$('v').value], T=TW[+$('t').value], ac=radio('kop')==='ac'; svg.innerHTML='';
+  const X0=60, Y0=40, D=60, W=10*D, H=8*D, ym=Y0+H/2;
+  el('rect',{x:X0-20,y:Y0-20,width:W+40,height:H+40,rx:14,fill:'#1B2A30'}); el('rect',{x:X0,y:Y0,width:W,height:H,fill:'#0F2027'});
+  for(let i=0;i<=10;i++) el('line',{x1:X0+i*D,y1:Y0,x2:X0+i*D,y2:Y0+H,stroke:'#2F4D57','stroke-width':i===5?1.6:1});
+  for(let j=0;j<=8;j++) el('line',{x1:X0,y1:Y0+j*D,x2:X0+W,y2:Y0+j*D,stroke:'#2F4D57','stroke-width':j===4?1.6:1});
+  for(let i=0;i<=50;i++){ el('line',{x1:X0+i*D/5,y1:ym-4,x2:X0+i*D/5,y2:ym+4,stroke:'#3F6672'}); } for(let j=0;j<=40;j++){ el('line',{x1:X0+W/2-4,y1:Y0+j*D/5,x2:X0+W/2+4,y2:Y0+j*D/5,stroke:'#3F6672'}); }
+  // Trigger: steigende Flanke durch Nulllinie des Wechselanteils in der Bildmitte
+  const off=ac?0:O, ph0=form==='sin'?0:(form==='drei'?0:0.0), tGes=10*T, punkte=[]; let clip=false;
+  const n=Math.min(4000,Math.max(400,Math.ceil(tGes*f*40)));
+  for(let i=0;i<=n;i++){ const tt=(i/n-0.5)*tGes; let u=A*sig(form,tt*f+(form==='rech'?0:0))+off; let y=ym-u/V*D; if(y<Y0-2||y>Y0+H+2) clip=true; y=Math.max(Y0-2,Math.min(Y0+H+2,y)); punkte.push([X0+i/n*W,y]); }
+  if(form==='rech'){ /* senkrechte Flanken sind durch dichte Abtastung schon da */ }
+  if(tGes*f>400){ el('rect',{x:X0,y:Math.max(Y0,ym-(A+off)/V*D),width:W,height:Math.min(H,2*A/V*D),fill:'#7CFFB2',opacity:.35}); } else linie(punkte,'#7CFFB2',2.5,{style:'filter:drop-shadow(0 0 3px #7CFFB2)'});
+  el('path',{d:`M${X0-14},${ym-off/V*D} l10,-6 v12 z`,fill:'#F2B84B'});
+  text(X0,Y0+H+44,'Y: '+vt(V)+'/div',{s:16,f:PETROL,a:'start'}); text(X0+W/2,Y0+H+44,ac?'AC':'DC',{s:16,f:PETROL}); text(X0+W,Y0+H+44,'X: '+zt(T)+'/div',{s:16,f:PETROL,a:'end'});
+  const kT=1/f/T, kA=A/V, st=$('status');
+  st.className='status'+(clip||kT<1||kT>10?' faellt':'');
+  st.innerHTML= clip ? 'Das Signal läuft aus dem Bild. Ablenkkoeffizient Y vergrößern.' : (tGes*f>400 ? 'Zu viele Perioden: Das Bild verschmiert. Zeitbasis X verkleinern.' : kT>10 ? 'Weniger als eine Periode im Bild. Zeitbasis X vergrößern.' : kA<1 ? 'Das Signal ist sehr klein. Ablenkkoeffizient Y verkleinern, dann liest du genauer ab.' : 'Gut ablesbar: eine Periode ist '+fmt(kT,1)+' Kästchen breit, der Scheitelwert '+fmt(kA,1)+' Kästchen hoch.');
+  const eff=form==='sin'?A/Math.SQRT2:form==='rech'?A:A/Math.sqrt(3), g=$('geheim').checked;
+  rechenweg([['Scheitelwert û','û = Kästchen · Y = '+fmt(kA,2)+' div · '+vt(V)+'/div',g?'?':vt(A)],['Spitze-Spitze-Wert','u<sub>ss</sub> = 2 · û',g?'?':vt(2*A)],
+    ['Periodendauer T','T = Kästchen · X = '+fmt(kT,2)+' div · '+zt(T)+'/div',g?'?':zt(1/f)],['Frequenz f','f = 1 / T',g?'?':hz(f)],
+    ['Effektivwert U (Wechselanteil)',form==='sin'?'U = û / √2':form==='rech'?'Rechteck: U = û':'Dreieck: U = û / √3',g?'?':vt(eff)]]);
+  $('fOut').textContent=g?'?':f+' Hz'; $('aOut').textContent=g?'?':fmt(A,1)+' V'; $('oOut').textContent=g?'?':fmt(O,1)+' V'; $('vOut').textContent=fmt(V,V<0.1?2:(V<1?1:0))+' V/div'; $('tOut').textContent=fmt(T*1000,T<1e-5?3:(T<1e-3?2:0))+' ms/div';
+  document.querySelectorAll('#f,#a,#o').forEach(e=>{ const z=e.closest('label').querySelector('.zahlbox'); if(z) z.style.visibility=g?'hidden':''; });
+}
+document.querySelectorAll('input').forEach(e=>e.addEventListener('input',zeichne));
+knopfStart(START,()=>{ document.querySelector('input[name=form][value=sin]').checked=true; document.querySelector('input[name=kop][value=dc]').checked=true; zeichne(); }); knopfBeamer(); zeichne();
+setInterval(()=>{ document.querySelectorAll('#f,#a,#o').forEach(e=>{ const z=e.closest('label').querySelector('.zahlbox'); if(z) z.style.visibility=$('geheim').checked?'hidden':''; }); },300);
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

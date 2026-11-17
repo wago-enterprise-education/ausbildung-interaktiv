@@ -1,142 +1,31 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Interaktive Lernangebote und HTML-Anwendungen von Deibele Bildung.">
-    <title>Lernangebote | Deibele Bildung</title>
-    <style>
-        :root {
-            color-scheme: light;
-            font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-            color: #172033;
-            background: #f3f6fb;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-        }
-
-        main {
-            width: min(100% - 2rem, 760px);
-            margin: 0 auto;
-            padding: 4rem 0;
-        }
-
-        .eyebrow {
-            margin: 0 0 0.5rem;
-            color: #3759a5;
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
-
-        h1 {
-            margin: 0;
-            font-size: clamp(2rem, 6vw, 3.25rem);
-            line-height: 1.1;
-        }
-
-        .intro {
-            margin: 1rem 0 2.5rem;
-            color: #526078;
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-
-        h2 {
-            margin: 0 0 1rem;
-            font-size: 1.25rem;
-        }
-
-        .offer-list {
-            display: grid;
-            gap: 1rem;
-            margin: 0;
-            padding: 0;
-            list-style: none;
-        }
-
-        .offer-link {
-            display: block;
-            padding: 1.25rem 1.5rem;
-            border: 1px solid #dce3ef;
-            border-radius: 0.75rem;
-            background: #fff;
-            color: inherit;
-            text-decoration: none;
-            transition: border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
-        }
-
-        .offer-link:hover {
-            transform: translateY(-2px);
-            border-color: #8299ce;
-            box-shadow: 0 8px 24px rgb(23 32 51 / 8%);
-        }
-
-        .offer-link:focus-visible {
-            outline: 3px solid #3759a5;
-            outline-offset: 3px;
-        }
-
-        .offer-link strong {
-            display: block;
-            margin-bottom: 0.35rem;
-            color: #24458e;
-            font-size: 1.1rem;
-        }
-
-        .offer-link span {
-            color: #526078;
-            line-height: 1.5;
-        }
-
-        footer {
-            margin-top: 2rem;
-            color: #6b778c;
-            font-size: 0.9rem;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                scroll-behavior: auto !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-    </style>
-</head>
-<body>
-    <main>
-        <header>
-            <p class="eyebrow">Deibele Bildung</p>
-            <h1>Lernangebote</h1>
-            <p class="intro">Interaktive Anwendungen und Materialien zum Lernen und Ausprobieren.</p>
-        </header>
-
-        <section aria-labelledby="angebote-heading">
-            <h2 id="angebote-heading">Alle Angebote</h2>
-            <ul class="offer-list">
-                <li>
-                    <a class="offer-link" href="Fehlerschleife.html">
-                        <strong>Fehlerschleife im TN-S-Netz</strong>
-                        <span>Spannungsfall und Fehlerschleifenimpedanz interaktiv berechnen.</span>
-                    </a>
-                </li>
-                <!-- Weitere HTML-Angebote als <li> mit einem relativen Link ergänzen. -->
-            </ul>
-        </section>
-
-        <footer>
-            <p>Wähle ein Angebot aus, um es direkt zu öffnen.</p>
-        </footer>
-    </main>
-</body>
-</html>
+<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Lern-Animationen Ausbildung Elektrotechnik</title>
+<style>body{margin:0;font:16px/1.45 "WAGO Connective",Arial,sans-serif;color:#1F2837}header{background:#1F2837;color:#fff;padding:18px;border-bottom:4px solid #6EC800}h1{margin:0;font-size:1.4rem}main{max-width:900px;margin:auto;padding:16px}ul{list-style:none;padding:0}li{background:#EFF0F1;border-radius:4px;padding:10px 12px;margin:8px 0}a{color:#1F2837}span,small{color:#616A73}</style></head>
+<body><header><h1>Lern-Animationen Ausbildung Elektrotechnik</h1></header><main><p>27 interaktive Animationen für M, EBT, EAT und EGS (Abschlussprüfung Teil 1 und 2). Jede Datei läuft eigenständig im Browser, ohne Internetverbindung.</p><ul>
+<li><a href="animationen/spannungsteiler.html"><b>Belasteter Spannungsteiler</b></a><br><span>R₁, R₂ und Last einstellen: Spannungs- und Strompfeile ändern sich live. Die Kennlinie zeigt, wie stark die Ausgangsspannung unter Last einbricht.</span><br><small>M EBT EAT EGS · AP1</small></li>
+<li><a href="animationen/asynchronmotor.html"><b>Drehstrom-Asynchronmotor: Drehfeld, Schlupf, Leistungsschild</b></a><br><span>Drei Wicklungen erzeugen das Drehfeld, der Läufer folgt mit Schlupf. Frequenz, Polpaarzahl und Last einstellen, Leistungsschild auswerten, Anlaufstrom direkt oder Stern-Dreieck.</span><br><small>M EBT EAT · AP2</small></li>
+<li><a href="animationen/drehstrom.html"><b>Drehstrom: Stern, Dreieck und Leistung</b></a><br><span>Zwischen Stern und Dreieck umschalten und den Faktor 3 bei der Leistung sehen. Neu: Stränge einzeln einstellen, dann wächst der Neutralleiterstrom.</span><br><small>M EBT EAT EGS · AP1 + AP2</small></li>
+<li><a href="animationen/fehlerschleife-tn-s.html"><b>Fehlerschleife im TN-S-Netz</b></a><br><span>Körperschluss am Motor: Der Fehlerstrom läuft sichtbar durch die Schleife. Leitungslänge, Querschnitt und LS-Schalter einstellen und die Abschaltbedingung prüfen.</span><br><small>M EBT EAT EGS · AP1 + AP2</small></li>
+<li><a href="animationen/fehlerstromschutz-rcd.html"><b>Fehlerstrom-Schutzeinrichtung (RCD)</b></a><br><span>Hin- und Rückstrom durch den Summenstromwandler: Ab welchem Fehlerstrom löst der RCD aus, und warum hilft er nicht, wenn jemand L und N anfasst?</span><br><small>M EBT EAT EGS · AP1 + AP2</small></li>
+<li><a href="animationen/frequenzumrichter.html"><b>Frequenzumrichter: Aufbau, U/f-Kennlinie, Bremsen</b></a><br><span>Gleichrichter, Zwischenkreis, Wechselrichter mit PWM: Sollwert vorgeben, Rampen einstellen, U/f-Kennlinie mit Boost und 87-Hz-Betrieb. Beim Bremsen steigt die Zwischenkreisspannung.</span><br><small>M EBT EAT · AP2</small></li>
+<li><a href="animationen/grafcet.html"><b>GRAFCET lesen: Ablaufsteuerung einer Bohrvorrichtung</b></a><br><span>GRAFCET und Maschine nebeneinander: aktiver Schritt, Aktionen und erfüllte Transitionen leuchten im Takt der Bohrvorrichtung. Mit gespeicherter Aktion und Zeitbedingung.</span><br><small>M EBT EAT · AP1 + AP2</small></li>
+<li><a href="animationen/gleichrichter.html"><b>Gleichrichter: Einweg, Brücke und Glättung</b></a><br><span>Welche Dioden leiten gerade? Der Stromweg durch die Brücke wird sichtbar. Mit Glättungskondensator, Restwelligkeit und Lastwiderstand.</span><br><small>M EBT EAT EGS · AP1</small></li>
+<li><a href="animationen/subnetz-rechner.html"><b>IPv4-Subnetz-Rechner</b></a><br><span>IP-Adresse und Präfixlänge einstellen: Netz- und Hostanteil Bit für Bit, Netzadresse, Broadcast und Hostanzahl. Sind SPS und Laptop im selben Netz?</span><br><small>M EBT EAT EGS · AP1 + AP2</small></li>
+<li><a href="animationen/installationsschaltungen.html"><b>Installationsschaltungen: Aus, Wechsel, Kreuz, Stromstoß</b></a><br><span>Schalter im Stromlaufplan antippen: Der Weg des Außenleiterpotenzials leuchtet, die Lampe geht an oder aus. Mit Schaltzustandstabelle.</span><br><small>M EBT EAT EGS · AP1</small></li>
+<li><a href="animationen/knx-telegramm.html"><b>KNX: Telegramm vom Taster zum Aktor</b></a><br><span>Taste drücken und das Telegramm über die Linie laufen sehen: Physikalische Adresse, Gruppenadresse und Nutzdaten. Nur Aktorkanäle mit passender Gruppenadresse schalten.</span><br><small>EBT · AP2</small></li>
+<li><a href="animationen/laden-entladen.html"><b>Kondensator und Spule: Laden und Entladen</b></a><br><span>RC- und RL-Glied schalten: Spannung und Strom laufen als e-Funktion mit. Zeitkonstante τ ablesen und nach 5 τ ist der Vorgang abgeschlossen.</span><br><small>M EBT EAT EGS · AP1</small></li>
+<li><a href="animationen/wirkungsgrad.html"><b>Leistung, Wirkungsgrad und Energiekosten</b></a><br><span>Energieflussbild von Motor und Getriebe: Verluste werden als Wärme sichtbar. Dazu Energie und Kosten im Jahr und der Vergleich mit einem besseren Motor.</span><br><small>M EBT EAT EGS · AP1</small></li>
+<li><a href="animationen/normalverteilung.html"><b>Normalverteilung und Prozessfähigkeit (Cp, Cpk)</b></a><br><span>Stichprobe mit Histogramm und Glockenkurve. Neu: Toleranzgrenzen einblenden und Cp und Cpk live berechnen. Ist der Prozess fähig?</span><br><small>EGS M · AP2</small></li>
+<li><a href="animationen/operationsverstaerker.html"><b>Operationsverstärker: invertierend und nichtinvertierend</b></a><br><span>R₁, R₂ und Eingangsspannung einstellen: Verstärkung mit Rechenweg, Übertragungskennlinie und Liniendiagramm. Wird übersteuert, schneidet der Ausgang an der Versorgung ab.</span><br><small>EGS EAT · AP2</small></li>
+<li><a href="animationen/passungen.html"><b>Passungen: Spiel, Übergang oder Übermaß</b></a><br><span>Nennmaß, Bohrung und Welle wählen: Die Toleranzfelder nach ISO 286 liegen maßstäblich zur Nulllinie. Höchst- und Mindestspiel mit Rechenweg und Passungsart.</span><br><small>M · AP1</small></li>
+<li><a href="animationen/pneumatikzylinder.html"><b>Pneumatik: Zylinder mit 5/2-Wegeventil</b></a><br><span>Ventil betätigen und den Schieber umschalten sehen: Druckluft strömt, der Kolben fährt. Druck, Durchmesser und Hub einstellen, Kolbenkraft und Luftverbrauch berechnen.</span><br><small>M EAT · AP1 + AP2</small></li>
+<li><a href="animationen/regelkreis.html"><b>Regelkreis: Füllstandsregelung mit P, I, PI, PID</b></a><br><span>Behälter mit Zulaufventil: Reglertyp und Parameter einstellen, Sollwertsprung und Störung auslösen. Bleibende Regelabweichung und Überschwingen live im Liniendiagramm.</span><br><small>M EBT EAT · AP2</small></li>
+<li><a href="animationen/risikograph-performance-level.html"><b>Risikograph: Performance Level bestimmen</b></a><br><span>Schwere, Häufigkeit, Vermeidbarkeit: Durch den Risikographen klicken und den erforderlichen PLr mit Begründung erhalten. Grundschema nach DIN EN ISO 13849-1.</span><br><small>M EBT EAT · AP2</small></li>
+<li><a href="animationen/sps-zeiten.html"><b>SPS: Zeiten, Zähler und Flanken</b></a><br><span>TON, TOF, TP, CTU und R_TRIG nach IEC 61131-3: Eingang schalten und im laufenden Zeitdiagramm sehen, wie der Baustein reagiert.</span><br><small>M EBT EAT EGS · AP1 + AP2</small></li>
+<li><a href="animationen/transformator.html"><b>Transformator: Übersetzung, Ströme und Kurzschluss</b></a><br><span>Windungszahlen und Last einstellen: Spannungen und Ströme auf beiden Seiten mit Rechenweg. Aus uk folgt der Kurzschlussstrom, der Wechselfluss im Kern wird sichtbar.</span><br><small>EBT EAT EGS · AP1 + AP2</small></li>
+<li><a href="animationen/oszilloskop.html"><b>Virtuelles Oszilloskop: ablesen und auswerten</b></a><br><span>Zeitbasis und Ablenkkoeffizient einstellen, Kästchen zählen: Scheitelwert, Periodendauer, Frequenz und Effektivwert bestimmen. Mit verdeckten Generatorwerten zum Üben.</span><br><small>M EBT EAT EGS · AP1</small></li>
+<li><a href="animationen/wendeschuetz.html"><b>Wendeschützschaltung mit Selbsthaltung und Verriegelung</b></a><br><span>Taster drücken und Stromwege verfolgen: Selbsthaltung, Schütz- und Tasterverriegelung einzeln abschalten und sehen, warum es ohne sie zum Kurzschluss kommt.</span><br><small>M EBT EAT · AP1 + AP2</small></li>
+<li><a href="animationen/zahlensysteme.html"><b>Zahlensysteme und Logikgatter</b></a><br><span>Bits antippen: Dezimal-, Hex- und BCD-Wert ändern sich mit Rechenweg. Dazu UND, ODER, NICHT, NAND, NOR und XOR mit Wahrheitstabelle.</span><br><small>M EBT EAT EGS · AP1</small></li>
+<li><a href="animationen/zahnradgetriebe.html"><b>Zahnradgetriebe: Übersetzung, Drehzahl, Drehmoment</b></a><br><span>Zähnezahlen einstellen und die Räder drehen sehen: Drehzahl runter, Moment rauf. Übersetzung, Abtriebsmoment, Teilkreis und Achsabstand mit Rechenweg.</span><br><small>M · AP1 + AP2</small></li>
+<li><a href="animationen/wechselstrom-rlc.html"><b>wechselstrom-rlc</b></a><br><span></span><br><small> · </small></li>
+<li><a href="animationen/ueberstromschutz.html"><b>Überstromschutz: Auslösekennlinie des LS-Schalters</b></a><br><span>Strom einstellen und an der Zeit-Strom-Kennlinie ablesen: thermisch oder magnetisch, wie schnell? Mit vorgeschaltetem Schutzorgan zur Selektivität.</span><br><small>M EBT EAT EGS · AP1 + AP2</small></li>
+</ul><p><small>© 2026 Marco Deibele. Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors, siehe NUTZUNGSRECHT.md.</small></p></main></body></html>

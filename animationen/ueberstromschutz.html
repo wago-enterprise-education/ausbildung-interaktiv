@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Überstromschutz: Auslösekennlinie des LS-Schalters</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Elektro und Mechatronik · LF 2 und 5 · AP1 + AP2</div>
+<h1>Überstromschutz: Auslösekennlinie des LS-Schalters</h1>
+<p class="unter">Stell den Strom ein und lies an der Zeit-Strom-Kennlinie ab, ob und wie schnell der LS-Schalter auslöst. Thermisch bei Überlast, magnetisch bei Kurzschluss. Mit einem vorgeschalteten Schutzorgan prüfst du die Selektivität.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 640" aria-label="Zeit-Strom-Kennlinie mit Auslösebereich und Arbeitspunkt"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Einstellungen</h2>
+      <div class="zeile">Charakteristik</div>
+      <div class="seg" role="radiogroup">
+        <label><input type="radio" name="kar" value="B" checked>B</label>
+        <label><input type="radio" name="kar" value="C">C</label>
+        <label><input type="radio" name="kar" value="D">D</label>
+      </div>
+      <label class="regler"><span class="zeile"><span>Bemessungsstrom I<sub>n</sub></span><output id="inOut"></output></span><input id="in" type="range" min="0" max="9" step="1" value="3" data-liste="6,10,13,16,20,25,32,40,50,63"></label>
+      <label class="regler"><span class="zeile"><span>Strom im Stromkreis I</span><output id="iOut"></output></span><input id="i" type="range" min="0" max="60" step="1" value="20"></label>
+      <div class="haken">
+        <label><input id="vor" type="checkbox"> vorgeschalteter LS-Schalter (Selektivität)</label>
+      </div>
+      <div id="wVor" style="display:none">
+        <div class="seg" role="radiogroup">
+          <label><input type="radio" name="kar2" value="B">B</label>
+          <label><input type="radio" name="kar2" value="C" checked>C</label>
+          <label><input type="radio" name="kar2" value="D">D</label>
+        </div>
+        <label class="regler"><span class="zeile"><span>I<sub>n</sub> vorgeschaltet</span><output id="in2Out"></output></span><input id="in2" type="range" min="0" max="9" step="1" value="8" data-liste="6,10,13,16,20,25,32,40,50,63"></label>
+      </div>
+      <div class="hinweis">Achsen fest und logarithmisch: Strom 1 A bis 10 kA, Zeit 1 ms bis 2 h. Der Strom-Regler springt in gerundeten Stufen von 1 A bis 10 kA. Kennlinien schematisch nach DIN EN 60898-1 (1,13 · I<sub>n</sub>: keine Auslösung in 1 h, 1,45 · I<sub>n</sub>: Auslösung in 1 h; magnetisch B 3–5, C 5–10, D 10–20 · I<sub>n</sub>). Genaue Kurven im Tabellenbuch.</div>
+      <div class="knoepfe"><button id="start" class="zweit">Startwerte</button><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte"><h2>Ablesen</h2><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>B16 und ein Strom von 20 A (Überlast 1,25 · I<sub>n</sub>). Löst der LS-Schalter aus?</li>
+        <li>B16 und 70 A. Und jetzt mit C16?</li>
+        <li>B16 hinter einem vorgeschalteten C50: Bis zu welchem Strom ist die Anlage selektiv?</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>Vielleicht, aber spät: Zwischen 1,13 und 1,45 · I<sub>n</sub> darf er erst nach mehr als einer Stunde auslösen oder bis zu einer Stunde brauchen. Deshalb gilt bei der Leitungsbemessung I<sub>2</sub> = 1,45 · I<sub>n</sub> ≤ 1,45 · I<sub>z</sub>.</li>
+        <li>70 A = 4,4 · I<sub>n</sub>: Beim B16 liegt das im magnetischen Übergangsbereich (3 bis 5 · I<sub>n</sub>), er kann sofort auslösen, sicher ab 80 A. Der C16 löst bei 70 A nur thermisch aus, nach mehreren Sekunden.</li>
+        <li>Selektiv ist es, solange das Band des B16 vollständig links bzw. unter dem Band des C50 liegt. Das endet, wenn der C50 magnetisch auslösen kann: ab 5 · 50 A = 250 A lösen möglicherweise beide aus.</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · schematische Kennlinien, keine Herstellerdaten · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+const IN=[6,10,13,16,20,25,32,40,50,63], MAG={B:[3,5],C:[5,10],D:[10,20]}, START={in:3,i:20,vor:false,in2:8};
+const LI=[]; for(let e=0;e<4;e++) [1,1.2,1.5,1.8,2,2.5,3,3.5,4,4.5,5,6,7,8,9].forEach(m=>LI.push(Math.round(m*Math.pow(10,e)*10)/10)); LI.push(10000);
+$('i').dataset.liste=LI.join(','); $('i').max=LI.length-1; $('i').value=LI.indexOf(25);
+const iVon=v=>LI[v];
+const G={x:90,y:40,w:660,h:500}, lx=I=>G.x+Math.log10(I)/4*G.w, ly=t=>G.y+(1-(Math.log10(t)+3)/(Math.log10(7200)+3))*G.h;
+const TMAX=7200, TMIN=0.001;
+function kenn(kar,In){ const [ml,mh]=MAG[kar];
+  const tu=x=>{ if(x<=1.45) return Infinity; if(x>=mh) return 0.01; return Math.min(TMAX*10,4616/Math.pow(x*x-1,2.547)); };   // spätestens
+  const tl=x=>{ if(x<=1.13) return Infinity; if(x>=ml) return 0.002; return Math.min(TMAX*10,107/Math.pow(x*x-1,2.74)); };     // frühestens
+  return {kar,In,ml,mh,tu,tl}; }
+function bandPfad(k){ const ob=[], un=[]; for(let i=0;i<=400;i++){ const I=Math.pow(10,i/100), x=I/k.In; const a=k.tl(x), b=k.tu(x);
+    ob.push([lx(I),ly(Math.max(TMIN,Math.min(TMAX,a)))]); un.push([lx(I),ly(Math.max(TMIN,Math.min(TMAX,b)))]); }
+  return 'M'+ob.map(p=>p.join(',')).join(' L')+' L'+un.reverse().map(p=>p.join(',')).join(' L')+' Z'; }
+function zeichne(){ const kar=radio('kar'), In=IN[+$('in').value], I=Math.round(iVon(+$('i').value)*10)/10, vor=$('vor').checked, k=kenn(kar,In), x=I/In; svg.innerHTML=''; defs();
+  $('wVor').style.display=vor?'':'none';
+  el('rect',{x:G.x,y:G.y,width:G.w,height:G.h,fill:'#fff',stroke:'#D9E1E3'});
+  [1,2,5,10,20,50,100,200,500,1000,2000,5000,10000].forEach(v=>{ const big=[1,10,100,1000,10000].includes(v); el('line',{x1:lx(v),y1:G.y,x2:lx(v),y2:G.y+G.h,stroke:big?'#D9E1E3':'#F0F3F4'}); if(big||v===5||v===50||v===500) text(lx(v),G.y+G.h+18,v>=1000?(v/1000)+' kA':v+' A',{s:12,f:STAHL,w:400}); });
+  [[0.001,'1 ms'],[0.01,'10 ms'],[0.1,'0,1 s'],[1,'1 s'],[10,'10 s'],[60,'1 min'],[600,'10 min'],[3600,'1 h']].forEach(([t,n])=>{ el('line',{x1:G.x,y1:ly(t),x2:G.x+G.w,y2:ly(t),stroke:'#EEF2F3'}); text(G.x-8,ly(t)+4,n,{s:12,f:STAHL,a:'end',w:400}); });
+  text(G.x+G.w,G.y+G.h+38,'Strom I',{s:13,a:'end'}); text(G.x-8,G.y-12,'Auslösezeit t',{s:13,a:'start'});
+  // Bänder
+  let k2=null; if(vor){ k2=kenn(radio('kar2'),IN[+$('in2').value]); el('path',{d:bandPfad(k2),fill:STAHL,'fill-opacity':.25,stroke:STAHL,'stroke-width':2}); text(lx(k2.In*1.6),ly(3000)-4,k2.kar+k2.In+' (vorgeschaltet)',{s:13,f:STAHL,a:'start'}); }
+  el('path',{d:bandPfad(k),fill:KUPFER,'fill-opacity':.28,stroke:KUPFER,'stroke-width':2}); text(lx(k.In*1.5),ly(1800)+18,kar+In,{s:15,f:KUPFER,a:'start'});
+  // Markierungen In, 1,13, 1,45, magnetisch
+  el('line',{x1:lx(In),y1:G.y,x2:lx(In),y2:G.y+G.h,stroke:PETROL,'stroke-dasharray':'4 4'}); text(lx(In)-4,G.y+14,sub('I','n'),{s:13,f:PETROL,a:'end'});
+  el('rect',{x:lx(k.ml*In),y:ly(0.1),width:lx(k.mh*In)-lx(k.ml*In),height:ly(0.002)-ly(0.1),fill:LILA,'fill-opacity':.12});
+  text((lx(k.ml*In)+lx(k.mh*In))/2,ly(0.0015),'magnetisch',{s:12,f:LILA});
+  // Arbeitspunkt
+  const tA=k.tl(x), tB=k.tu(x), Xp=lx(I);
+  el('line',{x1:Xp,y1:G.y,x2:Xp,y2:G.y+G.h,stroke:ROT,'stroke-width':2.5});
+  if(isFinite(tA)){ const y1=ly(Math.min(TMAX,tA)), y2=ly(Math.max(TMIN,Math.min(TMAX,tB))); el('line',{x1:Xp,y1,x2:Xp,y2,stroke:ROT,'stroke-width':8,'stroke-linecap':'round',opacity:.7}); }
+  text(Xp+6,G.y+G.h-8,'I = '+fmt(I,I<10?1:0)+' A',{s:14,f:ROT,a:'start'});
+  // Auslöser-Anzeige
+  const therm=x>1.13&&x<k.mh, mag=x>=k.ml;
+  [['Bimetall (thermisch)',therm,KUPFER],['Spule (magnetisch)',mag,LILA]].forEach(([n,a,c],j)=>{ const bx=G.x+14, by=ly(0.06)+j*36; el('rect',{x:bx,y:by,width:176,height:28,rx:14,fill:a?c:'#fff',stroke:c,'stroke-width':2}); text(bx+88,by+19,n,{s:13,f:a?'#fff':c,bg:a?c:'#fff',sw:0}); });
+  const zt=t=>t>=3600?fmt(t/3600,1)+' h':t>=60?fmt(t/60,1)+' min':t>=1?fmt(t,1)+' s':fmt(t*1000,0)+' ms';
+  let msg, cls='';
+  if(x<=1.13){ msg='Kein Auslösen: '+fmt(x,2)+' · I<sub>n</sub> liegt unter 1,13 · I<sub>n</sub>. Der Strom darf dauerhaft fließen.'; cls='gut'; }
+  else if(x<=1.45) msg='Kleine Überlast ('+fmt(x,2)+' · I<sub>n</sub>): Auslösung frühestens nach '+zt(Math.min(tA,TMAX))+', die Norm verlangt sie erst ab 1,45 · I<sub>n</sub> innerhalb 1 h.';
+  else if(x>=k.mh){ msg='Kurzschluss ('+fmt(x,1)+' · I<sub>n</sub>): Der magnetische Auslöser schaltet unverzögert ab, in wenigen Millisekunden.'; cls='gut'; }
+  else if(x>=k.ml) msg='Übergangsbereich ('+fmt(x,1)+' · I<sub>n</sub>): Der LS kann magnetisch sofort auslösen, sicher ist das erst ab '+k.mh+' · I<sub>n</sub> = '+k.mh*In+' A. Sonst thermisch nach spätestens '+zt(tB)+'.';
+  else { msg='Überlast ('+fmt(x,2)+' · I<sub>n</sub>): Das Bimetall löst thermisch aus, nach '+zt(tA)+' bis '+zt(tB)+'.'; cls='faellt'; }
+  if(k2){ const x2=I/k2.In, a2=k2.tl(x2); const sel=!isFinite(a2)||k.tu(x)<a2; msg+=sel?' Selektiv: Der vorgeschaltete '+k2.kar+k2.In+' bleibt eingeschaltet.':' Nicht selektiv: Auch der vorgeschaltete '+k2.kar+k2.In+' kann auslösen.'; if(!sel) cls='faellt'; }
+  const st=$('status'); st.className='status '+cls; st.innerHTML=msg;
+  const rows=[['Vielfaches des Bemessungsstroms','x = I / I<sub>n</sub> = '+fmt(I,1)+' A / '+In+' A',fmt(x,2)],
+    ['kleiner Prüfstrom (keine Auslösung in 1 h)','I<sub>1</sub> = 1,13 · I<sub>n</sub>',fmt(1.13*In,1)+' A'],['großer Prüfstrom (Auslösung in 1 h)','I<sub>2</sub> = 1,45 · I<sub>n</sub>',fmt(1.45*In,1)+' A'],
+    ['magnetischer Bereich '+kar,k.ml+' · I<sub>n</sub> bis '+k.mh+' · I<sub>n</sub>',k.ml*In+' A bis '+k.mh*In+' A'],
+    ['sichere Kurzschlussauslösung','I<sub>a</sub> = '+k.mh+' · I<sub>n</sub> (für die Abschaltbedingung)',k.mh*In+' A']];
+  if(isFinite(tA)) rows.push(['Auslösezeit am Arbeitspunkt','abgelesen im Band',zt(Math.max(TMIN,tA))+' bis '+(isFinite(tB)?zt(Math.max(TMIN,tB)):'> 1 h')]);
+  rechenweg(rows);
+  $('inOut').textContent=In+' A'; $('iOut').textContent=fmt(I,I<10?1:0)+' A'; if(vor) $('in2Out').textContent=IN[+$('in2').value]+' A';
+}
+document.querySelectorAll('input').forEach(e=>e.addEventListener('input',zeichne));
+knopfStart(START,()=>{ document.querySelector('input[name=kar][value=B]').checked=true; zeichne(); }); knopfBeamer(); zeichne();
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

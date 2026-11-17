@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Belasteter Spannungsteiler</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Elektro · LF 1 · AP1</div>
+<h1>Belasteter Spannungsteiler</h1>
+<p class="unter">Zwei Widerstände teilen die Spannung. Schließ eine Last an und sieh, wie die Ausgangsspannung einbricht. Die Pfeile zeigen Spannungen und Ströme in festem Maßstab.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 600" aria-label="Schaltung des Spannungsteilers mit Spannungs- und Strompfeilen und Kennlinie der Ausgangsspannung"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Einstellungen</h2>
+      <label class="regler"><span class="zeile"><span>Eingangsspannung U</span><output id="uOut"></output></span><input id="u" type="range" min="1" max="30" step="0.5" value="24"></label>
+      <label class="regler"><span class="zeile"><span>Widerstand R<sub>1</sub></span><output id="r1Out"></output></span><input id="r1" type="range" min="0" max="12" step="1" value="6" data-liste="10,22,47,100,220,470,1000,2200,4700,10000,22000,47000,100000"></label>
+      <label class="regler"><span class="zeile"><span>Widerstand R<sub>2</sub></span><output id="r2Out"></output></span><input id="r2" type="range" min="0" max="12" step="1" value="6" data-liste="10,22,47,100,220,470,1000,2200,4700,10000,22000,47000,100000"></label>
+      <label class="regler"><span class="zeile"><span>Lastwiderstand R<sub>L</sub></span><output id="rlOut"></output></span><input id="rl" type="range" min="0" max="12" step="1" value="6" data-liste="10,22,47,100,220,470,1000,2200,4700,10000,22000,47000,100000"></label>
+      <div class="haken">
+        <label><input id="last" type="checkbox" checked> Last angeschlossen</label>
+        <label><input id="kurve" type="checkbox" checked> Kennlinie U<sub>2</sub> über R<sub>L</sub></label>
+      </div>
+      <div class="hinweis">Spannungspfeile: 1 V ≙ 8 Bildpunkte. Strompfeile: Länge im festen Maßstab je Zehnerstufe, der Zahlenwert steht daneben. Kennlinie mit logarithmischer R<sub>L</sub>-Achse.</div>
+      <div class="knoepfe"><button id="start" class="zweit">Startwerte</button><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte"><h2>Rechenweg</h2><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>U = 24 V, R<sub>1</sub> = R<sub>2</sub> = 1 kΩ, ohne Last. Wie groß ist U<sub>2</sub>?</li>
+        <li>Schließ R<sub>L</sub> = 1 kΩ an. Wie groß ist U<sub>2</sub> jetzt?</li>
+        <li>Wie groß muss R<sub>L</sub> mindestens sein, damit U<sub>2</sub> um höchstens 10 % einbricht? Faustregel: Querstrom mindestens das Zehnfache des Laststroms.</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>U<sub>2</sub> = U · R<sub>2</sub> / (R<sub>1</sub> + R<sub>2</sub>) = 24 V · 1 kΩ / 2 kΩ = 12 V.</li>
+        <li>R<sub>2L</sub> = R<sub>2</sub> ∥ R<sub>L</sub> = 500 Ω. U<sub>2</sub> = 24 V · 500 Ω / 1500 Ω = 8 V. Ein Drittel weniger!</li>
+        <li>Für ≤ 10 % Einbruch etwa R<sub>L</sub> ≥ 5 kΩ (dann U<sub>2</sub> = 10,9 V). Mit dem Regler: ab 10 kΩ bleibt U<sub>2</sub> bei 11,4 V. Je kleiner R<sub>1</sub> und R<sub>2</sub>, desto steifer der Teiler, aber desto mehr Querstrom und Verlust.</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · Widerstandswerte aus der E-Reihe, ideale Spannungsquelle · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+const RW=[10,22,47,100,220,470,1000,2200,4700,10000,22000,47000,100000], START={u:24,r1:6,r2:6,rl:6,last:true,kurve:true};
+const om=r=>r>=1000?fmt(r/1000,r>=10000?0:1)+' kΩ':fmt(r,0)+' Ω';
+const amp=i=>i>=1?fmt(i,2)+' A':i>=1e-3?fmt(i*1000,i>=0.01?1:2)+' mA':fmt(i*1e6,1)+' µA';
+function rechne(){ const U=+$('u').value, R1=RW[+$('r1').value], R2=RW[+$('r2').value], RL=RW[+$('rl').value], last=$('last').checked;
+  const R2L=last?R2*RL/(R2+RL):R2, Rg=R1+R2L, I=U/Rg, U2=I*R2L, U1=U-U2, Iq=U2/R2, IL=last?U2/RL:0, U20=U*R2/(R1+R2);
+  return {U,R1,R2,RL,last,R2L,Rg,I,U2,U1,Iq,IL,U20}; }
+const KV=8; const ilen=i=>i<=0?0:Math.max(8,Math.min(110,30+18*Math.log10(i/1e-5)));   // fester log. Strommaßstab
+function zeichne(){ const r=rechne(); svg.innerHTML=''; defs();
+  const X0=140, XR=320, XL=530, YT=70, YB=330;
+  // Leitungen
+  linie([[X0,YT],[XR,YT]],GRAPHIT,3); linie([[X0,YB],[XR,YB]],GRAPHIT,3);
+  if(r.last){ linie([[XR,YT+130],[XL,YT+130],[XL,YT+150]],GRAPHIT,3); linie([[XL,YB-60],[XL,YB],[XR,YB]],GRAPHIT,3); }
+  else { linie([[XR,YT+130],[XL-40,YT+130]],GRAPHIT,3,{opacity:.4}); linie([[XR,YB],[XL-40,YB]],GRAPHIT,3,{opacity:.4}); el('circle',{cx:XL-40,cy:YT+130,r:5,fill:'#fff',stroke:GRAPHIT,'stroke-width':2}); el('circle',{cx:XL-40,cy:YB,r:5,fill:'#fff',stroke:GRAPHIT,'stroke-width':2}); }
+  linie([[XR,YT],[XR,YT+30]],GRAPHIT,3); linie([[XR,YT+100],[XR,YT+160]],GRAPHIT,3); linie([[XR,YT+230],[XR,YB]],GRAPHIT,3);
+  el('circle',{cx:XR,cy:YT+130,r:5,fill:GRAPHIT}); el('circle',{cx:XR,cy:YB,r:5,fill:GRAPHIT});
+  // Quelle
+  el('circle',{cx:X0,cy:(YT+YB)/2,r:24,fill:'#fff',stroke:PETROL,'stroke-width':3}); text(X0,(YT+YB)/2+6,'=',{s:22,f:PETROL}); linie([[X0,YT],[X0,(YT+YB)/2-24]],GRAPHIT,3); linie([[X0,(YT+YB)/2+24],[X0,YB]],GRAPHIT,3);
+  // Widerstände
+  const R=(x,y,n,v)=>{ el('rect',{x:x-13,y,width:26,height:70,fill:'#fff',stroke:PETROL,'stroke-width':3}); text(x+22,y+30,n,{s:15,f:PETROL,a:'start'}); text(x+22,y+50,om(v),{s:13,f:STAHL,a:'start',w:400}); };
+  R(XR,YT+30,sub('R','1'),r.R1); R(XR,YT+160,sub('R','2'),r.R2); if(r.last){ el('rect',{x:XL-13,y:YT+150,width:26,height:70,fill:'#fff',stroke:PETROL,'stroke-width':3}); text(XL+20,YT+180,sub('R','L'),{s:15,f:PETROL,a:'start'}); text(XL+20,YT+200,om(r.RL),{s:13,f:STAHL,a:'start',w:400}); }
+  // Spannungspfeile fest 8 px/V
+  const vp=(x,ym,U,n,c)=>{ const h=U*KV; pfeil(x,ym-h/2,x,ym+h/2,c,4); text(x-10,ym+5,n+' = '+fmt(U,2)+' V',{s:14,f:c,a:'end'}); };
+  vp(X0-50,(YT+YB)/2,r.U,'U',PETROL); vp(XR-40,YT+65,r.U1,sub('U','1'),KUPFER); vp(XR-40,YT+195,r.U2,sub('U','2'),GRUEN);
+  // Ströme
+  const ip=(x1,y1,dx,dy,i,n)=>{ const L=ilen(i); if(!L) return; pfeil(x1,y1,x1+dx*L,y1+dy*L,LILA,3); text(x1+dx*L/2+(dy?8:0),y1+dy*L/2+(dx?-10:5),n+' = '+amp(i),{s:13,f:LILA,a:dy?'start':'middle'}); };
+  ip(X0+20,YT,1,0,r.I,'I'); ip(XR+92,YT+150,0,1,r.Iq,sub('I','q')); if(r.last) ip(XR+20,YT+130,1,0,r.IL,sub('I','L'));
+  // Kennlinie
+  if($('kurve').checked){ const gx=625, gw=150, gy=60, gh=270, lx=v=>gx+(Math.log10(v)-1)/4*gw, ly=v=>gy+gh-(v/30)*gh;
+    el('rect',{x:gx,y:gy,width:gw,height:gh,fill:'#fff',stroke:'#D9E1E3'}); text(gx,gy-14,sub('U','2')+' über '+sub('R','L'),{s:15,f:PETROL,a:'start'});
+    [0,10,20,30].forEach(v=>{ el('line',{x1:gx,y1:ly(v),x2:gx+gw,y2:ly(v),stroke:'#EEF2F3'}); text(gx-6,ly(v)+4,v+' V',{s:11,f:STAHL,a:'end',w:400}); });
+    [10,100,1000,10000,100000].forEach(v=>text(lx(v),gy+gh+16,om(v),{s:11,f:STAHL,w:400}));
+    el('line',{x1:gx,y1:ly(r.U20),x2:gx+gw,y2:ly(r.U20),stroke:STAHL,'stroke-dasharray':'6 4','stroke-width':1.5}); text(gx+gw-4,ly(r.U20)-6,'ohne Last',{s:11,f:STAHL,a:'end',w:400});
+    const pts=[]; for(let i=0;i<=80;i++){ const v=Math.pow(10,1+4*i/80), p=r.R2*v/(r.R2+v); pts.push([lx(v),ly(r.U*p/(r.R1+p))]); } linie(pts,GRUEN,3);
+    if(r.last){ el('circle',{cx:lx(r.RL),cy:ly(r.U2),r:6,fill:GRUEN,stroke:'#fff','stroke-width':2}); } }
+  // Balken U2 mit/ohne Last
+  const by=440; text(140,by-18,'Ausgangsspannung im Vergleich',{s:15,f:PETROL,a:'start'});
+  [['ohne Last',r.U20,STAHL],['mit Last',r.last?r.U2:r.U20,GRUEN]].forEach(([n,v,c],i)=>{ const y=by+i*40; text(130,y+18,n,{s:13,a:'end',w:400}); el('rect',{x:140,y,width:v*KV*2,height:26,fill:c,rx:3}); text(140+v*KV*2+8,y+18,fmt(v,2)+' V',{s:14,f:c,a:'start'}); });
+  el('line',{x1:140,y1:by-4,x2:140,y2:by+70,stroke:GRAPHIT,'stroke-width':2}); text(140,by+92,'Balken: 1 V ≙ 16 Bildpunkte',{s:11,f:STAHL,a:'start',w:400});
+  // Status
+  const ein=r.last?(1-r.U2/r.U20)*100:0, s=$('status'); s.classList.toggle('faellt',ein>10);
+  s.innerHTML=!r.last?'Unbelastet: U<sub>2</sub> = '+fmt(r.U20,2)+' V, nur durch R<sub>1</sub> und R<sub>2</sub> bestimmt.':'Belastet: U<sub>2</sub> = '+fmt(r.U2,2)+' V, '+fmt(ein,1)+' % weniger als ohne Last. Querstromverhältnis I<sub>q</sub> / I<sub>L</sub> = '+fmt(r.Iq/r.IL,1)+(ein>10?'. Der Teiler ist zu „weich“.':'.');
+  const rows=[['Ersatzwiderstand R<sub>2L</sub>',r.last?'R<sub>2L</sub> = R<sub>2</sub> · R<sub>L</sub> / (R<sub>2</sub> + R<sub>L</sub>)':'ohne Last: R<sub>2L</sub> = R<sub>2</sub>',om(r.R2L)],
+   ['Gesamtwiderstand R','R = R<sub>1</sub> + R<sub>2L</sub>',om(r.Rg)],['Gesamtstrom I','I = U / R',amp(r.I)],
+   ['Ausgangsspannung U<sub>2</sub>','U<sub>2</sub> = U · R<sub>2L</sub> / (R<sub>1</sub> + R<sub>2L</sub>)',fmt(r.U2,2)+' V'],['Spannung U<sub>1</sub>','U<sub>1</sub> = U − U<sub>2</sub>',fmt(r.U1,2)+' V'],
+   ['Querstrom I<sub>q</sub>','I<sub>q</sub> = U<sub>2</sub> / R<sub>2</sub>',amp(r.Iq)]];
+  if(r.last) rows.push(['Laststrom I<sub>L</sub>','I<sub>L</sub> = U<sub>2</sub> / R<sub>L</sub>',amp(r.IL)],['Querstromverhältnis q','q = I<sub>q</sub> / I<sub>L</sub>',fmt(r.Iq/r.IL,2)]);
+  rows.push(['Leerlaufspannung U<sub>20</sub>','U<sub>20</sub> = U · R<sub>2</sub> / (R<sub>1</sub> + R<sub>2</sub>)',fmt(r.U20,2)+' V']);
+  rechenweg(rows);
+  $('uOut').textContent=fmt(r.U,1)+' V'; $('r1Out').textContent=r.R1+' Ω'; $('r2Out').textContent=r.R2+' Ω'; $('rlOut').textContent=r.RL+' Ω'; $('rl').disabled=!r.last;
+}
+document.querySelectorAll('input').forEach(e=>e.addEventListener('input',zeichne));
+knopfStart(START,zeichne); knopfBeamer(); zeichne();
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>

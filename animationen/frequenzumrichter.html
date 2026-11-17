@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Frequenzumrichter: Aufbau, U/f-Kennlinie, Bremsen</title>
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="thema">Ausbildung Elektro und Mechatronik · LF 8 · AP2</div>
+<h1>Frequenzumrichter: Aufbau, U/f-Kennlinie und Bremsen</h1>
+<p class="unter">Sollfrequenz vorgeben: Der Umrichter fährt über die Rampe hoch, Spannung und Drehzahl folgen der U/f-Kennlinie. Beim schnellen Abbremsen speist der Motor zurück und die Zwischenkreisspannung steigt.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 600" aria-label="Blockschaltbild Frequenzumrichter und U/f-Kennlinie"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Sollwert und Parameter</h2>
+      <label class="regler"><span class="zeile"><span>Sollfrequenz</span><output id="fsOut"></output></span><input id="fs" type="range" min="0" max="100" step="1" value="50"></label>
+      <label class="regler"><span class="zeile"><span>Hochlaufzeit (0 → 50 Hz)</span><output id="thOut"></output></span><input id="th" type="range" min="0.5" max="10" step="0.5" value="3"></label>
+      <label class="regler"><span class="zeile"><span>Rücklaufzeit (50 → 0 Hz)</span><output id="trOut"></output></span><input id="tr" type="range" min="0.5" max="10" step="0.5" value="3"></label>
+      <label class="regler"><span class="zeile"><span>Spannungsanhebung (Boost)</span><output id="bOut"></output></span><input id="b" type="range" min="0" max="10" step="1" value="4"></label>
+      <div class="seg" role="radiogroup"><label><input type="radio" name="kl" value="50" checked>Y, 50 Hz</label><label><input type="radio" name="kl" value="87">Δ, 87 Hz</label></div>
+      <div class="haken"><label><input id="bw" type="checkbox" checked> Bremswiderstand angeschlossen</label><label><input id="lauf" type="checkbox" checked> Zeit läuft</label></div>
+      <div class="knoepfe"><button id="halt" class="zweit">Stopp (Sollwert 0)</button><button id="quitt" class="zweit">Störung quittieren</button><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+      <div class="hinweis">Motor: 230/400 V Δ/Y, 50 Hz, p = 2, am 400-V-Umrichter. In Stern erreicht er 400 V bei 50 Hz. In Dreieck bekommt er 230 V schon bei 50 Hz und 400 V erst bei 87 Hz (√3 · 50 Hz): rund √3-fache Leistung bei gleichem Moment, Motor und Umrichter müssen dafür ausgelegt sein.</div>
+    </div>
+    <div class="karte"><h2>Rechenweg</h2><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>Stell die Sollfrequenz auf 25 Hz. Wie groß sind Motorspannung und Drehzahl ungefähr?</li>
+        <li>Nimm den Bremswiderstand weg, Rücklaufzeit 0,5 s, dann Stopp. Was passiert?</li>
+        <li>Warum sinkt oberhalb der Eckfrequenz das maximale Drehmoment?</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>Etwa die halbe Spannung (plus Boost), rund 200 V, und rund 720 1/min. U/f bleibt konstant, damit der Magnetfluss konstant bleibt.</li>
+        <li>Der Motor arbeitet als Generator und lädt den Zwischenkreis auf. Ohne Bremswiderstand schaltet der Umrichter mit Überspannung ab, der Motor trudelt aus.</li>
+        <li>Die Spannung kann nicht weiter steigen, U/f und damit der Fluss sinken (Feldschwächung). Das Moment fällt etwa mit 1/f, die Leistung bleibt konstant.</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+<footer>Eigene Darstellung · © 2026 Marco Deibele · vereinfachtes Modell, Schlupf konstant 60 1/min · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+let f=0, uzk=565, stoer=false, letzt=0, pw=0;
+function kenn(fx){ const e=radio('kl')==='87'?87:50, UN=400, ub=+$('b').value/100*UN; return {fE:e,U:fx<=0?0:Math.min(UN,ub+(UN-ub)*fx/e),Mrel:fx<=e?1:e/fx}; }
+function schritt(dt){ const fs=+$('fs').value, th=+$('th').value, tr=+$('tr').value;
+  if(stoer){ f=Math.max(0,f-dt*50/12); uzk+=(565-uzk)*Math.min(1,dt*2); return; }
+  const df=fs-f; let bremsen=false;
+  if(df>0) f=Math.min(fs,f+dt*50/th); else if(df<0){ f=Math.max(fs,f-dt*50/tr); bremsen=true; }
+  const ziel=bremsen?565+Math.min(400,140*(3/tr)):565;
+  if(bremsen&&$('bw').checked) uzk+=(Math.min(ziel,700)-uzk)*Math.min(1,dt*6); else uzk+=(ziel-uzk)*Math.min(1,dt*6);
+  if(uzk>800){ stoer=true; } pw+=dt; }
+function zeichne(){ const k=kenn(f), fs=+$('fs').value, bw=$('bw').checked, chop=bw&&uzk>680; svg.innerHTML=''; defs();
+  // Blockschaltbild
+  const y=60, h=110; const block=(x,w,t,u)=>{ el('rect',{x,y,width:w,height:h,rx:8,fill:'#fff',stroke:PETROL,'stroke-width':2.5}); text(x+w/2,y+h+22,t,{s:13,f:PETROL}); if(u) text(x+w/2,y+h+40,u,{s:11,f:STAHL,w:500}); };
+  text(40,y+60,'L1 L2 L3',{s:13,f:BRAUN,a:'middle'}); pfeil(70,y+55,100,y+55,BRAUN,3);
+  block(100,110,'Gleichrichter','B6-Brücke'); for(let i=0;i<3;i++){ const x=125+i*30; el('path',{d:`M${x},${y+30} l10,0 l-5,12 z M${x},${y+42} h10 M${x},${y+70} l10,0 l-5,12 z M${x},${y+82} h10`,fill:PETROL,stroke:PETROL,'stroke-width':1.5}); }
+  linie([[210,y+20],[470,y+20]],uzk>700?ROT:KUPFER,3); linie([[210,y+90],[470,y+90]],PETROL,3);
+  // Zwischenkreis
+  el('line',{x1:255,y1:y+20,x2:255,y2:y+48,stroke:KUPFER,'stroke-width':2}); el('line',{x1:240,y1:y+48,x2:270,y2:y+48,stroke:PETROL,'stroke-width':3}); el('line',{x1:240,y1:y+58,x2:270,y2:y+58,stroke:PETROL,'stroke-width':3}); el('line',{x1:255,y1:y+58,x2:255,y2:y+90,stroke:PETROL,'stroke-width':2});
+  text(250,y+h+22,'Zwischenkreis',{s:13,f:PETROL}); text(250,y+h+40,'U = '+fmt(uzk,0)+' V DC',{s:12,f:uzk>700?ROT:KUPFER});
+  // Brems-Chopper
+  el('rect',{x:362,y:y+34,width:16,height:42,fill:chop?ROT:'#fff',stroke:bw?PETROL:'#C9D3D6','stroke-width':2,'stroke-dasharray':bw?'':'4 3'}); el('line',{x1:370,y1:y+20,x2:370,y2:y+34,stroke:bw?PETROL:'#C9D3D6','stroke-width':2}); el('line',{x1:370,y1:y+76,x2:370,y2:y+90,stroke:bw?PETROL:'#C9D3D6','stroke-width':2});
+  text(375,y+h+22,'Bremswiderstand',{s:13,f:bw?PETROL:STAHL}); text(375,y+h+40,bw?(chop?'heizt: Bremsenergie':'bereit'):'nicht angeschlossen',{s:11,f:chop?ROT:STAHL,w:500});
+  block(470,120,'Wechselrichter','IGBT, Pulsweitenmodulation');
+  // PWM-Ausschnitt im Block
+  { const amp=k.U/400, sp=[]; for(let i=0;i<26;i++){ const ph=2*Math.PI*(i/26*2+pw*Math.min(f,60)/20), ref=amp*Math.sin(ph), d=Math.max(0.05,Math.min(0.95,0.5+0.5*ref)); if(f>0.5) el('rect',{x:478+i*4,y:y+28,width:4*d,height:52,fill:KUPFER,opacity:.75}); sp.push([480+i*4,y+54-24*ref]); }
+    if(f>0.5) linie(sp,PETROL,2.5); else el('rect',{x:478,y:y+28,width:104,height:52,fill:'#E4EAEC'}); }
+  text(530,y+100,f>0.5?fmt(f,1)+' Hz':'gesperrt',{s:13,f:PETROL});
+  pfeil(590,y+55,640,y+55,BRAUN,3); text(615,y+44,'U V W',{s:12,f:BRAUN});
+  el('circle',{cx:690,cy:y+55,r:44,fill:'#fff',stroke:PETROL,'stroke-width':3}); text(690,y+52,'M',{s:22,f:PETROL}); text(690,y+72,'3 ~',{s:13,f:PETROL});
+  const rot=pw*f*20; el('line',{x1:690,y1:y+55,x2:690+30*Math.cos(rot),y2:y+55+30*Math.sin(rot),stroke:KUPFER,'stroke-width':3,opacity:.4});
+  // U/f-Kennlinie
+  const G={x:90,y:290,w:420,h:240}, X=v=>G.x+v/100*G.w, Y=u=>G.y+G.h-u/450*G.h;
+  el('line',{x1:G.x,y1:G.y+G.h,x2:G.x+G.w+10,y2:G.y+G.h,stroke:GRAPHIT,'stroke-width':1.5}); el('line',{x1:G.x,y1:G.y+G.h,x2:G.x,y2:G.y-10,stroke:GRAPHIT,'stroke-width':1.5});
+  for(let v=0;v<=100;v+=25){ text(X(v),G.y+G.h+18,v,{s:12,f:STAHL,w:500}); el('line',{x1:X(v),y1:G.y,x2:X(v),y2:G.y+G.h,stroke:'#E4EAEC'}); } text(G.x+G.w+10,G.y+G.h+36,'f in Hz',{s:12,f:STAHL,a:'end'});
+  for(let u=0;u<=400;u+=100){ text(G.x-8,Y(u)+4,u,{s:12,f:STAHL,w:500,a:'end'}); el('line',{x1:G.x,y1:Y(u),x2:G.x+G.w,y2:Y(u),stroke:'#E4EAEC'}); } text(G.x-8,G.y-16,'U in V',{s:12,f:STAHL,a:'start'});
+  const pts=[]; for(let v=0;v<=100;v+=0.5) pts.push([X(v),Y(kenn(v).U)]); linie(pts,KUPFER,3);
+  const mp=[]; for(let v=1;v<=100;v+=0.5) mp.push([X(v),Y(kenn(v).Mrel*300)]); linie(mp,PETROL,2,{'stroke-dasharray':'6 4'}); text(X(98),Y(kenn(98).Mrel*300)-8,'M max (relativ)',{s:12,f:PETROL,a:'end'});
+  el('line',{x1:X(k.fE),y1:G.y,x2:X(k.fE),y2:G.y+G.h,stroke:PETROL,'stroke-dasharray':'3 4'}); text(X(k.fE),G.y-4,'Eckfrequenz '+k.fE+' Hz',{s:12,f:PETROL});
+  text(X(k.fE/2),G.y+20,'Konstantfluss',{s:12,f:STAHL}); text(X((k.fE+100)/2),G.y+20,'Feldschwächung',{s:12,f:STAHL});
+  el('circle',{cx:X(f),cy:Y(k.U),r:8,fill:KUPFER,stroke:'#fff','stroke-width':2}); el('line',{x1:X(fs),y1:G.y+G.h-8,x2:X(fs),y2:G.y+G.h+8,stroke:GRUEN,'stroke-width':4});
+  // Werte rechts
+  const n=Math.max(0,30*f-(f>1?60:0)), P=k.Mrel*f/(k.fE===87?50:50);
+  [['Ausgangsfrequenz',fmt(f,1)+' Hz',KUPFER],['Motorspannung',fmt(k.U,0)+' V',KUPFER],['Drehzahl ca.',fmt(n,0)+' 1/min',PETROL],['max. Moment',fmt(k.Mrel*100,0)+' % von M_N'.replace('M_N','Bemessung'),PETROL],['Zwischenkreis',fmt(uzk,0)+' V',uzk>700?ROT:PETROL]].forEach(([a,b,c],i)=>{ text(560,320+i*44,a,{s:13,f:STAHL,a:'start',w:500}); text(560,340+i*44,b,{s:18,f:c,a:'start'}); });
+  const st=$('status'); st.className='status'+(stoer?' faellt':(chop?' faellt':''));
+  st.innerHTML=stoer?'Störung: Überspannung im Zwischenkreis. Der Umrichter hat die Pulse gesperrt, der Motor trudelt aus. Rücklaufzeit verlängern oder Bremswiderstand anschließen.':chop?'Der Motor bremst generatorisch. Der Brems-Chopper leitet die Energie in den Bremswiderstand.':Math.abs(fs-f)>0.5?(fs>f?'Hochlauf über die Rampe …':'Rücklauf über die Rampe …'):'Stationär: '+fmt(f,1)+' Hz, '+fmt(k.U,0)+' V';
+  rechenweg([['Drehfelddrehzahl','n<sub>s</sub> = 60 · f / p = 60 · '+fmt(f,1)+' / 2',fmt(30*f,0)+' 1/min'],['U/f-Verhältnis','400 V / '+k.fE+' Hz',fmt(400/k.fE,2)+' V/Hz'],['Motorspannung','U = U<sub>Boost</sub> + (400 V − U<sub>Boost</sub>) · f / f<sub>E</sub>, max. 400 V',fmt(k.U,0)+' V'],['Zwischenkreis','U<sub>ZK</sub> ≈ √2 · 400 V',fmt(Math.SQRT2*400,0)+' V']]);
+  $('fsOut').textContent=fs+' Hz'; $('thOut').textContent=fmt(+$('th').value,1)+' s'; $('trOut').textContent=fmt(+$('tr').value,1)+' s'; $('bOut').textContent=$('b').value+' %';
+}
+function lauf(ts){ const dt=letzt?Math.min(.05,(ts-letzt)/1000):0; letzt=ts; if($('lauf').checked) schritt(dt); zeichne(); requestAnimationFrame(lauf); }
+$('halt').addEventListener('click',()=>{ $('fs').value=0; $('fs').dispatchEvent(new Event('input')); });
+$('quitt').addEventListener('click',()=>{ if(f<1){ stoer=false; uzk=565; } });
+knopfBeamer(); requestAnimationFrame(lauf);
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>
