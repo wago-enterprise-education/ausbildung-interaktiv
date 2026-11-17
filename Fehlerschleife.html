@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fehlerschleife im TN-S-Netz | Deibele Bildung</title>
+<!--META-->
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link rel="stylesheet" href="https://fonts.bunny.net/css?family=barlow:600|source-sans-3:400,600&amp;display=swap">
+<style>
+:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
+--fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
+header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+@media (min-width:720px){header.top .wrap{padding:0 32px}}
+.brand{display:flex;align-items:center}
+.brand svg{height:46px;width:auto}
+.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
+.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
+.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
+@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
+@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
+.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
+.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
+h1{margin-top:4px!important}
+h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
+.unter{margin:0 16px 10px;color:var(--stahl)}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.status.rutscht{background:var(--kupfer);color:#fff}
+.panel{display:flex;flex-direction:column;gap:12px}
+.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
+label.regler{display:block;margin:8px 0}
+.zeile{display:flex;justify-content:space-between;font-weight:600}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
+input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
+select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
+.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:10px}
+button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
+td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
+.rw{color:var(--stahl);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier li{margin:4px 0}
+details summary{cursor:pointer;color:var(--petrol);font-weight:600}
+footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
+footer a{color:var(--petrol)}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;gap:6px;margin:4px 0 6px}
+.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--petrol);color:#fff}
+.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
+.status.faellt{background:var(--kupfer);color:#fff}
+.status.gut{background:#2E7D5B;color:#fff}
+</style>
+<!--LD-->
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="https://www.deibele-bildung.de/" aria-label="Deibele Bildung, zur Startseite"><svg class="logo-1" viewBox="0 0 234 56" role="img" aria-label="Deibele Bildung"><g transform="translate(0 4)"><path d="M6.3 32L43.5 24.1" fill="none" stroke="#163A4A" stroke-width="3.6" stroke-linecap="round"/><path d="M20.5 30.8L16.3 41.8H24.7Z" fill="#163A4A" stroke="#163A4A" stroke-width="1.6" stroke-linejoin="round"/><rect fill="#C56A24" x="-5.54" y="-6.85" width="11.09" height="6.85" rx="1" transform="translate(11.35 29.1) rotate(-12)"/><circle fill="#163A4A" cx="33.69" cy="21.25" r="3.04"/><path d="M3 42.6H45" fill="none" stroke="#163A4A" stroke-width="1.6" stroke-linecap="round" opacity=".35"/></g><text x="56" y="37" font-family="Barlow, sans-serif" font-size="26"><tspan font-weight="600" fill="#163A4A">Deibele</tspan> <tspan font-weight="400" fill="#C56A24">Bildung</tspan></text></svg></a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menü</button>
+    <nav class="nav" id="nav" aria-label="Hauptnavigation">
+      <a href="https://www.deibele-bildung.de/#ueber-mich">Über mich</a>
+      <a href="https://www.deibele-bildung.de/#bildungsanbieter">Für Bildungsanbieter</a>
+      <a href="https://www.deibele-bildung.de/lernhilfen.html">Lernhilfen</a>
+      <a href="https://www.deibele-bildung.de/handreichungen.html">Handreichungen</a>
+      <a href="https://www.deibele-bildung.de/ausbildung.html" aria-current="page">Ausbildung</a>
+      <a href="https://www.deibele-bildung.de/#kontakt">Kontakt</a>
+    </nav>
+  </div>
+</header>
+<div class="thema">Ausbildung Elektro · LF 2 und 5 · AP1 + AP2</div>
+<h1>Fehlerschleife im TN-S-Netz</h1>
+<p class="unter">Ein Außenleiter berührt das Metallgehäuse eines Geräts (Körperschluss). Der Fehlerstrom fließt über den Schutzleiter zurück zum Trafo. Ist er groß genug, schaltet der LS-Schalter sofort ab. Stell Leitung und Schutzorgan ein und prüf die Abschaltbedingung.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 600" aria-label="TN-S-Netz mit Trafo, LS-Schalter, Leitung und Gerät, Fehlerschleife und Vergleich von Kurzschlussstrom und Auslösestrom"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Einstellungen</h2>
+      <div class="zeile">Auslösecharakteristik des LS-Schalters</div>
+      <div class="seg" role="radiogroup">
+        <label><input type="radio" name="kar" value="5" checked>B (5 · I<sub>n</sub>)</label>
+        <label><input type="radio" name="kar" value="10">C (10 · I<sub>n</sub>)</label>
+        <label><input type="radio" name="kar" value="20">D (20 · I<sub>n</sub>)</label>
+      </div>
+      <label class="regler"><span class="zeile"><span>Bemessungsstrom I<sub>n</sub></span><output id="inOut"></output></span><input id="in" type="range" min="0" max="7" step="1" value="3" data-liste="6,10,13,16,20,25,32,40"></label>
+      <label class="regler"><span class="zeile"><span>Leitungslänge l</span><output id="lOut"></output></span><input id="l" type="range" min="1" max="250" step="1" value="30"></label>
+      <label class="regler"><span class="zeile"><span>Querschnitt A (L und PE)</span><output id="aOut"></output></span><input id="a" type="range" min="0" max="5" step="1" value="1" data-liste="1.5,2.5,4,6,10,16"></label>
+      <label class="regler"><span class="zeile"><span>Netzimpedanz bis zum Verteiler Z<sub>V</sub></span><output id="zvOut"></output></span><input id="zv" type="range" min="0.05" max="2" step="0.05" value="0.3"></label>
+      <div class="haken">
+        <label><input id="fehler" type="checkbox" checked> Körperschluss im Gerät</label>
+        <label><input id="peAb" type="checkbox"> Schutzleiter unterbrochen</label>
+        <label><input id="warm" type="checkbox"> Leitererwärmung berücksichtigen (Faktor 2/3)</label>
+        <label><input id="lauf" type="checkbox" checked> Strom bewegt sich</label>
+      </div>
+      <div class="hinweis">Netz TN-S 400/230 V, U<sub>0</sub> = 230 V, Kupfer κ = 56 m/(Ω·mm²). Leitungsbild fest, die Länge steht als Zahl dran; die Leiter werden mit dem Querschnitt dicker. Strom-Skala unten fest logarithmisch von 10 A bis 10 kA. Blindwiderstände vernachlässigt.</div>
+      <div class="knoepfe"><button id="neu" >Fehler neu auslösen</button><button id="start" class="zweit">Startwerte</button><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte">
+      <h2>Rechenweg</h2>
+      <table id="werte"></table>
+    </div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>B16, 2,5 mm², Z<sub>V</sub> = 0,3 Ω. Bis zu welcher Leitungslänge ist die Abschaltbedingung erfüllt?</li>
+        <li>Gleiche Leitung, aber C16. Wie lang darf die Leitung jetzt höchstens sein? Warum?</li>
+        <li>Unterbrich den Schutzleiter. Was passiert mit dem Gehäuse, und warum misst man den Schutzleiter zuerst?</li>
+      </ol>
+      <details><summary>Lösungen</summary>
+        <ol>
+          <li>Z<sub>s,max</sub> = U<sub>0</sub> / I<sub>a</sub> = 230 V / 80 A = 2,875 Ω. Für die Leitung bleiben 2,875 Ω − 0,3 Ω = 2,575 Ω. Aus R = 2 · l / (κ · A) folgt l = 2,575 Ω · 56 · 2,5 / 2 = 180 m.</li>
+          <li>C16 braucht I<sub>a</sub> = 160 A, also Z<sub>s,max</sub> = 1,44 Ω. Für die Leitung bleiben 1,14 Ω, das sind nur noch 79 m. Der C-Schalter braucht den doppelten Strom, um magnetisch auszulösen.</li>
+          <li>Es gibt keine Fehlerschleife, der LS-Schalter löst nicht aus. Das Gehäuse liegt dauerhaft an 230 V gegen Erde, wer es anfasst, wird durchströmt. Deshalb wird bei der Erstprüfung zuerst die Durchgängigkeit des Schutzleiters gemessen.</li>
+        </ol>
+      </details>
+    </div>
+  </div>
+</main>
+<footer><a href="https://www.deibele-bildung.de/ausbildung.html">← Handreichungen für die Ausbildung</a> · <a href="https://www.deibele-bildung.de/lernhilfen.html">Alle Lernhilfen</a> · Eigene Darstellung · © 2026 Marco Deibele · <a href="/impressum.html">Impressum</a> · <a href="/datenschutz.html">Datenschutz</a> · Abschaltbedingung nach DIN VDE 0100-410, Auslöseströme und κ nach Tabellenbuch Elektrotechnik</footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const IN=[6,10,13,16,20,25,32,40], QS=[1.5,2.5,4,6,10,16], U0=230, KAPPA=56, START={in:3,l:30,a:1,zv:0.3};
+const FL='#6B4226', FN='#1F5FA8', FPE='#2E7D5B', FG='#C0392B';
+let phase=0, letzt=0, tFehler=0, aus=false;
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||'#252B2E','font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:'#EEF2F3','stroke-width':4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function rechne(){
+  const k=+document.querySelector('input[name=kar]:checked').value, In=IN[+$('in').value], l=+$('l').value, A=QS[+$('a').value], ZV=+$('zv').value;
+  const RL=l/(KAPPA*A), RPE=RL, Zs=ZV+RL+RPE, Ik=U0/Zs, Ia=k*In, f=$('warm').checked?2/3:1, Zmax=f*U0/Ia;
+  const fehler=$('fehler').checked, peAb=$('peAb').checked, ok=Zs<=Zmax, UB=peAb?U0:Ik*RPE;
+  return {k,In,l,A,ZV,RL,RPE,Zs,Ik,Ia,f,Zmax,fehler,peAb,ok,UB};
+}
+// Geometrie
+const YL=110, YN=180, YPE=250, XT=70, XLS=230, X1=330, XG=600;
+function leiter(pts,c,w,op){ el('polyline',{points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w,'stroke-linejoin':'round',opacity:op??1}); }
+function punkte(pfad,n,ph,c,r){ // Punkte entlang eines Polygonzugs
+  const seg=[]; let L=0; for(let i=1;i<pfad.length;i++){ const d=Math.hypot(pfad[i][0]-pfad[i-1][0],pfad[i][1]-pfad[i-1][1]); seg.push([L,d,pfad[i-1],pfad[i]]); L+=d; }
+  const sp=L/n; for(let j=0;j<n;j++){ let s=((j*sp+ph)%L+L)%L; for(const [s0,d,a,b] of seg){ if(s<=s0+d){ const t=(s-s0)/d; el('circle',{cx:a[0]+(b[0]-a[0])*t,cy:a[1]+(b[1]-a[1])*t,r,fill:c,'fill-opacity':.9}); break; } } }
+}
+function zeichne(){
+  const r=rechne(); svg.innerHTML='';
+  const dick=2.5+1.6*Math.sqrt(r.A), schleife=r.fehler&&!r.peAb&&!aus;
+  // Trafo
+  el('rect',{x:XT-50,y:YL-30,width:80,height:YPE-YL+80,rx:8,fill:'#163A4A'});
+  text(XT-10,YL-40,'Trafo',{s:14,f:'#163A4A'}); [YL,YN].forEach((y,i)=>{});
+  el('circle',{cx:XT-10,cy:YN-20,r:16,fill:'none',stroke:'#fff','stroke-width':2}); el('circle',{cx:XT-10,cy:YN+8,r:16,fill:'none',stroke:'#fff','stroke-width':2});
+  text(XT-10,YPE+38,'U<tspan font-size="70%" baseline-shift="sub">0</tspan> = 230 V',{s:13,f:'#fff'}).setAttribute('stroke','none');
+  // Sternpunkt-Erdung
+  el('line',{x1:XT+30,y1:YN,x2:XT+45,y2:YN,stroke:'#252B2E','stroke-width':3}); el('line',{x1:XT+45,y1:YN,x2:XT+45,y2:YPE,stroke:FPE,'stroke-width':3});
+  el('line',{x1:XT+45,y1:YPE,x2:XT+45,y2:YPE+40,stroke:'#252B2E','stroke-width':2}); [0,1,2].forEach(i=>el('line',{x1:XT+45-14+i*5,y1:YPE+40+i*6,x2:XT+45+14-i*5,y2:YPE+40+i*6,stroke:'#252B2E','stroke-width':2}));
+  text(XT+52,YPE+70,'Betriebserder',{s:11,f:'#6E8591',w:400,a:'start'});
+  // Leiter Trafo -> Verteiler
+  leiter([[XT+30,YL],[X1,YL]],FL,dick); leiter([[XT+30,YN],[X1,YN]],FN,dick); leiter([[XT+45,YPE],[X1,YPE]],FPE,dick);
+  // Verteiler
+  el('rect',{x:XLS-60,y:YL-50,width:200,height:YPE-YL+90,rx:6,fill:'none',stroke:'#6E8591','stroke-width':1.5,'stroke-dasharray':'6 5'}); text(XLS+40,YL-58,'Verteiler',{s:13,f:'#6E8591',w:400});
+  // Leitung zum Gerät
+  leiter([[X1,YL],[XG,YL]],FL,dick); leiter([[X1,YN],[XG,YN]],FN,dick);
+  if(r.peAb){ leiter([[X1,YPE],[460,YPE]],FPE,dick); leiter([[480,YPE],[XG,YPE]],FPE,dick); text(470,YPE+30,'unterbrochen',{s:13,f:FG}); el('path',{d:`M460,${YPE-10} l20,20 M480,${YPE-10} l-20,20`,stroke:FG,'stroke-width':3}); }
+  else leiter([[X1,YPE],[XG,YPE]],FPE,dick);
+  el('line',{x1:X1+20,y1:YL-36,x2:XG-20,y2:YL-36,stroke:'#6E8591','stroke-width':1.5}); [X1+20,XG-20].forEach(x=>el('line',{x1:x,y1:YL-42,x2:x,y2:YL-30,stroke:'#6E8591','stroke-width':1.5}));
+  text((X1+XG)/2,YL-44,'Leitung l = '+fmt(r.l,0)+' m · '+fmt(r.A,1)+' mm² Cu',{s:14,f:'#6E8591'});
+  [['L1',YL,FL],['N',YN,FN],['PE',YPE,FPE]].forEach(([n,y,c])=>text(X1+30,y-8,n,{s:13,f:c}));
+  // Gerät mit Metallgehäuse
+  const gb=r.fehler&&(r.peAb||!aus)?(r.UB>50?'#F6DADA':'#FFF4D6'):'#DCE3E6';
+  el('rect',{x:XG,y:YL-40,width:150,height:YPE-YL+80,rx:8,fill:gb,stroke:'#6E8591','stroke-width':5});
+  text(XG+75,YL-52,'Gerät mit Metallgehäuse (Schutzklasse I)',{s:12,f:'#6E8591',w:400});
+  el('circle',{cx:XG+90,cy:(YL+YN)/2+5,r:24,fill:'#fff',stroke:'#163A4A','stroke-width':2.5}); text(XG+90,(YL+YN)/2+11,'M',{s:18,f:'#163A4A'});
+  el('line',{x1:XG,y1:YL,x2:XG+90,y2:YL,stroke:FL,'stroke-width':3}); el('line',{x1:XG+90,y1:YL,x2:XG+90,y2:(YL+YN)/2-19,stroke:FL,'stroke-width':3});
+  el('line',{x1:XG,y1:YN,x2:XG+90,y2:YN,stroke:FN,'stroke-width':3}); el('line',{x1:XG+90,y1:YN,x2:XG+90,y2:(YL+YN)/2+29,stroke:FN,'stroke-width':3});
+  el('line',{x1:XG,y1:YPE,x2:XG+20,y2:YPE,stroke:FPE,'stroke-width':3}); el('circle',{cx:XG+20,cy:YPE,r:5,fill:FPE});
+  if(r.fehler){ // Körperschluss: Blitz von L zum Gehäuse
+    el('path',{d:`M${XG+40},${YL} l-8,22 l14,-4 l-10,26 l20,-30 l-14,4 l8,-18 z`,fill:FG,transform:`translate(0,4)`});
+    text(XG+95,YPE-22,'Körperschluss',{s:13,f:FG});
+  }
+  // Fehlerschleife hervorheben
+  const pfadF=[[XT+30,YL],[XG+40,YL],[XG+40,YL+40],[XG+5,YL+40],[XG+5,YPE],[XT+45,YPE],[XT+45,YN],[XT+30,YN]];
+  if(schleife){ el('polyline',{points:pfadF.map(p=>p.join(',')).join(' '),fill:'none',stroke:FG,'stroke-width':dick+10,'stroke-opacity':.18,'stroke-linejoin':'round'});
+    if($('lauf').checked) punkte(pfadF,46,phase,FG,Math.min(5,dick/2+1.5)); }
+  else if(!r.fehler && $('lauf').checked && !aus){ punkte([[XT+30,YL],[XG+90,YL],[XG+90,YN],[XT+30,YN]],34,phase*0.25,'#fff',3); }
+  // LS-Schalter auf L (über der Schleife gezeichnet)
+  el('rect',{x:XLS-26,y:YL-22,width:52,height:44,rx:4,fill:'#fff',stroke:'#163A4A','stroke-width':2});
+  el('circle',{cx:XLS-14,cy:YL+6,r:3.5,fill:'#252B2E'}); el('circle',{cx:XLS+14,cy:YL+6,r:3.5,fill:'#252B2E'});
+  if(aus) el('line',{x1:XLS-14,y1:YL+6,x2:XLS+10,y2:YL-14,stroke:'#252B2E','stroke-width':4,'stroke-linecap':'round'}); else el('line',{x1:XLS-14,y1:YL+6,x2:XLS+16,y2:YL-2,stroke:'#252B2E','stroke-width':4,'stroke-linecap':'round'});
+  el('rect',{x:XLS-10,y:YL+12,width:20,height:6,fill:'#163A4A'});
+  text(XLS,YL-30,'LS '+(r.k===5?'B':r.k===10?'C':'D')+r.In+(aus?' · AUS':''),{s:15,f:aus?'#2E7D5B':'#163A4A'});
+  // Berührungsspannung
+  if(r.fehler && (r.peAb || !aus)){ text(XG+75,YPE+66,sub('U','B')+' am Gehäuse ≈ '+fmt(r.UB,0)+' V',{s:15,f:r.UB>50?FG:'#8A6D00'}); }
+  else if(aus) text(XG+75,YPE+66,'Gehäuse spannungsfrei',{s:15,f:FPE});
+  // Strom-Skala log 10 A ... 10 kA
+  const SX0=90, SX1=760, SY=470, lg=v=>SX0+(Math.log10(Math.max(10,Math.min(1e4,v)))-1)/3*(SX1-SX0);
+  text(SX0,SY-62,'Abschaltbedingung: Kurzschlussstrom I<tspan font-size="70%" baseline-shift="sub">k</tspan> gegen Auslösestrom I<tspan font-size="70%" baseline-shift="sub">a</tspan>',{s:15,f:'#163A4A',a:'start'});
+  el('rect',{x:SX0,y:SY-20,width:lg(r.Ia/r.f)-SX0,height:40,fill:'#F6DADA'}); el('rect',{x:lg(r.Ia/r.f),y:SY-20,width:SX1-lg(r.Ia/r.f),height:40,fill:'#DCEFE5'});
+  el('line',{x1:SX0,y1:SY+20,x2:SX1,y2:SY+20,stroke:'#252B2E','stroke-width':2});
+  [10,20,50,100,200,500,1000,2000,5000,10000].forEach(v=>{ el('line',{x1:lg(v),y1:SY+20,x2:lg(v),y2:SY+28,stroke:'#252B2E','stroke-width':1.5}); text(lg(v),SY+44,v>=1000?fmt(v/1000,0)+' kA':fmt(v,0)+' A',{s:12,f:'#6E8591',w:400}); });
+  text(SX0+6,SY+5,'zu wenig: LS löst nicht sofort aus',{s:12,f:FG,a:'start',w:400}); text(SX1-6,SY+5,'reicht: magnetische Auslösung',{s:12,f:FPE,a:'end',w:400});
+  el('line',{x1:lg(r.Ia/r.f),y1:SY-30,x2:lg(r.Ia/r.f),y2:SY+20,stroke:'#163A4A','stroke-width':3}); text(lg(r.Ia/r.f),SY-34,sub('I','a')+(r.f<1?' / (2/3)':'')+' = '+fmt(r.Ia/r.f,0)+' A',{s:13,f:'#163A4A'});
+  if(!r.peAb){ const x=lg(r.Ik); el('path',{d:`M${x},${SY+18} l-9,-16 h18 z`,fill:r.ok?FPE:FG}); el('line',{x1:x,y1:SY-20,x2:x,y2:SY+4,stroke:r.ok?FPE:FG,'stroke-width':3});
+    text(x,SY+66,sub('I','k')+' = '+fmt(r.Ik,0)+' A',{s:15,f:r.ok?FPE:FG}); }
+  else text((SX0+SX1)/2,SY+66,'Keine Fehlerschleife: I<tspan font-size="70%" baseline-shift="sub">k</tspan> ≈ 0 A',{s:15,f:FG});
+  // Status
+  const s=$('status'); s.classList.remove('faellt','gut');
+  if(!r.fehler){ s.innerHTML='Normalbetrieb: Der Strom fließt über L1 zum Motor und über N zurück. Der Schutzleiter ist stromlos. Schalte den Körperschluss ein.'; }
+  else if(r.peAb){ s.classList.add('faellt'); s.innerHTML='Gefahr: Ohne Schutzleiter gibt es keine Fehlerschleife. Der LS-Schalter löst nicht aus, das Gehäuse liegt an 230 V.'; }
+  else if(aus){ s.classList.add('gut'); s.innerHTML='Abgeschaltet: I<sub>k</sub> = '+fmt(r.Ik,0)+' A ≥ I<sub>a</sub>'+(r.f<1?' / (2/3)':'')+' = '+fmt(r.Ia/r.f,0)+' A. Der LS-Schalter hat magnetisch in wenigen Millisekunden ausgelöst (gefordert: höchstens 0,4 s).'; }
+  else if(r.ok){ s.innerHTML='Fehlerstrom fließt: I<sub>k</sub> = '+fmt(r.Ik,0)+' A. Gleich löst der LS-Schalter aus (Zeitlupe) …'; }
+  else { s.classList.add('faellt'); s.innerHTML='Abschaltbedingung nicht erfüllt: I<sub>k</sub> = '+fmt(r.Ik,0)+' A ist kleiner als I<sub>a</sub>'+(r.f<1?' / (2/3)':'')+' = '+fmt(r.Ia/r.f,0)+' A. Der LS-Schalter löst nur thermisch und viel zu spät aus, das Gehäuse bleibt unter Spannung. Kürzere Leitung, größerer Querschnitt oder anderes Schutzorgan (z. B. RCD) wählen.'; }
+  // Rechenweg
+  const rows=[], z=(a,b,c)=>rows.push(`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`);
+  z('Widerstand Außenleiter R<sub>L</sub>','R<sub>L</sub> = l / (κ · A) = '+fmt(r.l,0)+' m / (56 · '+fmt(r.A,1)+' mm²)',fmt(r.RL,3)+' Ω');
+  z('Widerstand Schutzleiter R<sub>PE</sub>','gleicher Querschnitt: R<sub>PE</sub> = R<sub>L</sub>',fmt(r.RPE,3)+' Ω');
+  z('Schleifenimpedanz Z<sub>s</sub>','Z<sub>s</sub> = Z<sub>V</sub> + R<sub>L</sub> + R<sub>PE</sub>',fmt(r.Zs,3)+' Ω');
+  z('Kurzschlussstrom I<sub>k</sub>','I<sub>k</sub> = U<sub>0</sub> / Z<sub>s</sub>',r.peAb?'≈ 0 A':fmt(r.Ik,0)+' A');
+  z('Auslösestrom I<sub>a</sub>',(r.k===5?'B':r.k===10?'C':'D')+': I<sub>a</sub> = '+r.k+' · I<sub>n</sub> = '+r.k+' · '+r.In+' A',fmt(r.Ia,0)+' A');
+  z('zulässige Schleifenimpedanz',(r.f<1?'Z<sub>s,max</sub> = 2/3 · U<sub>0</sub> / I<sub>a</sub>':'Z<sub>s,max</sub> = U<sub>0</sub> / I<sub>a</sub>'),fmt(r.Zmax,3)+' Ω');
+  z('Abschaltbedingung','Z<sub>s</sub> ≤ Z<sub>s,max</sub>',r.peAb?'<span style="color:'+FG+'">keine Schleife</span>':r.ok?'<span style="color:'+FPE+'">erfüllt</span>':'<span style="color:'+FG+'">nicht erfüllt</span>');
+  z('Berührungsspannung U<sub>B</sub>','U<sub>B</sub> ≈ I<sub>k</sub> · R<sub>PE</sub> (bis zur Abschaltung)',r.peAb?'230 V':fmt(r.UB,0)+' V');
+  z('größte Leitungslänge','l<sub>max</sub> = (Z<sub>s,max</sub> − Z<sub>V</sub>) · κ · A / 2',r.Zmax>r.ZV?fmt((r.Zmax-r.ZV)*KAPPA*r.A/2,0)+' m':'unmöglich');
+  $('werte').innerHTML=rows.join('');
+  $('inOut').textContent=r.In+' A'; $('lOut').textContent=fmt(r.l,0)+' m'; $('aOut').textContent=fmt(r.A,1)+' mm²'; $('zvOut').textContent=fmt(r.ZV,2)+' Ω';
+  return r;
+}
+function lauf(ts){ const dt=letzt?Math.min(.05,(ts-letzt)/1000):0; letzt=ts; const r=rechne();
+  if(r.fehler && !r.peAb && r.ok && !aus){ tFehler+=dt; if(tFehler>2.2) aus=true; }
+  if($('lauf').checked) phase+=dt*(r.fehler&&!r.peAb&&!aus? Math.min(260,40+Math.sqrt(r.Ik)*8) : 40);
+  zeichne(); requestAnimationFrame(lauf); }
+function neu(){ aus=false; tFehler=0; }
+document.querySelectorAll('input').forEach(e=>e.addEventListener('input',neu));
+$('neu').addEventListener('click',()=>{ $('fehler').checked=true; neu(); });
+$('start').addEventListener('click',()=>{ for(const k in START) $(k).value=START[k]; document.querySelector('input[name=kar][value="5"]').checked=true; $('fehler').checked=true; $('peAb').checked=false; $('warm').checked=false;
+  document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); neu(); });
+$('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});});
+requestAnimationFrame(lauf);
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+</body>
+</html>
