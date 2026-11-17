@@ -1,6 +1,6 @@
 # Lern-Animationen Ausbildung Elektrotechnik
 
-27 interaktive Lern-Animationen für Auszubildende (M, EBT, EAT, EGS), Vorbereitung auf die Abschlussprüfung Teil 1 und 2.
+27 interaktive Lern-Animationen im WAGO-Design („Ausbildung-interaktiv“) für Auszubildende (M, EBT, EAT, EGS), Vorbereitung auf die Abschlussprüfung Teil 1 und 2.
 
 - Jede Datei in `animationen/` ist eigenständig (HTML, CSS, JavaScript in einer Datei).
 - Keine externen Abhängigkeiten: kein CDN, keine Web-Schriften, keine Cookies, kein Tracking, keine Netzwerkzugriffe.

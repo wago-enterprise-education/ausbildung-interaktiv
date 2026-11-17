@@ -3,73 +3,80 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GRAFCET lesen: Bohrvorrichtung</title>
+<title>WAGO Ausbildung · GRAFCET lesen: Bohrvorrichtung</title>
 <style>
-:root{--petrol:#163A4A;--petrol2:#1D4A5E;--kupfer:#C56A24;--kupferd:#A9561A;--stahl:#6E8591;--graphit:#252B2E;--hell:#EEF2F3;--linie:#D9E1E3;
---fg:#163A4A;--fh:#C56A24;--fn:#2E7D5B;--fr:#8A3B9E;--fz:#6E8591}
+:root{--anth:#1F2837;--a70:#616A73;--a40:#A5A8AF;--a15:#DEDFE1;--hg:#EFF0F1;--gruen:#6EC800;
+--petrol:#1F2837;--kupfer:#6EC800;--stahl:#616A73;--graphit:#1F2837;--hell:#EFF0F1;--linie:#DEDFE1}
 *{box-sizing:border-box}
-html,body{margin:0;background:#fff;color:var(--graphit);font:400 16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
-header.top{position:relative;z-index:5;background:#fff;border-bottom:1px solid var(--linie)}
-header.top .wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
-@media (min-width:720px){header.top .wrap{padding:0 32px}}
-.brand{display:flex;align-items:center}
-.brand svg{height:46px;width:auto}
-.nav{display:flex;gap:20px;font:600 15px "Barlow",Arial,sans-serif}
-.nav a{color:var(--petrol);text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
-.nav a:hover,.nav a[aria-current="page"]{border-bottom-color:var(--kupfer)}
-.menu-btn{display:none;flex:none;background:none;border:1px solid var(--linie);border-radius:8px;padding:8px 12px;font:600 15px "Barlow",Arial,sans-serif;color:var(--petrol);cursor:pointer}
-@media (max-width:1040px) and (min-width:761px){.nav{gap:14px;font-size:14px}.brand svg{height:38px}}
-@media (max-width:760px){.brand svg{height:38px}.menu-btn{display:block}
-.nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--linie);flex-direction:column;gap:0;padding:8px 16px 16px;box-shadow:0 6px 12px rgba(0,0,0,.08)}
-.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--hell)}}
-.thema{margin:14px 16px 0;font:600 12px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer)}
-h1{margin-top:4px!important}
-h1{font:600 clamp(24px,3.4vw,36px)/1.1 "Barlow",Arial,sans-serif;color:var(--petrol);margin:14px 16px 2px}
-.unter{margin:0 16px 10px;color:var(--stahl)}
-main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 16px}
+html,body{margin:0;background:var(--hg);color:var(--anth);font:400 16px/1.4 "WAGO Connective",Arial,Helvetica,sans-serif;-webkit-text-size-adjust:100%}
+.kopf{background:#fff;color:var(--anth);border-bottom:1px solid var(--a15);box-shadow:0 2px 6px rgba(31,40,55,.06)}
+.kopf .wrap{max-width:1280px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:8px;min-height:72px}
+.logo{height:40px;width:auto;display:block;flex:none;margin-right:14px}
+.kopf .bereich{font-size:18px;font-weight:400;background:var(--a70);color:#fff;padding:2px 8px;line-height:26px;white-space:nowrap}
+.kopf .bereich span{font-weight:400;color:var(--a15)}
+@media (max-width:480px){.logo{height:40px;margin-right:10px}.kopf .bereich{font-size:15px}}
+.inhalt{max-width:1280px;margin:0 auto}
+.thema{margin:20px 16px 0;font-size:14px;color:var(--a70);display:flex;align-items:center;gap:8px}
+.thema::before{content:"";width:16px;height:4px;background:var(--gruen);flex:none}
+h1{font:700 clamp(24px,3.2vw,36px)/1.1 "WAGO Connective",Arial,sans-serif;letter-spacing:-.01em;color:var(--anth);margin:6px 16px 6px}
+.unter{margin:0 16px 18px;color:var(--a70);max-width:900px}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 24px}
 @media (max-width:860px){main{grid-template-columns:1fr}}
-.buehne{background:var(--hell);border-radius:10px;padding:6px;position:relative;align-self:start;position:sticky;top:8px}
+.buehne{background:#fff;border-radius:0;padding:8px;align-self:start;position:sticky;top:8px}
 @media (max-width:860px){.buehne{position:relative;top:0}}
 svg{width:100%;height:auto;display:block}
-.status{display:inline-block;margin:6px 6px 0;font:600 15px "Barlow",Arial,sans-serif;padding:6px 12px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
-.status.rutscht{background:var(--kupfer);color:#fff}
-.panel{display:flex;flex-direction:column;gap:12px}
-.karte{background:#fff;border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
-.karte h2{font:600 13px "Barlow",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--kupfer);margin:0 0 8px}
-label.regler{display:block;margin:8px 0}
-.zeile{display:flex;justify-content:space-between;font-weight:600}
-.zeile output{font-variant-numeric:tabular-nums;color:var(--petrol)}
-input[type=range]{width:100%;accent-color:var(--kupfer);height:28px}
-select{width:100%;padding:8px;border:1px solid var(--linie);border-radius:6px;font:inherit;background:#fff}
-.haken{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
-.haken label{display:flex;align-items:center;gap:6px;cursor:pointer}
-input[type=checkbox]{accent-color:var(--kupfer);width:18px;height:18px}
-.knoepfe{display:flex;gap:8px;margin-top:10px}
-button{flex:1;font:600 15px "Barlow",Arial,sans-serif;padding:10px;border-radius:6px;border:2px solid var(--petrol);background:var(--petrol);color:#fff;cursor:pointer}
-button.zweit{background:#fff;color:var(--petrol)}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--kupfer);outline-offset:2px}
+.status{display:inline-block;margin:4px 4px 0;font-weight:700;font-size:15px;padding:8px 12px;border-radius:0;background:var(--anth);color:#fff;border-left:4px solid var(--gruen)}
+.status.rutscht,.status.faellt{border-left-color:#C0392B}
+.status.gut{border-left-color:var(--gruen)}
+.panel{display:flex;flex-direction:column;gap:16px}
+.karte{background:#fff;border:0;border-radius:0;padding:20px}
+.karte h2{font:700 20px/1.2 "WAGO Connective",Arial,sans-serif;color:var(--anth);margin:0 0 12px}
+
+label.regler{display:block;margin:10px 0}
+.zeile{display:flex;justify-content:space-between;align-items:center;font-weight:700;gap:8px}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--anth)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;margin:4px 0 0}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:linear-gradient(90deg,var(--gruen) var(--p,0%),var(--a15) var(--p,0%));border-radius:2px}
+input[type=range]::-moz-range-track{height:4px;background:var(--a15);border-radius:2px}
+input[type=range]::-moz-range-progress{height:4px;background:var(--gruen);border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--anth);margin-top:-8px;box-shadow:0 0 0 3px #fff}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--anth)}
+select{width:100%;padding:8px;border:1px solid var(--a40);border-radius:0;font:inherit;background:#fff;color:var(--anth)}
+.haken{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.haken label{display:flex;align-items:center;gap:8px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--anth);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:14px}
+button{flex:1;font:700 15px "WAGO Connective",Arial,sans-serif;padding:11px 10px;border-radius:0;border:0;background:var(--gruen);color:var(--anth);cursor:pointer}
+button::before{content:"› ";font-weight:700}
+button.zweit{background:var(--gruen);color:var(--anth)}
+button:hover{background:#5fae00}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gruen);outline-offset:2px}
 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
-td{padding:5px 0;border-bottom:1px solid var(--linie);vertical-align:top}
-td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:8px}
-.rw{color:var(--stahl);font-size:14px}
+td{padding:8px 0;border-bottom:1px solid var(--a15);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td:last-child{text-align:right;font-weight:700;white-space:nowrap;padding-left:8px}
+.rw{color:var(--a70);font-size:14px}
 .farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
-.probier li{margin:4px 0}
-details summary{cursor:pointer;color:var(--petrol);font-weight:600}
-footer{padding:10px 16px 18px;color:var(--stahl);font-size:13px;border-top:1px solid var(--linie)}
-footer a{color:var(--petrol)}
+.probier ol{padding-left:22px;margin:0}.probier li{margin:6px 0}
+details{margin-top:10px;background:var(--hg);border-radius:0;padding:10px 12px}
+details summary{cursor:pointer;color:var(--anth);font-weight:700}
+footer{background:var(--anth);padding:16px 16px 22px;color:var(--a40);font-size:13px}
+footer .inhalt{padding:0}
 body.beamer{font-size:19px}
 body.beamer h1{font-size:40px}
-.seg{display:flex;gap:6px;margin:4px 0 6px}
-.seg label{flex:1;text-align:center;border:2px solid var(--petrol);border-radius:6px;padding:7px 4px;cursor:pointer;font:600 14px "Barlow",Arial,sans-serif;color:var(--petrol)}
+.seg{display:flex;margin:6px 0 4px;border:1px solid var(--a40);overflow:hidden}
+.seg label{flex:1;text-align:center;padding:9px 4px;cursor:pointer;font-weight:700;font-size:14px;color:var(--anth);background:#fff}
+.seg label+label{border-left:1px solid var(--a40)}
 .seg input{position:absolute;opacity:0;pointer-events:none}
-.seg label:has(input:checked){background:var(--petrol);color:#fff}
-.hinweis{font-size:14px;color:var(--stahl);margin-top:6px}
-.status.faellt{background:var(--kupfer);color:#fff}
-.status.gut{background:#2E7D5B;color:#fff}
+.seg label:has(input:checked){background:var(--anth);color:#fff;box-shadow:inset 0 -4px 0 var(--gruen)}
+.hinweis{font-size:14px;color:var(--a70);margin-top:6px}
+svg text[fill="#6EC800"],svg tspan[fill="#6EC800"],svg text[fill="#5FAE00"]{fill:#1F2837}
 </style>
 <!--LD-->
 </head>
 <body>
+<div class="kopf"><div class="wrap"><img class="logo" src="data:image/png;base64,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" alt="WAGO"><div class="bereich">Ausbildung-interaktiv</div></div></div>
+<div class="inhalt">
 <div class="thema">Ausbildung Mechatronik und Elektro · LF 7 und 9 · AP1 + AP2</div>
 <h1>GRAFCET lesen: Ablaufsteuerung einer Bohrvorrichtung</h1>
 <p class="unter">Links der GRAFCET nach DIN EN 60848, rechts die Maschine. Der aktive Schritt ist markiert, die erfüllte Transition leuchtet. So siehst du, wie Schritte, Aktionen und Übergangsbedingungen zusammenspielen.</p>
@@ -103,15 +110,16 @@ body.beamer h1{font-size:40px}
     </div>
   </div>
 </main>
-<footer>Eigene Darstellung · © 2026 Marco Deibele · Darstellung nach DIN EN 60848, vereinfacht · Nutzung in der WAGO-Ausbildung mit Genehmigung des Autors</footer>
+</div>
+<footer><div class="inhalt">Darstellung nach DIN EN 60848, vereinfacht · © 2026 Marco Deibele, Nutzung in der WAGO-Ausbildung mit Genehmigung</div></footer>
 <script>
 (function(){
 const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
 const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
-const PETROL='#163A4A', KUPFER='#C56A24', STAHL='#6E8591', GRUEN='#2E7D5B', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#252B2E', BLAU='#1F5FA8', BRAUN='#6B4226';
+const PETROL='#1F2837', KUPFER='#6EC800', STAHL='#A5A8AF', GRUEN='#6EC800', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#1F2837', BLAU='#1F5FA8', BRAUN='#7A5230';
 const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
 function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
-function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||GRAPHIT,'font-size':o.s||16,'font-family':'Barlow, Arial, sans-serif','font-weight':o.w||600,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EEF2F3','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:(o.f===KUPFER||o.f===GRUEN)?PETROL:(o.f||GRAPHIT),'font-size':o.s||16,'font-family':'WAGO Connective, Arial, sans-serif','font-weight':o.w||700,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EFF0F1','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
 const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
 function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
 function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
@@ -141,17 +149,17 @@ function schritt(dt){ const v=+$('v').value; dt*=v; s1=Math.max(0,s1-dt); tX+=dt
 function zeichne(){ const s=sens(); svg.innerHTML=''; defs();
   // GRAFCET
   const gx=40, sw=54, dy=92, y0=24;
-  el('rect',{x:16,y:6,width:380,height:588,rx:10,fill:'#fff',stroke:'#D9E1E3'});
+  el('rect',{x:16,y:6,width:380,height:588,rx:10,fill:'#fff',stroke:'#DEDFE1'});
   el('line',{x1:gx+sw/2,y1:y0,x2:gx+sw/2,y2:y0+5*dy+sw+30,stroke:PETROL,'stroke-width':2});
   el('polyline',{points:`${gx+sw/2},${y0+5*dy+sw+30} ${gx-14},${y0+5*dy+sw+30} ${gx-14},${y0-8} ${gx+sw/2},${y0-8} ${gx+sw/2},${y0}`,fill:'none',stroke:PETROL,'stroke-width':2});
   pfeil(gx-14,y0+80,gx-14,y0+40,PETROL,2);
   SCH.forEach((c,i)=>{ const y=y0+i*dy, ak=X===i, f=ak?KUPFER:PETROL;
-    el('rect',{x:gx,y,width:sw,height:sw-10,fill:ak?'#FBEDE2':'#fff',stroke:f,'stroke-width':ak?3.5:2});
+    el('rect',{x:gx,y,width:sw,height:sw-10,fill:ak?'#F1F9E6':'#fff',stroke:f,'stroke-width':ak?3.5:2});
     if(i===0) el('rect',{x:gx+5,y:y+5,width:sw-10,height:sw-20,fill:'none',stroke:f,'stroke-width':2});
     text(gx+sw/2,y+(sw-10)/2+7,c.n,{s:20,f});
     if(ak) el('circle',{cx:gx+sw/2,cy:y+sw-17,r:4,fill:KUPFER});
     c.akt.forEach((a,j)=>{ const ax=gx+sw+22+j*130; el('line',{x1:j?ax-8:gx+sw,y1:y+(sw-10)/2,x2:ax,y2:y+(sw-10)/2,stroke:f,'stroke-width':2});
-      el('rect',{x:ax,y:y+6,width:122,height:sw-22,fill:ak?'#FBEDE2':'#fff',stroke:f,'stroke-width':1.6});
+      el('rect',{x:ax,y:y+6,width:122,height:sw-22,fill:ak?'#F1F9E6':'#fff',stroke:f,'stroke-width':1.6});
       const gs=a.includes(':=');
       text(ax+61,y+(sw-10)/2+5,a,{s:13,f,w:600});
       if(gs) pfeil(ax+61,y+6,ax+61,y-6,f,1.6); });
@@ -160,25 +168,25 @@ function zeichne(){ const s=sens(); svg.innerHTML=''; defs();
     text(gx+sw/2+26,ty+5,c.t,{s:14,a:'start',f:ak&&ok?GRUEN:(ak?KUPFER:GRAPHIT),w:ak?700:500}); });
   // Maschine
   const mx=440, my=60;
-  el('rect',{x:mx-14,y:6,width:376,height:588,rx:10,fill:'#fff',stroke:'#D9E1E3'});
+  el('rect',{x:mx-14,y:6,width:376,height:588,rx:10,fill:'#fff',stroke:'#DEDFE1'});
   text(mx+170,34,'Bohrvorrichtung',{s:16,f:PETROL});
   el('rect',{x:mx,y:470,width:340,height:22,fill:STAHL}); // Tisch
   // Werkstück
-  const wx=mx+150; if(wst){ el('rect',{x:wx,y:420,width:110,height:50,fill:'#C9D3D6',stroke:GRAPHIT,'stroke-width':1.5});
-    if(bo>0.55) el('rect',{x:wx+48,y:420,width:14,height:Math.min(50,(bo-0.55)/0.45*50),fill:'#7E8B90'}); }
+  const wx=mx+150; if(wst){ el('rect',{x:wx,y:420,width:110,height:50,fill:'#A5A8AF',stroke:GRAPHIT,'stroke-width':1.5});
+    if(bo>0.55) el('rect',{x:wx+48,y:420,width:14,height:Math.min(50,(bo-0.55)/0.45*50),fill:'#7F868E'}); }
   // Spannzylinder links
   const kx=mx+10, ky=430; el('rect',{x:kx,y:ky,width:90,height:30,fill:'#fff',stroke:PETROL,'stroke-width':2}); const sx=kx+20+sp*45; el('rect',{x:sx,y:ky+3,width:8,height:24,fill:PETROL});
   el('rect',{x:sx+8,y:ky+12,width:59,height:6,fill:PETROL}); text(kx+45,ky+82,'1A  Spannen',{s:12,f:PETROL,w:600});
-  el('circle',{cx:kx+20,cy:ky-8,r:5,fill:s.B1?GRUEN:'#D9E1E3'}); text(kx+20,ky-18,'1B1',{s:11,f:GRAPHIT});
-  el('circle',{cx:kx+65,cy:ky-8,r:5,fill:s.B2?GRUEN:'#D9E1E3'}); text(kx+65,ky-18,'1B2',{s:11,f:GRAPHIT});
+  el('circle',{cx:kx+20,cy:ky-8,r:5,fill:s.B1?GRUEN:'#DEDFE1'}); text(kx+20,ky-18,'1B1',{s:11,f:GRAPHIT});
+  el('circle',{cx:kx+65,cy:ky-8,r:5,fill:s.B2?GRUEN:'#DEDFE1'}); text(kx+65,ky-18,'1B2',{s:11,f:GRAPHIT});
   // Bohrer
-  const bx=wx+55, ob=110, hub=bo*160; el('rect',{x:bx-70,y:70,width:16,height:300,fill:'#E4EAEC'}); // Säule
+  const bx=wx+55, ob=110, hub=bo*160; el('rect',{x:bx-70,y:70,width:16,height:300,fill:'#E8E9EB'}); // Säule
   el('rect',{x:bx-40,y:ob+hub,width:80,height:70,rx:6,fill:'#fff',stroke:PETROL,'stroke-width':2.5}); text(bx,ob+hub+30,'M1',{s:15,f:M1?KUPFER:PETROL}); text(bx,ob+hub+50,M1?'läuft':'aus',{s:11,f:M1?KUPFER:STAHL,w:600});
   const bt=ob+hub+70; el('rect',{x:bx-5,y:bt,width:10,height:70,fill:STAHL});
   for(let k=0;k<5;k++){ const yy=bt+10+k*12+((rot*6)%12); if(yy<bt+68) el('line',{x1:bx-5,y1:yy,x2:bx+5,y2:yy+6,stroke:'#fff','stroke-width':1.5}); }
-  el('circle',{cx:bx+80,cy:ob+10,r:5,fill:s.B3?GRUEN:'#D9E1E3'}); text(bx+92,ob+14,'B3 oben',{s:11,f:GRAPHIT,a:'start'});
-  el('circle',{cx:bx+80,cy:ob+170,r:5,fill:s.B4?GRUEN:'#D9E1E3'}); text(bx+92,ob+174,'B4 unten',{s:11,f:GRAPHIT,a:'start'});
-  el('circle',{cx:mx+300,cy:448,r:5,fill:s.B5?GRUEN:'#D9E1E3'}); text(mx+300,438,'B5',{s:11,f:GRAPHIT});
+  el('circle',{cx:bx+80,cy:ob+10,r:5,fill:s.B3?GRUEN:'#DEDFE1'}); text(bx+92,ob+14,'B3 oben',{s:11,f:GRAPHIT,a:'start'});
+  el('circle',{cx:bx+80,cy:ob+170,r:5,fill:s.B4?GRUEN:'#DEDFE1'}); text(bx+92,ob+174,'B4 unten',{s:11,f:GRAPHIT,a:'start'});
+  el('circle',{cx:mx+300,cy:448,r:5,fill:s.B5?GRUEN:'#DEDFE1'}); text(mx+300,438,'B5',{s:11,f:GRAPHIT});
   text(bx+60,ob+hub+38,X===2||X===3?'2M1 ↓':X===4?'2M2 ↑':'',{s:12,f:KUPFER,a:'start'});
   text(mx+10,540,'S1',{s:12,f:GRAPHIT,a:'start'}); el('circle',{cx:mx+40,cy:536,r:10,fill:s.S1?GRUEN:'#fff',stroke:GRUEN,'stroke-width':2});
   const st=$('status'), ok=bed(X,s); st.className='status'+(ok?' gut':'');
@@ -197,7 +205,7 @@ knopfBeamer(); requestAnimationFrame(lauf);
 <script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
 <style>
 .zahlbox{display:inline-flex;align-items:center;gap:4px}
-.zahl{width:78px;text-align:right;font:600 15px "Source Sans 3","Segoe UI",Arial,sans-serif;color:var(--petrol);border:1px solid #D9E1E3;border-radius:5px;padding:3px 6px;background:#fff}
+.zahl{width:78px;text-align:right;font:600 15px "WAGO Connective",Arial,sans-serif;color:var(--petrol);border:1px solid #A5A8AF;border-radius:0;padding:3px 6px;background:#fff}
 .zahl:disabled{opacity:.4}
 .einheit{color:var(--petrol);font-weight:600;min-width:1ch}
 </style>
@@ -229,5 +237,6 @@ document.querySelectorAll('input[type=range]').forEach(r=>{
 });
 })();
 </script>
+<script>(function(){function f(){document.querySelectorAll('input[type=range]').forEach(function(r){var a=+r.min||0,b=+r.max||100;r.style.setProperty('--p',((r.value-a)/(b-a)*100)+'%')})}document.addEventListener('input',f);document.addEventListener('change',f);setInterval(f,250);f()})();</script>
 </body>
 </html>
