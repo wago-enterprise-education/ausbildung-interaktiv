@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WAGO Ausbildung · Zweipunktregler: Schaltdifferenz und Totzeit</title>
+<style>
+:root{--anth:#1F2837;--a70:#616A73;--a40:#A5A8AF;--a15:#DEDFE1;--hg:#EFF0F1;--gruen:#6EC800;
+--petrol:#1F2837;--kupfer:#6EC800;--stahl:#616A73;--graphit:#1F2837;--hell:#EFF0F1;--linie:#DEDFE1}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--hg);color:var(--anth);font:400 16px/1.4 "WAGO Connective",Arial,Helvetica,sans-serif;-webkit-text-size-adjust:100%}
+.kopf{background:#fff;color:var(--anth);border-bottom:1px solid var(--a15);box-shadow:0 2px 6px rgba(31,40,55,.06)}
+.kopf .wrap{max-width:1280px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:8px;min-height:72px}
+.logo{height:40px;width:auto;display:block;flex:none;margin-right:14px}
+.kopf .bereich{font-size:18px;font-weight:400;background:var(--a70);color:#fff;padding:2px 8px;line-height:26px;white-space:nowrap}
+.kopf .bereich span{font-weight:400;color:var(--a15)}
+@media (max-width:480px){.logo{height:40px;margin-right:10px}.kopf .bereich{font-size:15px}}
+.inhalt{max-width:1280px;margin:0 auto}
+.thema{margin:20px 16px 0;font-size:14px;color:var(--a70);display:flex;align-items:center;gap:8px}
+.thema::before{content:"";width:16px;height:4px;background:var(--gruen);flex:none}
+h1{font:700 clamp(24px,3.2vw,36px)/1.1 "WAGO Connective",Arial,sans-serif;letter-spacing:-.01em;color:var(--anth);margin:6px 16px 6px}
+.unter{margin:0 16px 18px;color:var(--a70);max-width:900px}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 24px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:#fff;border-radius:0;padding:8px;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:4px 4px 0;font-weight:700;font-size:15px;padding:8px 12px;border-radius:0;background:var(--anth);color:#fff;border-left:4px solid var(--gruen)}
+.status.rutscht,.status.faellt{border-left-color:#C0392B}
+.status.gut{border-left-color:var(--gruen)}
+.panel{display:flex;flex-direction:column;gap:16px}
+.karte{background:#fff;border:0;border-radius:0;padding:20px}
+.karte h2{font:700 20px/1.2 "WAGO Connective",Arial,sans-serif;color:var(--anth);margin:0 0 12px}
+
+label.regler{display:block;margin:10px 0}
+.zeile{display:flex;justify-content:space-between;align-items:center;font-weight:700;gap:8px}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--anth)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;margin:4px 0 0}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:linear-gradient(90deg,var(--gruen) var(--p,0%),var(--a15) var(--p,0%));border-radius:2px}
+input[type=range]::-moz-range-track{height:4px;background:var(--a15);border-radius:2px}
+input[type=range]::-moz-range-progress{height:4px;background:var(--gruen);border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--anth);margin-top:-8px;box-shadow:0 0 0 3px #fff}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--anth)}
+select{width:100%;padding:8px;border:1px solid var(--a40);border-radius:0;font:inherit;background:#fff;color:var(--anth)}
+.haken{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.haken label{display:flex;align-items:center;gap:8px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--anth);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:14px}
+button{flex:1;font:700 15px "WAGO Connective",Arial,sans-serif;padding:11px 10px;border-radius:0;border:0;background:var(--gruen);color:var(--anth);cursor:pointer}
+button::before{content:"› ";font-weight:700}
+button.zweit{background:var(--gruen);color:var(--anth)}
+button:hover{background:#5fae00}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gruen);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:8px 0;border-bottom:1px solid var(--a15);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td:last-child{text-align:right;font-weight:700;white-space:nowrap;padding-left:8px}
+.rw{color:var(--a70);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier ol{padding-left:22px;margin:0}.probier li{margin:6px 0}
+details{margin-top:10px;background:var(--hg);border-radius:0;padding:10px 12px}
+details summary{cursor:pointer;color:var(--anth);font-weight:700}
+footer{background:var(--anth);padding:16px 16px 22px;color:var(--a40);font-size:13px}
+footer .inhalt{padding:0}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;margin:6px 0 4px;border:1px solid var(--a40);overflow:hidden}
+.seg label{flex:1;text-align:center;padding:9px 4px;cursor:pointer;font-weight:700;font-size:14px;color:var(--anth);background:#fff}
+.seg label+label{border-left:1px solid var(--a40)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--anth);color:#fff;box-shadow:inset 0 -4px 0 var(--gruen)}
+.hinweis{font-size:14px;color:var(--a70);margin-top:6px}
+svg text[fill="#6EC800"],svg tspan[fill="#6EC800"],svg text[fill="#5FAE00"]{fill:#1F2837}
+</style>
+</head>
+<body>
+<div class="kopf"><div class="wrap"><img class="logo" src="data:image/png;base64,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" alt="WAGO"><div class="bereich">Ausbildung-interaktiv</div></div></div>
+<div class="inhalt">
+<div class="thema">Ausbildung Mechatronik und Elektro · Steuerungs- und Regelungstechnik · AP2</div>
+<h1>Zweipunktregler: Schaltdifferenz und Totzeit</h1>
+<p class="unter">Heizung an, Heizung aus: Der Zweipunktregler kennt nur zwei Stellungen. Stell Sollwert, Schaltdifferenz und Totzeit des Ofens ein und sieh, wie stark die Temperatur pendelt und wie oft das Schütz schaltet.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 600" aria-label="Temperaturverlauf eines Ofens mit Zweipunktregler"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Regler und Strecke</h2>
+      <label class="regler"><span class="zeile"><span>Sollwert w</span><output id="wOut"></output></span><input id="w" type="range" min="60" max="220" step="5" value="150"></label>
+      <label class="regler"><span class="zeile"><span>Schaltdifferenz x<sub>sd</sub></span><output id="dOut"></output></span><input id="d" type="range" min="2" max="40" step="1" value="10"></label>
+      <label class="regler"><span class="zeile"><span>Totzeit T<sub>t</sub> der Strecke</span><output id="ttOut"></output></span><input id="tt" type="range" min="0" max="40" step="1" value="10"></label>
+      <label class="regler"><span class="zeile"><span>Heizleistung (Endtemperatur bei Dauer-Ein)</span><output id="pOut"></output></span><input id="p" type="range" min="150" max="300" step="5" value="260"></label>
+      <div class="knoepfe" style="flex-wrap:wrap"><button id="tuer" class="zweit">Ofentür kurz öffnen</button><button id="neu" class="zweit">Kalt starten</button><button id="start" class="zweit">Startwerte</button><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+      <div class="hinweis">Ofen als Strecke mit Zeitkonstante 60 s und Totzeit. Umgebung 20 °C. 1 s im Bild = 15 s. Achsen fest: 0 bis 300 °C, letzte 10 min.</div>
+    </div>
+    <div class="karte"><h2>Rechenweg</h2><table id="werte"></table></div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>Stell die Totzeit auf 0. Wie groß ist die Schwankung jetzt im Vergleich zur Schaltdifferenz?</li>
+        <li>Verkleinere die Schaltdifferenz auf 2 K. Was gewinnst du, was verlierst du?</li>
+        <li>Erhöhe die Totzeit auf 30 s. Warum schwingt die Temperatur weit über den Ausschaltpunkt?</li>
+      </ol>
+      <details><summary>Lösungen</summary><ol>
+        <li>Ohne Totzeit pendelt die Temperatur genau zwischen Ein- und Ausschaltpunkt, also um x<sub>sd</sub>.</li>
+        <li>Die Temperatur bleibt enger am Sollwert, aber das Schütz schaltet viel öfter. Mehr Verschleiß.</li>
+        <li>Nach dem Abschalten heizt die Strecke noch die Totzeit lang nach, weil die Wärme den Fühler erst später erreicht. Beim Einschalten genauso nach unten.</li>
+      </ol></details>
+    </div>
+  </div>
+</main>
+</div>
+<footer><div class="inhalt">Strecke 1. Ordnung mit Totzeit, Modell · © 2026 Marco Deibele, Nutzung in der WAGO-Ausbildung mit Genehmigung</div></footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const PETROL='#1F2837', KUPFER='#6EC800', STAHL='#A5A8AF', GRUEN='#6EC800', LILA='#8A3B9E', ROT='#C0392B', GRAPHIT='#1F2837', BLAU='#1F5FA8', BRAUN='#7A5230';
+const FARBEN=[PETROL,KUPFER,STAHL,GRUEN,LILA,ROT,GRAPHIT,BLAU,BRAUN];
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:(o.f===KUPFER||o.f===GRUEN)?PETROL:(o.f||GRAPHIT),'font-size':o.s||16,'font-family':'WAGO Connective, Arial, sans-serif','font-weight':o.w||700,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:o.bg||'#EFF0F1','stroke-width':o.sw??4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash,p){ if(Math.hypot(x2-x1,y2-y1)<2) return; const i=FARBEN.indexOf(c); const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'stroke-linecap':'round'}; if(i>=0)a['marker-end']=`url(#m${i})`; if(dash) a['stroke-dasharray']=dash; return el('line',a,p); }
+function linie(pts,c,w,o={}){ const a={points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':w||2.5,'stroke-linejoin':'round','stroke-linecap':'round'}; Object.assign(a,o); return el('polyline',a,o.p); }
+function knopfStart(START,extra){ $('start').addEventListener('click',()=>{ for(const k in START){ const e=$(k); if(e.type==='checkbox') e.checked=START[k]; else e.value=START[k]; } if(extra) extra(); document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); }); }
+function knopfBeamer(){ $('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});}); }
+function rechenweg(rows){ $('werte').innerHTML=rows.map(([a,b,c])=>`<tr><td>${a}<div class="rw">${b}</div></td><td>${c}</td></tr>`).join(''); }
+const radio=n=>document.querySelector(`input[name=${n}]:checked`).value;
+
+const START={w:150,d:10,tt:10,p:260}; const TAU=60, TU=20, FENSTER=600, DT=0.25;
+let T=TU, ein=false, zeit=0, puf=[], hist=[], schalt=[], letzt=0, tuer=0;
+function kalt(){ T=TU; ein=false; zeit=0; puf=[]; hist=[]; schalt=[]; }
+function schritt(){ const w=+$('w').value, d=+$('d').value, tt=+$('tt').value, P=+$('p').value;
+  // Regler
+  if(T<=w-d/2&&!ein){ ein=true; schalt.push(zeit); } else if(T>=w+d/2&&ein){ ein=false; schalt.push(zeit); }
+  // Totzeit: Heizleistung wirkt verspätet auf den Fühler
+  puf.push(ein?1:0); const n=Math.round(tt/DT); while(puf.length>n+1) puf.shift(); const u=puf[0];
+  const ziel=TU+(P-TU)*u - (tuer>0?80:0); T+=(ziel-T)*DT/TAU; if(tuer>0) tuer-=DT;
+  zeit+=DT; hist.push([zeit,T,ein]); while(hist.length&&hist[0][0]<zeit-FENSTER) hist.shift(); while(schalt.length&&schalt[0]<zeit-FENSTER) schalt.shift(); }
+function zeichne(){ const w=+$('w').value, d=+$('d').value, tt=+$('tt').value, P=+$('p').value; svg.innerHTML=''; defs();
+  const G={x:80,y:50,w:600,h:380}, X=t=>G.x+G.w-(zeit-t)/FENSTER*G.w, Y=v=>G.y+G.h-Math.max(0,Math.min(300,v))/300*G.h;
+  el('rect',{x:G.x,y:G.y,width:G.w,height:G.h,fill:'#fff',stroke:'#DEDFE1'});
+  for(let v=0;v<=300;v+=50){ el('line',{x1:G.x,y1:Y(v),x2:G.x+G.w,y2:Y(v),stroke:'#EFF0F1'}); text(G.x-6,Y(v)+4,v,{s:11,f:STAHL,a:'end',w:500}); }
+  for(let m=0;m<=10;m+=2) text(G.x+G.w-m/10*G.w,G.y+G.h+18,m?'−'+m+' min':'jetzt',{s:11,f:STAHL,w:500});
+  text(G.x,G.y-14,'Temperatur in °C',{s:13,f:GRAPHIT,a:'start'});
+  el('rect',{x:G.x,y:Y(w+d/2),width:G.w,height:Y(w-d/2)-Y(w+d/2),fill:KUPFER,opacity:.12});
+  [[w+d/2,'aus bei '+fmt(w+d/2,0)],[w,'w = '+w],[w-d/2,'ein bei '+fmt(w-d/2,0)]].forEach(([v,n],i)=>{ el('line',{x1:G.x,y1:Y(v),x2:G.x+G.w,y2:Y(v),stroke:i===1?GRUEN:KUPFER,'stroke-width':i===1?2:1.5,'stroke-dasharray':i===1?'':'6 4'}); text(G.x+G.w+6,Y(v)+(i===0?-2:i===2?10:4),n,{s:11,f:i===1?GRUEN:KUPFER,a:'start'}); });
+  if(hist.length>1) linie(hist.map(h=>[X(h[0]),Y(h[1])]),ROT,2.5);
+  // Stellgröße
+  const sy=480, sh=40; text(G.x,sy-10,'Heizung (Stellgröße y)',{s:13,f:GRAPHIT,a:'start'}); el('rect',{x:G.x,y:sy,width:G.w,height:sh,fill:'#fff',stroke:'#DEDFE1'});
+  if(hist.length>1){ const pts=[]; hist.forEach((h,i)=>{ const yv=h[2]?sy+6:sy+sh-6; if(i&&hist[i-1][2]!==h[2]) pts.push([X(h[0]),hist[i-1][2]?sy+6:sy+sh-6]); pts.push([X(h[0]),yv]); }); linie(pts,PETROL,2.5); }
+  text(G.x-6,sy+12,'Ein',{s:11,f:STAHL,a:'end',w:500}); text(G.x-6,sy+sh-2,'Aus',{s:11,f:STAHL,a:'end',w:500});
+  // Auswertung: letzte 5 min, wenn eingeschwungen
+  const sp=hist.filter(h=>h[0]>zeit-300), mx=sp.length?Math.max(...sp.map(h=>h[1])):T, mn=sp.length?Math.min(...sp.map(h=>h[1])):T, sw=zeit>360&&mn>w-d/2-60;
+  const nS=schalt.filter(t=>t>zeit-300).length, frq=nS/2/5;
+  text(G.x+G.w/2,575,'Ist '+fmt(T,1)+' °C · Heizung '+(ein?'EIN':'AUS'),{s:14,f:ein?KUPFER:PETROL});
+  const st=$('status'); if(P<w+d/2){ st.className='status faellt'; st.innerHTML='Heizleistung reicht nicht: Ausschaltpunkt wird nie erreicht, die Heizung bleibt dauernd an.'; }
+  else if(!sw){ st.className='status'; st.innerHTML='Ofen heizt auf …'; }
+  else { st.className='status'+(mx-mn<=d*1.5?' gut':' faellt'); st.innerHTML='Temperatur pendelt zwischen '+fmt(mn,0)+' und '+fmt(mx,0)+' °C, Schwankung '+fmt(mx-mn,0)+' K'; }
+  rechenweg([['Einschaltpunkt','w − x<sub>sd</sub> / 2',fmt(w-d/2,1)+' °C'],['Ausschaltpunkt','w + x<sub>sd</sub> / 2',fmt(w+d/2,1)+' °C'],['Schwankung (letzte 5 min)','x<sub>max</sub> − x<sub>min</sub>',sw?fmt(mx-mn,1)+' K':'–'],['Schaltspiele','Ein + Aus je Minute / 2',sw?fmt(frq,2)+' /min':'–'],['Totzeit','Fühler merkt das Schalten erst nach',tt+' s']]);
+  $('wOut').textContent=w+' °C'; $('dOut').textContent=d+' K'; $('ttOut').textContent=tt+' s'; $('pOut').textContent=P+' °C';
+}
+function lauf(ts){ const dt=letzt?Math.min(.05,(ts-letzt)/1000):0; letzt=ts; const n=Math.round(dt*15/DT); for(let k=0;k<n;k++) schritt(); zeichne(); requestAnimationFrame(lauf); }
+$('neu').addEventListener('click',kalt); $('tuer').addEventListener('click',()=>{ tuer=20; });
+knopfStart(START,()=>{ kalt(); }); knopfBeamer(); kalt(); for(let k=0;k<2400;k++) schritt(); requestAnimationFrame(lauf);
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "WAGO Connective",Arial,sans-serif;color:var(--petrol);border:1px solid #A5A8AF;border-radius:0;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+<script>(function(){function f(){document.querySelectorAll('input[type=range]').forEach(function(r){var a=+r.min||0,b=+r.max||100;r.style.setProperty('--p',((r.value-a)/(b-a)*100)+'%')})}document.addEventListener('input',f);document.addEventListener('change',f);setInterval(f,250);f()})();</script>
+</body>
+</html>

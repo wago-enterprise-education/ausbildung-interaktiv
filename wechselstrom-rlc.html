@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WAGO Ausbildung · Wechselstrom R, L, C mit Zeigerdiagramm</title>
+<style>
+:root{--anth:#1F2837;--a70:#616A73;--a40:#A5A8AF;--a15:#DEDFE1;--hg:#EFF0F1;--gruen:#6EC800;
+--petrol:#1F2837;--kupfer:#6EC800;--stahl:#616A73;--graphit:#1F2837;--hell:#EFF0F1;--linie:#DEDFE1}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--hg);color:var(--anth);font:400 16px/1.4 "WAGO Connective",Arial,Helvetica,sans-serif;-webkit-text-size-adjust:100%}
+.kopf{background:#fff;color:var(--anth);border-bottom:1px solid var(--a15);box-shadow:0 2px 6px rgba(31,40,55,.06)}
+.kopf .wrap{max-width:1280px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:8px;min-height:72px}
+.logo{height:40px;width:auto;display:block;flex:none;margin-right:14px}
+.kopf .bereich{font-size:18px;font-weight:400;background:var(--a70);color:#fff;padding:2px 8px;line-height:26px;white-space:nowrap}
+.kopf .bereich span{font-weight:400;color:var(--a15)}
+@media (max-width:480px){.logo{height:40px;margin-right:10px}.kopf .bereich{font-size:15px}}
+.inhalt{max-width:1280px;margin:0 auto}
+.thema{margin:20px 16px 0;font-size:14px;color:var(--a70);display:flex;align-items:center;gap:8px}
+.thema::before{content:"";width:16px;height:4px;background:var(--gruen);flex:none}
+h1{font:700 clamp(24px,3.2vw,36px)/1.1 "WAGO Connective",Arial,sans-serif;letter-spacing:-.01em;color:var(--anth);margin:6px 16px 6px}
+.unter{margin:0 16px 18px;color:var(--a70);max-width:900px}
+main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:16px;padding:0 16px 24px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.buehne{background:#fff;border-radius:0;padding:8px;align-self:start;position:sticky;top:8px}
+@media (max-width:860px){.buehne{position:relative;top:0}}
+svg{width:100%;height:auto;display:block}
+.status{display:inline-block;margin:4px 4px 0;font-weight:700;font-size:15px;padding:8px 12px;border-radius:0;background:var(--anth);color:#fff;border-left:4px solid var(--gruen)}
+.status.rutscht,.status.faellt{border-left-color:#C0392B}
+.status.gut{border-left-color:var(--gruen)}
+.panel{display:flex;flex-direction:column;gap:16px}
+.karte{background:#fff;border:0;border-radius:0;padding:20px}
+.karte h2{font:700 20px/1.2 "WAGO Connective",Arial,sans-serif;color:var(--anth);margin:0 0 12px}
+
+label.regler{display:block;margin:10px 0}
+.zeile{display:flex;justify-content:space-between;align-items:center;font-weight:700;gap:8px}
+.zeile output{font-variant-numeric:tabular-nums;color:var(--anth)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;margin:4px 0 0}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:linear-gradient(90deg,var(--gruen) var(--p,0%),var(--a15) var(--p,0%));border-radius:2px}
+input[type=range]::-moz-range-track{height:4px;background:var(--a15);border-radius:2px}
+input[type=range]::-moz-range-progress{height:4px;background:var(--gruen);border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--anth);margin-top:-8px;box-shadow:0 0 0 3px #fff}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--anth)}
+select{width:100%;padding:8px;border:1px solid var(--a40);border-radius:0;font:inherit;background:#fff;color:var(--anth)}
+.haken{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.haken label{display:flex;align-items:center;gap:8px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--anth);width:18px;height:18px}
+.knoepfe{display:flex;gap:8px;margin-top:14px}
+button{flex:1;font:700 15px "WAGO Connective",Arial,sans-serif;padding:11px 10px;border-radius:0;border:0;background:var(--gruen);color:var(--anth);cursor:pointer}
+button::before{content:"› ";font-weight:700}
+button.zweit{background:var(--gruen);color:var(--anth)}
+button:hover{background:#5fae00}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gruen);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:8px 0;border-bottom:1px solid var(--a15);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td:last-child{text-align:right;font-weight:700;white-space:nowrap;padding-left:8px}
+.rw{color:var(--a70);font-size:14px}
+.farbe{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.probier ol{padding-left:22px;margin:0}.probier li{margin:6px 0}
+details{margin-top:10px;background:var(--hg);border-radius:0;padding:10px 12px}
+details summary{cursor:pointer;color:var(--anth);font-weight:700}
+footer{background:var(--anth);padding:16px 16px 22px;color:var(--a40);font-size:13px}
+footer .inhalt{padding:0}
+body.beamer{font-size:19px}
+body.beamer h1{font-size:40px}
+.seg{display:flex;margin:6px 0 4px;border:1px solid var(--a40);overflow:hidden}
+.seg label{flex:1;text-align:center;padding:9px 4px;cursor:pointer;font-weight:700;font-size:14px;color:var(--anth);background:#fff}
+.seg label+label{border-left:1px solid var(--a40)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--anth);color:#fff;box-shadow:inset 0 -4px 0 var(--gruen)}
+.hinweis{font-size:14px;color:var(--a70);margin-top:6px}
+svg text[fill="#6EC800"],svg tspan[fill="#6EC800"],svg text[fill="#5FAE00"]{fill:#1F2837}
+</style>
+<!--LD-->
+</head>
+<body>
+<div class="kopf"><div class="wrap"><img class="logo" src="data:image/png;base64,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" alt="WAGO"><div class="bereich">Ausbildung-interaktiv</div></div></div>
+<div class="inhalt">
+<div class="thema">Ausbildung Elektro · LF 1 und 5 · AP1 + AP2</div>
+<h1>Wechselstrom: R, L und C mit Zeigerdiagramm</h1>
+<p class="unter">Widerstand, Spule und Kondensator reagieren unterschiedlich auf Wechselstrom. Stell die Bauteile ein und sieh zu, wie sich Zeigerdiagramm, Liniendiagramm und Leistungsdreieck verändern.</p>
+<main>
+  <div class="buehne">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <svg id="bild" viewBox="0 0 800 700" aria-label="Schaltung, Leistungsdreieck, Zeigerdiagramm und Liniendiagramm"></svg>
+  </div>
+  <div class="panel">
+    <div class="karte">
+      <h2>Einstellungen</h2>
+      <div class="zeile">Schaltung</div>
+      <div class="seg" role="radiogroup">
+        <label><input type="radio" name="sch" value="reihe" checked>Reihenschaltung</label>
+        <label><input type="radio" name="sch" value="parallel">Parallelschaltung</label>
+      </div>
+      <label class="regler"><span class="zeile"><span>Spannung U</span><output id="uOut"></output></span><input id="u" type="range" min="12" max="400" step="1" value="230"></label>
+      <label class="regler"><span class="zeile"><span>Frequenz f</span><output id="fOut"></output></span><input id="f" type="range" min="10" max="500" step="1" value="50"></label>
+      <label class="regler"><span class="zeile"><span>Widerstand R</span><output id="rOut"></output></span><input id="r" type="range" min="1" max="500" step="1" value="100"></label>
+      <label class="regler"><span class="zeile"><span>Induktivität L</span><output id="lOut"></output></span><input id="l" type="range" min="10" max="2000" step="10" value="500"></label>
+      <label class="regler"><span class="zeile"><span>Kapazität C</span><output id="cOut"></output></span><input id="c" type="range" min="1" max="1000" step="1" value="47"></label>
+      <div class="haken">
+        <label><input id="mitL" type="checkbox" checked> Spule L eingebaut</label>
+        <label><input id="mitC" type="checkbox" checked> Kondensator C eingebaut</label>
+        <label><input id="laeuft" type="checkbox" checked> Zeiger drehen (Zeitlupe)</label>
+        <label><input id="festhalten" type="checkbox"> Maßstäbe festhalten</label>
+      </div>
+      <div class="hinweis">Ausgebaute Bauteile sind in der Reihenschaltung überbrückt, in der Parallelschaltung abgeklemmt. Die Maßstäbe springen in festen Stufen (siehe Maßstabsleisten). Zum Vergleich zweier Einstellungen „Maßstäbe festhalten“ anhaken.</div>
+      <div class="knoepfe"><button id="start" class="zweit">Startwerte</button><button id="beamer" class="zweit" title="Vollbild für den Beamer">Vollbild</button></div>
+    </div>
+    <div class="karte">
+      <h2>Rechenweg</h2>
+      <table id="werte"></table>
+    </div>
+    <div class="karte probier">
+      <h2>Probier's aus</h2>
+      <ol>
+        <li>Reihenschaltung, 230 V, 50 Hz, R = 100 Ω, L = 500 mH, Kondensator ausgebaut. Berechne X<sub>L</sub>, Z, I und cos φ.</li>
+        <li>Bau den Kondensator mit 47 µF wieder ein. Bei welcher Frequenz wird der Strom am größten? Vergleiche dann U<sub>L</sub> mit der Netzspannung.</li>
+        <li>Parallelschaltung, 230 V, 50 Hz, R = 100 Ω, L = 500 mH. Welcher Kondensator macht cos φ = 1 (Kompensation)?</li>
+      </ol>
+      <details><summary>Lösungen</summary>
+        <ol>
+          <li>X<sub>L</sub> = 2π · 50 Hz · 0,5 H = 157,1 Ω. Z = √(100² + 157,1²) Ω = 186,2 Ω. I = 230 V / 186,2 Ω = 1,24 A. cos φ = R / Z = 0,54 (φ = 57,5°).</li>
+          <li>Bei der Resonanzfrequenz f<sub>0</sub> = 1 / (2π · √(L · C)) = 32,8 Hz. Dann heben sich X<sub>L</sub> und X<sub>C</sub> auf, Z = R und I = 2,3 A. U<sub>L</sub> = I · X<sub>L</sub> = 2,3 A · 103 Ω = 237 V, also mehr als die Netzspannung (Spannungsüberhöhung).</li>
+          <li>Der Blindstrom der Spule muss aufgehoben werden: X<sub>C</sub> = X<sub>L</sub>, also C = 1 / (ω² · L) = 1 / ((314,2 1/s)² · 0,5 H) = 20,3 µF. Mit 20 µF ist cos φ fast 1.</li>
+        </ol>
+      </details>
+    </div>
+  </div>
+</main>
+</div>
+<footer><div class="inhalt">Ideale Bauteile, Effektivwerte in den Rechnungen, Formelzeichen nach Tabellenbuch Elektrotechnik · © 2026 Marco Deibele, Nutzung in der WAGO-Ausbildung mit Genehmigung</div></footer>
+<script>
+(function(){
+const svg=document.getElementById('bild'), NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>(+x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const FU='#1F2837', FI='#6EC800', FR='#2E7D5B', FL='#8A3B9E', FC='#616A73', FARBEN=[FU,FI,FR,FL,FC];
+const START={u:230,f:50,r:100,l:500,c:47};
+let th=Math.PI/6, letzt=0, festV=0, festI=0, festP=0;
+function el(tg,a,p){const e=document.createElementNS(NS,tg);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function text(x,y,s,o={}){const e=el('text',{x,y,fill:o.f||'#1F2837','font-size':o.s||16,'font-family':'WAGO Connective, Arial, sans-serif','font-weight':o.w||700,'text-anchor':o.a||'middle','paint-order':'stroke',stroke:'#EFF0F1','stroke-width':4},o.p);e.innerHTML=s;return e}
+const sub=(b,i)=>`${b}<tspan font-size="70%" baseline-shift="sub">${i}</tspan>`;
+function defs(){ const d=el('defs',{}); FARBEN.forEach((c,i)=>{ const m=el('marker',{id:'m'+i,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d); el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m); }); }
+function pfeil(x1,y1,x2,y2,c,w,dash){ if(Math.hypot(x2-x1,y2-y1)<2) return; const a={x1,y1,x2,y2,stroke:c,'stroke-width':w||4,'marker-end':`url(#m${FARBEN.indexOf(c)})`,'stroke-linecap':'round'}; if(dash) a['stroke-dasharray']=dash; el('line',a); }
+// Maßstab in festen Stufen: Wert je 50 px
+const STUFEN=[]; for(let e=-3;e<=5;e++) [1,1.5,2,2.5,3,4,5,6,8].forEach(m=>STUFEN.push(m*Math.pow(10,e)));
+function stufe(max,px,fest){ const need=max*50/px; if(fest && $('festhalten').checked && fest>=need) return fest; return STUFEN.find(s=>s>=need)||STUFEN[STUFEN.length-1]; }
+function einheit(v,e){ return fmt(v, v<1?3:(v<10?1:0))+' '+e; }
+function rechne(){
+  const sch=document.querySelector('input[name=sch]:checked').value, U=+$('u').value, f=+$('f').value, R=+$('r').value, L=+$('l').value/1000, C=+$('c').value*1e-6;
+  const mL=$('mitL').checked, mC=$('mitC').checked, w=2*Math.PI*f, XL=w*L, XC=1/(w*C);
+  const o={sch,U,f,R,L,C,mL,mC,w,XL,XC};
+  if(sch==='reihe'){ const X=(mL?XL:0)-(mC?XC:0); o.X=X; o.Z=Math.hypot(R,X); o.I=U/o.Z; o.phi=Math.atan2(X,R); o.UR=o.I*R; o.UL=mL?o.I*XL:0; o.UC=mC?o.I*XC:0; }
+  else { o.IR=U/R; o.IL=mL?U/XL:0; o.IC=mC?U/XC:0; const B=o.IL-o.IC; o.I=Math.hypot(o.IR,B); o.Z=U/o.I; o.phi=Math.atan2(B,o.IR); }
+  o.S=U*o.I; o.P=o.S*Math.cos(o.phi); o.Q=o.S*Math.sin(o.phi); o.f0=(mL&&mC)?1/(2*Math.PI*Math.sqrt(L*C)):null;
+  return o;
+}
+function massstab(x,y,wert,einh,farbe){ el('line',{x1:x,y1:y,x2:x+50,y2:y,stroke:farbe,'stroke-width':3}); [x,x+50].forEach(xx=>el('line',{x1:xx,y1:y-5,x2:xx,y2:y+5,stroke:farbe,'stroke-width':2})); text(x+58,y+5,einheit(wert,einh),{s:12,f:farbe,a:'start',w:400}); }
+function bauteil(typ,x,y,vert,aktiv){ // R: Rechteck leer, L: Rechteck gefüllt, C: zwei Platten
+  const op=aktiv?1:.25, g=el('g',{opacity:op});
+  if(typ==='C'){ if(vert){ el('rect',{x:x-20,y:y-8,width:40,height:16,fill:'#EFF0F1'},g); el('line',{x1:x-18,y1:y-6,x2:x+18,y2:y-6,stroke:FU,'stroke-width':4},g); el('line',{x1:x-18,y1:y+6,x2:x+18,y2:y+6,stroke:FU,'stroke-width':4},g);} else { el('rect',{x:x-8,y:y-20,width:16,height:40,fill:'#EFF0F1'},g); el('line',{x1:x-6,y1:y-18,x2:x-6,y2:y+18,stroke:FU,'stroke-width':4},g); el('line',{x1:x+6,y1:y-18,x2:x+6,y2:y+18,stroke:FU,'stroke-width':4},g);} }
+  else { const bw=vert?18:46, bh=vert?46:18; el('rect',{x:x-bw/2,y:y-bh/2,width:bw,height:bh,fill:typ==='L'?FU:'#fff',stroke:FU,'stroke-width':2.5},g); }
+}
+function schaltung(o){
+  text(200,22,o.sch==='reihe'?'Reihenschaltung':'Parallelschaltung',{s:16,f:FU});
+  const qx=80, qy=125; const quelle=()=>{ el('circle',{cx:qx,cy:qy,r:18,fill:'#fff',stroke:FU,'stroke-width':2.5}); el('path',{d:`M${qx-10},${qy} q5,-10 10,0 t10,0`,fill:'none',stroke:FU,'stroke-width':2}); text(qx-24,qy-4,fmt(o.U,0)+' V',{s:13,a:'end',f:FU}); text(qx-24,qy+13,fmt(o.f,0)+' Hz',{s:12,a:'end',f:FC,w:400}); };
+  if(o.sch==='reihe'){
+    const y0=55, y1=200, xr=380;
+    el('polyline',{points:`${qx},${qy-18} ${qx},${y0} ${xr},${y0} ${xr},${y1} ${qx},${y1} ${qx},${qy+18}`,fill:'none',stroke:'#1F2837','stroke-width':2.5});
+    quelle();
+    [['R',130,true,sub('U','R'),o.UR,FR],['L',225,o.mL,sub('U','L'),o.UL,FL],['C',320,o.mC,sub('U','C'),o.UC,FC]].forEach(([t,x,a,n,v,c])=>{ bauteil(t,x,y0,false,a); text(x,y0-18,t,{s:14,f:FU}); text(x,y0+40,a?n+' = '+einheit(v,'V'):'überbrückt',{s:13,f:a?c:'#616A73',w:a?600:400}); });
+    text(215,y1+22,'I = '+einheit(o.I,'A'),{s:14,f:FI});
+    pfeil(150,y1,110,y1,FI,2.5);
+  } else {
+    const y0=45, y1=205;
+    el('polyline',{points:`${qx},${qy-18} ${qx},${y0} 360,${y0}`,fill:'none',stroke:'#1F2837','stroke-width':2.5});
+    el('polyline',{points:`${qx},${qy+18} ${qx},${y1} 360,${y1}`,fill:'none',stroke:'#1F2837','stroke-width':2.5});
+    quelle(); pfeil(85,y0,110,y0,FI,2.5); text(100,y0-10,'I = '+einheit(o.I,'A'),{s:13,f:FI,a:'start'});
+    [['R',160,true,sub('I','R'),o.IR,FR],['L',260,o.mL,sub('I','L'),o.IL,FL],['C',360,o.mC,sub('I','C'),o.IC,FC]].forEach(([t,x,a,n,v,c])=>{
+      el('line',{x1:x,y1:y0,x2:x,y2:y1,stroke:'#1F2837','stroke-width':2.5,opacity:a?1:.25,'stroke-dasharray':a?'':'5 5'}); el('circle',{cx:x,cy:y0,r:4,fill:'#1F2837'}); el('circle',{cx:x,cy:y1,r:4,fill:'#1F2837'});
+      bauteil(t,x,qy,true,a); text(x+16,qy-28,t,{s:14,f:FU,a:'start'}); text(x,y1+22,a?n+' = '+einheit(v,'A'):'abgeklemmt',{s:13,f:a?c:'#616A73',w:a?600:400}); });
+  }
+}
+function zeiger(o){
+  const cx=200, cy=480, RM=160; text(cx,292,'Zeigerdiagramm',{s:16,f:FU});
+  el('circle',{cx,cy,r:RM,fill:'none',stroke:'#DEDFE1','stroke-width':1.5,'stroke-dasharray':'4 6'});
+  const P=(r,a)=>[cx+r*Math.cos(a),cy-r*Math.sin(a)];
+  if(o.sch==='reihe'){
+    // Bezug: Strom I bei Winkel th; U_R in Phase, U_L +90°, U_C −90°
+    const pts=[[o.UR,0],[o.UR,o.UL],[o.UR,o.UL-o.UC]], maxV=Math.max(o.U,...pts.map(p=>Math.hypot(p[0],p[1])));
+    const sV=stufe(maxV,RM,festV); festV=sV; const kV=50/sV, sI=stufe(o.I,RM*0.55,festI); festI=sI; const kI=50/sI;
+    const v=(a,b)=>[cx+(a*Math.cos(th)-b*Math.sin(th))*kV, cy-(a*Math.sin(th)+b*Math.cos(th))*kV];
+    const p0=[cx,cy], p1=v(o.UR,0), p2=v(o.UR,o.UL), p3=v(o.UR,o.UL-o.UC);
+    pfeil(p0[0],p0[1],p1[0],p1[1],FR,4); if(o.mL) pfeil(p1[0],p1[1],p2[0],p2[1],FL,4); if(o.mC) pfeil(p2[0],p2[1],p3[0],p3[1],FC,4);
+    pfeil(cx,cy,p3[0],p3[1],FU,5);
+    const ip=P(o.I*kI,th); pfeil(cx,cy,ip[0],ip[1],FI,3.5,'7 4');
+    const lab=(p,q,s,c)=>{ if(Math.hypot(q[0]-p[0],q[1]-p[1])<16) return; text((p[0]+q[0])/2+10,(p[1]+q[1])/2-6,s,{s:15,f:c,a:'start'}); };
+    lab(p0,p1,sub('U','R'),FR); if(o.mL) lab(p1,p2,sub('U','L'),FL); if(o.mC) lab(p2,p3,sub('U','C'),FC);
+    { const mx=cx+(p3[0]-cx)*.55, my=cy+(p3[1]-cy)*.55, L=Math.hypot(p3[0]-cx,p3[1]-cy)||1, nx=-(p3[1]-cy)/L, ny=(p3[0]-cx)/L; text(mx-nx*16,my-ny*16+5,'U',{s:16,f:FU}); } text(ip[0]+12*Math.cos(th),ip[1]-12*Math.sin(th)+16,'I',{s:16,f:FI});
+    massstab(30,668,sV,'V',FU); massstab(210,668,sI,'A',FI);
+  } else {
+    const pts=[[o.IR,0],[o.IR,-o.IL],[o.IR,o.IC-o.IL]], maxI=Math.max(...pts.map(p=>Math.hypot(p[0],p[1])));
+    const sI=stufe(maxI,RM,festI); festI=sI; const kI=50/sI, sV=stufe(o.U,RM*0.85,festV); festV=sV; const kV=50/sV;
+    const v=(a,b)=>[cx+(a*Math.cos(th)-b*Math.sin(th))*kI, cy-(a*Math.sin(th)+b*Math.cos(th))*kI];
+    const p0=[cx,cy], p1=v(o.IR,0), p2=v(o.IR,-o.IL), p3=v(o.IR,o.IC-o.IL);
+    const up=P(o.U*kV,th); pfeil(cx,cy,up[0],up[1],FU,3.5,'7 4');
+    pfeil(p0[0],p0[1],p1[0],p1[1],FR,4); if(o.mL) pfeil(p1[0],p1[1],p2[0],p2[1],FL,4); if(o.mC) pfeil(p2[0],p2[1],p3[0],p3[1],FC,4);
+    pfeil(cx,cy,p3[0],p3[1],FI,5);
+    const lab=(p,q,s,c)=>{ if(Math.hypot(q[0]-p[0],q[1]-p[1])<16) return; text((p[0]+q[0])/2+10,(p[1]+q[1])/2-6,s,{s:15,f:c,a:'start'}); };
+    lab(p0,p1,sub('I','R'),FR); if(o.mL) lab(p1,p2,sub('I','L'),FL); if(o.mC) lab(p2,p3,sub('I','C'),FC);
+    { const mx=cx+(p3[0]-cx)*.55, my=cy+(p3[1]-cy)*.55, L=Math.hypot(p3[0]-cx,p3[1]-cy)||1, nx=-(p3[1]-cy)/L, ny=(p3[0]-cx)/L; text(mx-nx*16,my-ny*16+5,'I',{s:16,f:FI}); } text(up[0]+14*Math.cos(th),up[1]-14*Math.sin(th)+6,'U',{s:16,f:FU});
+    massstab(30,668,sI,'A',FI); massstab(210,668,sV,'V',FU);
+  }
+  // Winkel φ zwischen I und U
+  if(Math.abs(o.phi)>0.03){ const r=42, aI=o.sch==='reihe'?th:th-o.phi, aU=aI+o.phi, a0=Math.min(aI,aU), a1=Math.max(aI,aU);
+    el('path',{d:`M${cx+r*Math.cos(a0)},${cy-r*Math.sin(a0)} A${r},${r} 0 0 0 ${cx+r*Math.cos(a1)},${cy-r*Math.sin(a1)}`,fill:'none',stroke:FI,'stroke-width':2.5});
+    text(cx+(r+14)*Math.cos((a0+a1)/2),cy-(r+14)*Math.sin((a0+a1)/2)+5,'φ',{s:16,f:FI}); }
+  el('circle',{cx,cy,r:4,fill:'#1F2837'});
+}
+function linie(o){
+  const D={x:450,y:325,w:320,h:300}, ym=D.y+D.h/2, A=D.h/2-14; text(D.x+D.w/2,310,'Liniendiagramm (eine Periode)',{s:16,f:FU});
+  el('rect',{x:D.x,y:D.y,width:D.w,height:D.h,fill:'#fff',stroke:'#DEDFE1'});
+  const T=1000/o.f; [0,.25,.5,.75,1].forEach(q=>{ const x=D.x+q*D.w; el('line',{x1:x,y1:D.y,x2:x,y2:D.y+D.h,stroke:'#EFF0F1'}); text(x,D.y+D.h+18,fmt(q*T,Number.isInteger(+(q*T).toFixed(3))?0:1),{s:12,f:FC,w:400}); });
+  el('line',{x1:D.x,y1:ym,x2:D.x+D.w,y2:ym,stroke:'#1F2837','stroke-width':1.5}); text(D.x+D.w,D.y+D.h+36,'t in ms',{s:13,a:'end'});
+  const pu=o.sch==='reihe'?o.phi:0, pi=o.sch==='reihe'?0:-o.phi;
+  const kurve=(amp,ph,c,dash)=>{ const pts=[]; for(let i=0;i<=200;i++){ const wt=i/200*2*Math.PI; pts.push((D.x+i/200*D.w).toFixed(1)+','+(ym-amp*Math.sin(wt+ph)).toFixed(1)); } const a={points:pts.join(' '),fill:'none',stroke:c,'stroke-width':3}; if(dash)a['stroke-dasharray']=dash; el('polyline',a); };
+  kurve(A,pu,FU); kurve(A*0.7,pi,FI,'7 4');
+  text(D.x+8,D.y+18,'u: û = '+einheit(o.U*Math.SQRT2,'V'),{s:13,f:FU,a:'start'}); text(D.x+8,D.y+36,'i (gestrichelt): î = '+einheit(o.I*Math.SQRT2,'A'),{s:13,f:FI,a:'start'});
+  text(D.x+D.w-8,D.y+D.h-8,'Höhen nicht maßstäblich',{s:11,f:FC,a:'end',w:400});
+  const tc=((th%(2*Math.PI))+2*Math.PI)%(2*Math.PI), xc=D.x+tc/(2*Math.PI)*D.w; el('line',{x1:xc,y1:D.y,x2:xc,y2:D.y+D.h,stroke:FI,'stroke-width':1.5,opacity:.6});
+}
+function leistung(o){
+  const x0=450, y0=150; text(615,22,'Leistungsdreieck',{s:16,f:FU});
+  const sP=stufe(Math.max(o.P/290,Math.abs(o.Q)/105)*290,290,festP); festP=sP; const k=50/sP;
+  const P=o.P*k, Q=o.Q*k;
+  pfeil(x0,y0,x0+P,y0,FR,4); pfeil(x0+P,y0,x0+P,y0-Q,FL,4); pfeil(x0,y0,x0+P,y0-Q,FI,4);
+  text(x0+P/2,y0+(Q>=0?22:-10),'P = '+einheit(o.P,'W'),{s:13,f:FR});
+  if(Math.abs(Q)>12) text(x0+P+8,y0-Q/2+5,'Q = '+einheit(Math.abs(o.Q),'var')+(o.Q>0?' (induktiv)':' (kapazitiv)'),{s:13,f:FL,a:'start'});
+  text(x0+P/2-8,y0-Q/2+(Q>=0?-10:22),'S = '+einheit(o.S,'VA'),{s:13,f:FI,a:'end'});
+  massstab(450,275,sP,'W bzw. var, VA',FC);
+}
+function zeichne(){
+  const o=rechne(); svg.innerHTML=''; defs(); schaltung(o); leistung(o); zeiger(o); linie(o);
+  const g=o.phi*180/Math.PI, s=$('status'); s.classList.remove('gut');
+  let t= Math.abs(g)<1 ? 'Resonanz bzw. rein ohmsch: Strom und Spannung sind in Phase, cos φ = 1.' : g>0 ? 'Induktiv: Die Spannung eilt dem Strom um φ = '+fmt(g,1)+'° voraus.' : 'Kapazitiv: Der Strom eilt der Spannung um φ = '+fmt(-g,1)+'° voraus.';
+  if(o.sch==='reihe' && Math.max(o.UL,o.UC)>o.U*1.001) t+=' Achtung: '+(o.UL>=o.UC?'U<sub>L</sub>':'U<sub>C</sub>')+' = '+einheit(Math.max(o.UL,o.UC),'V')+' ist größer als die angelegte Spannung (Spannungsüberhöhung).';
+  if(o.sch==='parallel' && Math.max(o.IL,o.IC)>o.I*1.001 && o.mL && o.mC) t+=' Spule und Kondensator führen mehr Strom als die Zuleitung (Stromüberhöhung).';
+  if(Math.abs(g)<1) s.classList.add('gut'); s.innerHTML=t;
+  const rows=[], r=(n,rw,v)=>rows.push(`<tr><td>${n}<div class="rw">${rw}</div></td><td>${v}</td></tr>`);
+  r('Kreisfrequenz ω','ω = 2π · f',fmt(o.w,1)+' 1/s');
+  if(o.mL) r('induktiver Blindwiderstand X<sub>L</sub>','X<sub>L</sub> = ω · L',einheit(o.XL,'Ω'));
+  if(o.mC) r('kapazitiver Blindwiderstand X<sub>C</sub>','X<sub>C</sub> = 1 / (ω · C)',einheit(o.XC,'Ω'));
+  if(o.sch==='reihe'){
+    r('Scheinwiderstand Z','Z = √(R² + (X<sub>L</sub> − X<sub>C</sub>)²)',einheit(o.Z,'Ω'));
+    r('Strom I','I = U / Z',einheit(o.I,'A'));
+    r('Teilspannungen','U<sub>R</sub> = I · R, U<sub>L</sub> = I · X<sub>L</sub>, U<sub>C</sub> = I · X<sub>C</sub>',fmt(o.UR,1)+' / '+fmt(o.UL,1)+' / '+fmt(o.UC,1)+' V');
+    r('Phasenverschiebung φ','tan φ = (X<sub>L</sub> − X<sub>C</sub>) / R',fmt(o.phi*180/Math.PI,1)+'°');
+  } else {
+    r('Zweigströme','I<sub>R</sub> = U / R, I<sub>L</sub> = U / X<sub>L</sub>, I<sub>C</sub> = U / X<sub>C</sub>',fmt(o.IR,2)+' / '+fmt(o.IL,2)+' / '+fmt(o.IC,2)+' A');
+    r('Gesamtstrom I','I = √(I<sub>R</sub>² + (I<sub>L</sub> − I<sub>C</sub>)²)',einheit(o.I,'A'));
+    r('Scheinwiderstand Z','Z = U / I',einheit(o.Z,'Ω'));
+    r('Phasenverschiebung φ','tan φ = (I<sub>L</sub> − I<sub>C</sub>) / I<sub>R</sub>',fmt(o.phi*180/Math.PI,1)+'°');
+  }
+  r('Leistungsfaktor cos φ',o.sch==='reihe'?'cos φ = R / Z':'cos φ = I<sub>R</sub> / I',fmt(Math.cos(o.phi),3));
+  r('Scheinleistung S','S = U · I',einheit(o.S,'VA'));
+  r('Wirkleistung P','P = S · cos φ',einheit(o.P,'W'));
+  r('Blindleistung Q','Q = S · sin φ',einheit(Math.abs(o.Q),'var'));
+  if(o.f0) r('Resonanzfrequenz f<sub>0</sub>','f<sub>0</sub> = 1 / (2π · √(L · C))',fmt(o.f0,1)+' Hz');
+  $('werte').innerHTML=rows.join('');
+  $('uOut').textContent=fmt(o.U,0)+' V'; $('fOut').textContent=fmt(o.f,0)+' Hz'; $('rOut').textContent=fmt(o.R,0)+' Ω'; $('lOut').textContent=fmt(o.L*1000,0)+' mH'; $('cOut').textContent=fmt(o.C*1e6,0)+' µF';
+  $('l').disabled=!o.mL; $('c').disabled=!o.mC;
+}
+function schritt(ts){ const dt=letzt?Math.min(.05,(ts-letzt)/1000):0; letzt=ts; if($('laeuft').checked) th+=dt*2*Math.PI*0.2; zeichne(); requestAnimationFrame(schritt); }
+$('start').addEventListener('click',()=>{ for(const k in START) $(k).value=START[k]; $('mitL').checked=true; $('mitC').checked=true; document.querySelector('input[name=sch][value=reihe]').checked=true;
+  document.querySelectorAll('input[type=range]').forEach(e=>e.dispatchEvent(new Event('input'))); });
+$('beamer').addEventListener('click',()=>{document.body.classList.toggle('beamer'); const d=document.documentElement;
+  if(!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});});
+requestAnimationFrame(schritt);
+})();
+</script>
+
+<script>(function(){var b=document.querySelector('.menu-btn'),n=document.getElementById('nav');if(b&&n)b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});})();</script>
+<style>
+.zahlbox{display:inline-flex;align-items:center;gap:4px}
+.zahl{width:78px;text-align:right;font:600 15px "WAGO Connective",Arial,sans-serif;color:var(--petrol);border:1px solid #A5A8AF;border-radius:0;padding:3px 6px;background:#fff}
+.zahl:disabled{opacity:.4}
+.einheit{color:var(--petrol);font-weight:600;min-width:1ch}
+</style>
+<script>
+/* Zahlenfeld neben jedem Regler: Eingabe mit Komma oder Punkt, Enter übernimmt */
+(function(){
+const dez=x=>{const s=String(+(+x).toFixed(6)); return (s.split('.')[1]||'').length;};
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const lab=r.closest('label'), out=lab&&lab.querySelector('output'), zeile=lab&&lab.querySelector('.zeile');
+  const liste=r.dataset.liste? r.dataset.liste.split(',').map(Number) : null, f=+(r.dataset.faktor||1);
+  const z=document.createElement('input'); z.type='text'; z.inputMode='decimal'; z.className='zahl'; z.autocomplete='off';
+  z.setAttribute('aria-label',(zeile?zeile.textContent.replace(/\s+/g,' ').trim():'Wert')+' als Zahl eingeben');
+  const e=document.createElement('span'); e.className='einheit';
+  const box=document.createElement('span'); box.className='zahlbox'; box.append(z,e);
+  if(out){ out.style.display='none'; out.after(box); } else if(zeile) zeile.append(box); else r.before(box);
+  const d=liste? Math.max(...liste.map(dez)) : dez(r.step*f);
+  const wert=()=>liste? liste[+r.value] : +r.value*f;
+  const zeige=v=>v.toLocaleString('de-DE',{useGrouping:false,minimumFractionDigits:liste?0:d,maximumFractionDigits:d});
+  const einheit=()=>{ if(!out) return ''; const m=out.textContent.trim().match(/[^\d.,+\-\s−][\s\S]*$/); return m? m[0].trim() : ''; };
+  const sync=()=>{ if(document.activeElement!==z) z.value=zeige(wert()); e.textContent=einheit(); z.disabled=r.disabled; };
+  const setze=()=>{ let v=parseFloat(z.value.replace(/\s/g,'').replace(',','.').replace('−','-')); if(isNaN(v)){ sync(); return; }
+    if(liste){ let b=0; liste.forEach((x,i)=>{ if(Math.abs(x-v)<Math.abs(liste[b]-v)) b=i; }); r.value=b; }
+    else { v=v/f; v=Math.min(+r.max,Math.max(+r.min,v)); r.value=v; }
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); z.value=zeige(wert()); e.textContent=einheit(); };
+  z.addEventListener('change',setze);
+  z.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); setze(); z.blur(); } });
+  z.addEventListener('click',ev=>ev.preventDefault());
+  r.addEventListener('input',sync); setInterval(sync,250); sync();
+});
+})();
+</script>
+<script>(function(){function f(){document.querySelectorAll('input[type=range]').forEach(function(r){var a=+r.min||0,b=+r.max||100;r.style.setProperty('--p',((r.value-a)/(b-a)*100)+'%')})}document.addEventListener('input',f);document.addEventListener('change',f);setInterval(f,250);f()})();</script>
+</body>
+</html>
